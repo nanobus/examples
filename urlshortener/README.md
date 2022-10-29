@@ -4,7 +4,12 @@ A simple URL shortener API that stores them in a swappable database (e.g. [Postg
 
 ## Setup
 
-Follow the instuctures [here](https://github.com/nanobus/nanobus/blob/main/README.md#getting-started)
+Dependencies:
+
+* Install [Go 1.19+](https://go.dev/dl/)
+* Install [TinyGo 0.26+](https://tinygo.org/getting-started/install/)
+* Install [Binaryen](https://github.com/WebAssembly/binaryen) (Homebrew `brew install binaryen`)
+* Install [Apex and NanoBus](https://github.com/nanobus/nanobus/blob/main/README.md#getting-started).
 
 ## Running
 
