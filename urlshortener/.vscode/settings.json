@@ -1,0 +1,15 @@
+{
+    "task.allowAutomaticTasks": "on",
+    "redisXplorer.config": {
+        "profiles": [
+            {
+                "name": "Local",
+                "host": "localhost",
+                "accessKey": "",
+                "filter": "*",
+                "port": "6379"
+            }
+        ],
+        "scanLimit": 200
+    }
+}
