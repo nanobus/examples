@@ -1,0 +1,68 @@
+version: "3.9"
+services:
+  # nanobus-redis:
+  #   build:
+  #     context: ../
+  #     dockerfile: ./docker/Components.Dockerfile
+  #     args:
+  #       APP_NAME: state.redis
+  #   privileged: true
+  #   environment:
+  #     - DAPR_COMPONENT_SOCKET_PATH=/var/run/redis.sock
+  #   volumes:
+  #     - ./sockets:/var/run
+  # nanobus-kafka:
+  #   build:
+  #     context: ../
+  #     dockerfile: ./docker/Components.Dockerfile
+  #     args:
+  #       APP_NAME: pubsub.kafka
+  #   privileged: true
+  #   environment:
+  #     - DAPR_COMPONENT_SOCKET_PATH=/var/run/kafka.sock
+  #   volumes:
+  #     - ./sockets:/var/run
+  jaeger:
+    image: jaegertracing/all-in-one:1.6
+    environment:
+      COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "9411:9411"
+  redis-server:
+    image: redis:6
+    ports:
+      - "6379:6379"
+  # nats:
+  #   image: nats
+  #   ports:
+  #     - "4222:4222"
+  #     - "8222:8222"
+  #   command: --http_port 8222
+  postgresql:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: urlshortener
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/postgresql/data:/var/lib/postgresql/data
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka:latest
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+      KAFKA_CREATE_TOPICS: "binding-topic:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181

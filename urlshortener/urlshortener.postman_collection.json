@@ -1,0 +1,123 @@
+{
+	"info": {
+		"_postman_id": "5a1c2211-7fa0-4062-8528-60092b3aeab7",
+		"name": "Simple URL shortener API",
+		"description": "Simple API for shortening URLs created using NanoBus and Dapr.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Shortener",
+			"item": [
+				{
+					"name": "shorten",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "state",
+									"value": "mystate",
+									"type": "string"
+								},
+								{
+									"key": "tokenType",
+									"value": "bearer",
+									"type": "string"
+								},
+								{
+									"key": "accessToken",
+									"value": "???",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "consumer-secret",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "url-shortener",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "http://127.0.0.1:9000/oauth2/token",
+									"type": "string"
+								},
+								{
+									"key": "authUrl",
+									"value": "http://127.0.0.1:9000/oauth2/auth",
+									"type": "string"
+								},
+								{
+									"key": "useBrowser",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"url\": \"https://apexlang.io\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseRestURI}}/v1/shorten",
+							"host": [
+								"{{baseRestURI}}"
+							],
+							"path": [
+								"v1",
+								"shorten"
+							]
+						},
+						"description": "Shorten a URL and return a generated identifier."
+					},
+					"response": []
+				},
+				{
+					"name": "lookup",
+					"protocolProfileBehavior": {
+						"followRedirects": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseRestURI}}/v1/replaceme",
+							"host": [
+								"{{baseRestURI}}"
+							],
+							"path": [
+								"v1",
+								"replaceme"
+							]
+						},
+						"description": "Return the URL using the generated identifier."
+					},
+					"response": []
+				}
+			],
+			"description": "The URL shortening service."
+		}
+	],
+	"variable": [
+		{
+			"key": "baseRestURI",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

@@ -1,0 +1,20 @@
+all: build run
+
+build:
+    @mkdir -p build
+    @tinygo build -o build/urlshortener.wasm -scheduler=none -target wasi -no-debug cmd/main.go
+    @wasm-opt -O build/urlshortener.wasm -o build/urlshortener.wasm
+    @wasmrs-ops build/urlshortener.wasm
+
+run:
+    @nanobus
+
+copy-components:
+    mkdir -p components
+    cp ../../nanobus/build/components/* ./components
+
+kafka:
+    @DAPR_COMPONENT_SOCKET_PATH=./kafka.socket ./components/pubsub.kafka
+
+redis:
+    @DAPR_COMPONENT_SOCKET_PATH=./redis.socket ./components/state.redis
