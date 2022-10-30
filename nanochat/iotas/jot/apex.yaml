@@ -1,0 +1,147 @@
+spec: apex.aidl
+config:
+  name: jot
+  package: jot
+  module: github.com/candlecorp/nanochat/iotas/jot
+  aliases:
+    UUID:
+      type: uuid.UUID
+      import: github.com/google/uuid
+      parse: uuid.Parse
+      format: String
+generates:
+  ./src/generated.rs:
+    module: "@nanobus/rust"
+    # module: "../../../iota/codegen/packages/rust"
+    config:
+      serde: true
+      derive:
+        _all:
+          - Debug
+      datetime: wasmrs_guest::Timestamp
+      visibility:
+        _all: pub
+  cmd/main.go:
+    ifNotExists: true
+    module: "@nanobus/tinygo"
+    visitorClass: MainVisitor
+    config:
+      import: github.com/candlecorp/nanochat/iotas/jot/pkg/jot
+  pkg/jot/msgpack.go:
+    module: "@nanobus/tinygo"
+    visitorClass: MsgPackVisitor
+  pkg/jot/interfaces.go:
+    module: "@nanobus/tinygo"
+    visitorClass: InterfacesVisitor
+  pkg/jot/export.go:
+    module: "@nanobus/tinygo"
+    visitorClass: ExportVisitor
+  pkg/jot/providers.go:
+    module: "@nanobus/tinygo"
+    visitorClass: ProviderVisitor
+  pkg/jot/jots.go:
+    ifNotExists: true
+    module: "@nanobus/tinygo"
+    visitorClass: ScaffoldVisitor
+    config:
+      names:
+        - Jots
+  pkg/jot/users.go:
+    ifNotExists: true
+    module: "@nanobus/tinygo"
+    visitorClass: ScaffoldVisitor
+    config:
+      names:
+        - Users  
+  bus.yaml:
+    ifNotExists: true
+    module: "@nanobus/bus"
+    visitorClass: BusVisitor
+---
+spec: ../user/apex.aidl
+config:
+  name: user
+  package: user
+  module: github.com/candlecorp/nanochat/iotas/jot
+  aliases:
+    UUID:
+      type: uuid.UUID
+      import: github.com/google/uuid
+      parse: uuid.Parse
+      format: String
+generates:
+  pkg/user/msgpack.go:
+    module: "@nanobus/tinygo"
+    visitorClass: MsgPackVisitor
+  pkg/user/interfaces.go:
+    module: "@nanobus/tinygo"
+    visitorClass: InterfacesVisitor
+  pkg/user/import.go:
+    module: "@nanobus/tinygo"
+    visitorClass: ImportVisitor
+---
+spec: ../follow/apex.aidl
+config:
+  name: follow
+  package: follow
+  module: github.com/candlecorp/nanochat/iotas/jot
+  aliases:
+    UUID:
+      type: uuid.UUID
+      import: github.com/google/uuid
+      parse: uuid.Parse
+      format: String
+generates:
+  pkg/follow/msgpack.go:
+    module: "@nanobus/tinygo"
+    visitorClass: MsgPackVisitor
+  pkg/follow/interfaces.go:
+    module: "@nanobus/tinygo"
+    visitorClass: InterfacesVisitor
+  pkg/follow/import.go:
+    module: "@nanobus/tinygo"
+    visitorClass: ImportVisitor
+---
+spec: ../message/apex.aidl
+config:
+  name: message
+  package: message
+  module: github.com/candlecorp/nanochat/iotas/jot
+  aliases:
+    UUID:
+      type: uuid.UUID
+      import: github.com/google/uuid
+      parse: uuid.Parse
+      format: String
+generates:
+  pkg/message/msgpack.go:
+    module: "@nanobus/tinygo"
+    visitorClass: MsgPackVisitor
+  pkg/message/interfaces.go:
+    module: "@nanobus/tinygo"
+    visitorClass: InterfacesVisitor
+  pkg/message/import.go:
+    module: "@nanobus/tinygo"
+    visitorClass: ImportVisitor
+---
+spec: ../like/apex.aidl
+config:
+  name: like
+  package: like
+  module: github.com/candlecorp/nanochat/iotas/jot
+  aliases:
+    UUID:
+      type: uuid.UUID
+      import: github.com/google/uuid
+      parse: uuid.Parse
+      format: String
+generates:
+  pkg/like/msgpack.go:
+    module: "@nanobus/tinygo"
+    visitorClass: MsgPackVisitor
+  pkg/like/interfaces.go:
+    module: "@nanobus/tinygo"
+    visitorClass: InterfacesVisitor
+  pkg/like/import.go:
+    module: "@nanobus/tinygo"
+    visitorClass: ImportVisitor

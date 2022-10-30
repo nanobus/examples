@@ -1,0 +1,89 @@
+specs:
+  - uses: apex
+    with:
+      filename: apex.aidl
+
+migrate:
+  userdb:
+    uses: postgres
+    with:
+      dataSource: ${env:IOTA_USER_DB}
+      directory: sql
+
+resources:
+  userdb:
+    uses: postgres
+    with:
+      url: ${env:IOTA_USER_DB}
+
+resiliency:
+  retries:
+    database:
+      policy: constant
+      duration: 3s
+
+  circuitBreakers:
+    database:
+      policy: constant
+      duration: 3s
+
+providers:
+  'nanochat.io.user.v1.UserStore':
+    me:
+      steps:
+        - name: Loads the user of the request
+          uses: "@postgres/query"
+          with:
+            single: true
+            resource: userdb
+            sql: |
+              SELECT * FROM "user"
+              WHERE id = $1
+            args:
+              - claims.sub
+          # retry: database
+          # circuitBreaker: database
+
+    load:
+      steps:
+        - name: Load a single user
+          uses: "@postgres/query"
+          with:
+            single: true
+            resource: userdb
+            sql: |
+              SELECT * FROM "user"
+              WHERE id = $1
+            args:
+              - input.userId
+          # retry: database
+          # circuitBreaker: database
+
+    getMultiple:
+      steps:
+        - name: Lookup many users
+          uses: "@postgres/query"
+          with:
+            resource: userdb
+            sql: |
+              SELECT * FROM "user"
+              WHERE id = any($1)
+            args:
+              - input.userIds
+          # retry: database
+          # circuitBreaker: database
+
+    findByHandle:
+      steps:
+        - name: Lookup user by handle
+          uses: "@postgres/query"
+          with:
+            single: true
+            resource: userdb
+            sql: |
+              SELECT * FROM "user"
+              WHERE handle = $1
+            args:
+              - input.handle
+          # retry: database
+          # circuitBreaker: database

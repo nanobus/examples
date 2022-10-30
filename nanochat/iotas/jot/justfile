@@ -1,0 +1,23 @@
+all: deps codegen tidy build
+
+deps:
+
+codegen:
+	apex generate
+
+tidy:
+	go mod tidy
+
+build:
+	mkdir -p build
+	tinygo build -o build/jot.wasm --scheduler=none --target=wasi -no-debug cmd/main.go
+	wasm-opt -O build/jot.wasm -o build/jot.wasm
+	wasmrs-ops build/jot.wasm
+
+clean:
+	rm -Rf build
+
+doc:
+
+test:
+	go test --count=1 ./pkg/...

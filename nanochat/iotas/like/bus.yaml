@@ -1,0 +1,125 @@
+specs:
+  - uses: apex
+    with:
+      filename: apex.aidl
+
+migrate:
+  likedb:
+    uses: postgres
+    with:
+      dataSource: ${env:IOTA_LIKE_DB}
+      directory: sql
+
+resources:
+  likedb:
+    uses: postgres
+    with:
+      url: ${env:IOTA_LIKE_DB}
+
+resiliency:
+  retries:
+    database:
+      policy: constant
+      duration: 3s
+
+  circuitBreakers:
+    database:
+      policy: constant
+      duration: 3s
+
+providers:
+  'nanochat.io.like.v1.LikeStore':
+    like:
+      steps:
+        - name: Store like
+          uses: "@postgres/exec"
+          with:
+            resource: likedb
+            sql: |
+              SELECT fn_like($1, $2) as success;
+            args:
+              - claims.sub
+              - input.likableId
+          # retry: database
+          # circuitBreaker: database
+
+    unlike:
+      steps:
+        - name: Remove like
+          uses: "@postgres/exec"
+          with:
+            resource: likedb
+            sql: |
+              SELECT fn_unlike($1, $2) as success;
+            args:
+              - claims.sub
+              - input.likableId
+          # retry: database
+          # circuitBreaker: database
+
+    load:
+      steps:
+        - name: Lookup user by handle
+          uses: "@postgres/query"
+          with:
+            single: true
+            resource: likedb
+            sql: |
+              SELECT t.id, t.likes
+              FROM likable t
+              WHERE t.id = $1
+            args:
+              - input.likableId
+          # retry: database
+          # circuitBreaker: database
+
+    delete:
+      steps:
+        - name: Delete the likable
+          uses: "@postgres/query"
+          with:
+            single: true
+            resource: likedb
+            sql: |
+              DELETE FROM likable t
+              WHERE t.id = $1
+            args:
+              - input.likableId
+          # retry: database
+          # circuitBreaker: database
+
+    getMultiple:
+      steps:
+        - name: Get multiple likables
+          uses: "@postgres/query"
+          with:
+            resource: likedb
+            sql: |
+              SELECT t.id, t.likes
+              FROM likable t
+              WHERE t.id = any($1)
+            args:
+              - input.likableIds
+          # retry: database
+          # circuitBreaker: database
+
+    getLikedBy:
+      steps:
+        - name: Fetch users likes
+          uses: "@postgres/query"
+          with:
+            resource: likedb
+            sql: |
+              SELECT u.id as user_id, l.time
+              FROM likable u
+              JOIN likes l ON u.id = l.user_id
+              WHERE l.likable_id = $1
+              ORDER BY l.time DESC
+              OFFSET $2
+              LIMIT $3
+            args:
+              - input.likableId
+              - input.offset
+              - input.limit
+          # retry: database
+          # circuitBreaker: database

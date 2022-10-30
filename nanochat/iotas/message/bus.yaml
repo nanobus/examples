@@ -1,0 +1,134 @@
+specs:
+  - uses: apex
+    with:
+      filename: apex.aidl
+
+migrate:
+  messagedb:
+    uses: postgres
+    with:
+      dataSource: ${env:IOTA_MESSAGE_DB}
+      directory: sql
+
+resources:
+  messagedb:
+    uses: postgres
+    with:
+      url: ${env:IOTA_MESSAGE_DB}
+
+resiliency:
+  retries:
+    database:
+      policy: constant
+      duration: 3s
+
+  circuitBreakers:
+    database:
+      policy: constant
+      duration: 3s
+
+providers:
+  'nanochat.io.messsage.v1.MessageStore':
+    store:
+      steps:
+        - name: Store a tweet.
+          uses: "@postgres/query"
+          with:
+            single: true
+            resource: messagedb
+            sql: |
+              INSERT INTO message (user_id, message, time)
+              VALUES ($1, $2, now())
+              RETURNING *
+            args:
+              - claims.sub
+              - input.message
+          # retry: database
+          # circuitBreaker: database
+
+    load:
+      steps:
+        - name: Get a single message.
+          uses: "@postgres/query"
+          with:
+            single: true
+            resource: messagedb
+            sql: |
+              SELECT * FROM message
+              WHERE id = $1
+            args:
+              - input.id
+          # retry: database
+          # circuitBreaker: database
+
+    delete:
+      steps:
+        - name: Remove a message
+          uses: "@postgres/query"
+          with:
+            single: true
+            resource: messagedb
+            sql: |
+              DELETE FROM message
+              WHERE id = $1
+                AND user_id = $2
+              RETURNING *
+            args:
+              - input.id
+              - claims.sub
+          # retry: database
+          # circuitBreaker: database
+
+    myMessages:
+      steps:
+        - name: Get the tweet timeline.
+          uses: "@postgres/query"
+          with:
+            resource: messagedb
+            sql: |
+              SELECT t.* FROM message t
+              JOIN follows f ON t.user_id = f.follows
+              WHERE f.follower = $1
+                AND (t.time < $2 OR $2 IS NULL)
+              ORDER BY t.time DESC LIMIT $3
+            args:
+              - claims.sub
+              - input.before
+              - input.limit
+          # retry: database
+          # circuitBreaker: database
+
+    getFeed:
+      steps:
+        - name: Get a user's message timeline.
+          uses: "@postgres/query"
+          with:
+            resource: messagedb
+            sql: |
+              SELECT * FROM message t
+              WHERE (t.user_id = any($1) OR t.user_id = $2)
+                AND (t.time < $3 OR $3 IS NULL)
+              ORDER BY time DESC
+            args:
+              - input.userIds
+              - claims.sub
+              - input.before
+          # retry: database
+          # circuitBreaker: database
+  
+    getUserMessages:
+      steps:
+        - name: Get a user's message timeline.
+          uses: "@postgres/query"
+          with:
+            resource: messagedb
+            sql: |
+              SELECT * FROM message t
+              WHERE t.user_id = $1
+                AND (t.time < $2 OR $2 IS NULL)
+              ORDER BY time DESC
+            args:
+              - input.userId
+              - input.before
+          # retry: database
+          # circuitBreaker: database

@@ -1,0 +1,140 @@
+application:
+  id: nanochat
+  version: 0.0.1
+  environment: local
+
+transports:
+  rest:
+    uses: rest
+    with:
+      address: :8080
+      static:
+        - path: /
+          dir: ui
+      routes:
+        - uses: oauth2
+          with:
+            clientId: ${env:OAUTH_CLIENT_ID}
+            clientSecret: ${env:OAUTH_CLIENT_SECRET}
+            endpoint:
+              authUrl: ${env:OAUTH_AUTH_URL}
+              tokenUrl: ${env:OAUTH_TOKEN_URL}
+            redirectUrl: ${env:OAUTH_REDIRECT_URL}
+            pipeline: storeSession
+            debug: true
+  httprpc:
+    uses: httprpc
+    with:
+      address: :9090
+
+migrate:
+  followdb:
+    uses: postgres
+    with:
+      dataSource: ${env:IOTA_FOLLOW_DB}
+      directory: iotas/follow/sql
+  likedb:
+    uses: postgres
+    with:
+      dataSource: ${env:IOTA_LIKE_DB}
+      directory: iotas/like/sql
+  messagedb:
+    uses: postgres
+    with:
+      dataSource: ${env:IOTA_MESSAGE_DB}
+      directory: iotas/message/sql
+  userdb:
+    uses: postgres
+    with:
+      dataSource: ${env:IOTA_USER_DB}
+      directory: iotas/user/sql
+
+filters:
+  http:
+    - uses: session
+      with:
+        pipeline: getAccessToken
+        debug: true
+    - uses: jwt
+      with:
+        jwksUrl: ${env:OAUTH_JWKS_URL}
+        debug: true
+
+pipelines:
+  getAccessToken:
+    steps:
+      - name: Select access token
+        uses: "@postgres/query"
+        with:
+          resource: userdb
+          single: true
+          sql: |
+            SELECT access_token, token_type
+            FROM "session"
+            WHERE sid = $1
+              AND expiry >= now()
+          args:
+            - sid
+
+  storeSession:
+    steps:
+      - name: Create user if none exists
+        uses: "@postgres/exec"
+        with:
+          resource: userdb
+          sql: |
+            INSERT INTO "user" (id, handle, email)
+            VALUES ($1, $2, $3)
+            ON CONFLICT DO NOTHING
+          args:
+            - claims.sub
+            - claims.preferred_username
+            - claims.email
+      - name: Create a session
+        uses: "@postgres/exec"
+        with:
+          resource: userdb
+          sql: |
+            INSERT INTO "session" (sid, uid, access_token, expiry, refresh_token, token_type)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (sid) DO UPDATE
+            SET uid = $2, access_token = $3, expiry = $4, refresh_token = $5, token_type = $6
+          args:
+            - claims.sid
+            - claims.sub
+            - access_token
+            - expiry
+            - refresh_token
+            - token_type
+
+tracing:
+  uses: jaeger
+  with:
+    collectorEndpoint: ${env:JAEGER_TRACE_ENDPOINT}
+
+import:
+  # API
+  - iotas/jot/bus.yaml
+
+  # Stores
+  - iotas/follow/bus.yaml
+  - iotas/like/bus.yaml
+  - iotas/message/bus.yaml
+  - iotas/user/bus.yaml
+
+errors:
+  not_found:
+    type: NotFound
+    code: not_found
+    title: Not found
+    message: id {{ .key }} is not found
+  user_not_found:
+    type: NotFound
+    code: not_found
+    title: Not found
+    message: User with handle {{ .handle }} is not found
+  jot_not_found:
+    type: NotFound
+    code: not_found
+    title: Not found
+    message: Jot with id {{ .messageId }} is not found
