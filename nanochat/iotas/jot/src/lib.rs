@@ -1,6 +1,12 @@
 pub(crate) mod generated;
+pub(crate) mod user;
+pub(crate) mod follow;
+pub(crate) mod message;
+pub(crate) mod like;
 
 use generated::*;
+use message::*;
+
 use wasmrs_guest::*;
 
 #[async_trait::async_trait(?Send)]
@@ -11,7 +17,7 @@ impl JotsService for JotsComponent {
         let inputs = inputs.await?;
 
         
-        Ok(jot_store::store_jot(jot_store::store_jot::Inputs {
+        Ok(message_store::store(message_store::store::Inputs {
             message: &inputs.message,
         })
         .await?)
