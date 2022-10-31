@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      PGUSER: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nanochat
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  nanobus:
+    image: candlecorp/nanobus:v2
+    depends_on:
+      postgres:
+        condition: service_healthy
+      oidc:
+        condition: service_healthy
+    volumes:
+      - ./bus.yaml:/app/bus.yaml
+      - ./web/static:/app/static
+      - ./sql:/app/sql
+      - ./iotas/jot/bus.yaml:/app/iotas/jot/bus.yaml
+      - ./iotas/jot/apex.aidl:/app/iotas/jot/apex.aidl
+      - ./iotas/jot/build:/app/iotas/jot/build
+    environment:
+      NANOCHAT_SQL: file://sql
+      NANOCHAT_DB: postgresql://postgres:postgres@postgres:5432/nanochat?sslmode=disable
+      OAUTH_CLIENT_ID: foo
+      OAUTH_CLIENT_SECRET: bar
+      OAUTH_AUTH_URL: http://localhost:9000/auth
+      OAUTH_TOKEN_URL: http://localhost:9000/token
+      OAUTH_REDIRECT_URL: http://localhost:8080/oauth/callback
+      OAUTH_JWKS_URL: http://oidc:9000/certs
+    ports:
+      - "8080:8080"
+
+  oidc:
+    image: qlik/simple-oidc-provider
+    ports:
+      - 9000:9000
+    volumes:
+      - ./tests/data/app.js:/usr/src/app/app.js
+      - ./tests/data/users.json:/usr/src/app/server/users.json
+    environment:
+      REDIRECTS: http://localhost:8080/oauth/callback,https://oauth.pstmn.io/v1/callback
+      PORT: 9000
+      USERS_FILE: /usr/src/app/server/users.json
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:9000/.well-known/openid-configuration || exit 1
+      interval: 10s
+      retries: 5
+      timeout: 10s

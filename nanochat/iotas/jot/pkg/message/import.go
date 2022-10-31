@@ -3,18 +3,7 @@
 package message
 
 import (
-	"context"
-	"encoding/binary"
-	"time"
-
-	"github.com/google/uuid"
-	"github.com/nanobus/iota/go/msgpack"
 	"github.com/nanobus/iota/go/wasmrs/invoke"
-	"github.com/nanobus/iota/go/wasmrs/payload"
-	"github.com/nanobus/iota/go/wasmrs/proxy"
-	"github.com/nanobus/iota/go/wasmrs/rx/flux"
-	"github.com/nanobus/iota/go/wasmrs/rx/mono"
-	"github.com/nanobus/iota/go/wasmrs/transform"
 )
 
 var (
@@ -59,9 +48,9 @@ func (m *MessageStoreImpl) Store(ctx context.Context, message string) mono.Mono[
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestResponse(ctx, pl)
-	return mono.Map(future, transform.MsgPackDecode[Message])
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestResponse(ctx, p)
+	return mono.Map(m, transform.MsgPackDecode[Message])
 }
 
 func (m *MessageStoreImpl) Load(ctx context.Context, id uuid.UUID) mono.Mono[Message] {
@@ -78,9 +67,9 @@ func (m *MessageStoreImpl) Load(ctx context.Context, id uuid.UUID) mono.Mono[Mes
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestResponse(ctx, pl)
-	return mono.Map(future, transform.MsgPackDecode[Message])
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestResponse(ctx, p)
+	return mono.Map(m, transform.MsgPackDecode[Message])
 }
 
 func (m *MessageStoreImpl) Delete(ctx context.Context, id uuid.UUID) mono.Mono[Message] {
@@ -97,9 +86,9 @@ func (m *MessageStoreImpl) Delete(ctx context.Context, id uuid.UUID) mono.Mono[M
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestResponse(ctx, pl)
-	return mono.Map(future, transform.MsgPackDecode[Message])
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestResponse(ctx, p)
+	return mono.Map(m, transform.MsgPackDecode[Message])
 }
 
 func (m *MessageStoreImpl) MyMessages(ctx context.Context, before *time.Time, limit uint32) flux.Flux[Message] {
@@ -117,9 +106,9 @@ func (m *MessageStoreImpl) MyMessages(ctx context.Context, before *time.Time, li
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestStream(ctx, pl)
-	return flux.Map(future, transform.MsgPackDecode[Message])
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestStream(ctx, p)
+	return flux.Map(m, transform.MsgPackDecode[Message])
 }
 
 func (m *MessageStoreImpl) GetFeed(ctx context.Context, userIds []uuid.UUID, before *time.Time, limit uint32) flux.Flux[Message] {
@@ -138,9 +127,9 @@ func (m *MessageStoreImpl) GetFeed(ctx context.Context, userIds []uuid.UUID, bef
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestStream(ctx, pl)
-	return flux.Map(future, transform.MsgPackDecode[Message])
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestStream(ctx, p)
+	return flux.Map(m, transform.MsgPackDecode[Message])
 }
 
 func (m *MessageStoreImpl) GetUserMessages(ctx context.Context, userID uuid.UUID, before *time.Time, limit uint32) flux.Flux[Message] {
@@ -159,7 +148,7 @@ func (m *MessageStoreImpl) GetUserMessages(ctx context.Context, userID uuid.UUID
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestStream(ctx, pl)
-	return flux.Map(future, transform.MsgPackDecode[Message])
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestStream(ctx, p)
+	return flux.Map(m, transform.MsgPackDecode[Message])
 }

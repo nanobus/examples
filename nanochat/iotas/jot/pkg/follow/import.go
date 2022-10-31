@@ -3,17 +3,7 @@
 package follow
 
 import (
-	"context"
-	"encoding/binary"
-
-	"github.com/google/uuid"
-	"github.com/nanobus/iota/go/msgpack"
 	"github.com/nanobus/iota/go/wasmrs/invoke"
-	"github.com/nanobus/iota/go/wasmrs/payload"
-	"github.com/nanobus/iota/go/wasmrs/proxy"
-	"github.com/nanobus/iota/go/wasmrs/rx/flux"
-	"github.com/nanobus/iota/go/wasmrs/rx/mono"
-	"github.com/nanobus/iota/go/wasmrs/transform"
 )
 
 var (
@@ -60,9 +50,9 @@ func (f *FollowStoreImpl) Load(ctx context.Context, userID uuid.UUID) mono.Mono[
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestResponse(ctx, pl)
-	return mono.Map(future, transform.MsgPackDecode[UserRef])
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestResponse(ctx, p)
+	return mono.Map(m, transform.MsgPackDecode[UserRef])
 }
 
 func (f *FollowStoreImpl) GetMultiple(ctx context.Context, userIds []uuid.UUID) flux.Flux[UserRef] {
@@ -79,9 +69,9 @@ func (f *FollowStoreImpl) GetMultiple(ctx context.Context, userIds []uuid.UUID) 
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestStream(ctx, pl)
-	return flux.Map(future, transform.MsgPackDecode[UserRef])
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestStream(ctx, p)
+	return flux.Map(m, transform.MsgPackDecode[UserRef])
 }
 
 func (f *FollowStoreImpl) Follow(ctx context.Context, followedID uuid.UUID) mono.Void {
@@ -98,9 +88,9 @@ func (f *FollowStoreImpl) Follow(ctx context.Context, followedID uuid.UUID) mono
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestResponse(ctx, pl)
-	return mono.Map(future, transform.Void.Decode)
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestResponse(ctx, p)
+	return mono.Map(m, transform.Void.Decode)
 }
 
 func (f *FollowStoreImpl) Unfollow(ctx context.Context, followedID uuid.UUID) mono.Void {
@@ -117,9 +107,9 @@ func (f *FollowStoreImpl) Unfollow(ctx context.Context, followedID uuid.UUID) mo
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestResponse(ctx, pl)
-	return mono.Map(future, transform.Void.Decode)
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestResponse(ctx, p)
+	return mono.Map(m, transform.Void.Decode)
 }
 
 func (f *FollowStoreImpl) FetchFollowers(ctx context.Context, userID uuid.UUID, offset uint32, limit uint32) flux.Flux[FollowRef] {
@@ -138,9 +128,9 @@ func (f *FollowStoreImpl) FetchFollowers(ctx context.Context, userID uuid.UUID, 
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestStream(ctx, pl)
-	return flux.Map(future, transform.MsgPackDecode[FollowRef])
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestStream(ctx, p)
+	return flux.Map(m, transform.MsgPackDecode[FollowRef])
 }
 
 func (f *FollowStoreImpl) FetchFollows(ctx context.Context, userID uuid.UUID, offset uint32, limit uint32) flux.Flux[FollowRef] {
@@ -159,9 +149,9 @@ func (f *FollowStoreImpl) FetchFollows(ctx context.Context, userID uuid.UUID, of
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestStream(ctx, pl)
-	return flux.Map(future, transform.MsgPackDecode[FollowRef])
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestStream(ctx, p)
+	return flux.Map(m, transform.MsgPackDecode[FollowRef])
 }
 
 func (f *FollowStoreImpl) MyFollows(ctx context.Context) flux.Flux[FollowRef] {
@@ -172,7 +162,7 @@ func (f *FollowStoreImpl) MyFollows(ctx context.Context) flux.Flux[FollowRef] {
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestStream(ctx, pl)
-	return flux.Map(future, transform.MsgPackDecode[FollowRef])
+	p := payload.New(payloadData, metadata[:])
+	m := gCaller.RequestStream(ctx, p)
+	return flux.Map(m, transform.MsgPackDecode[FollowRef])
 }
