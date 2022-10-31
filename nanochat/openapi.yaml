@@ -1,0 +1,296 @@
+components: {}
+info: null
+openapi: 3.0.0
+paths:
+    /v1/jots:
+        get:
+            description: Get the jot feed
+            operationId: getFeed
+            parameters:
+                - in: query
+                  name: before
+                  schema:
+                    format: date-time
+                    type: string
+                - in: query
+                  name: limit
+                  schema:
+                    default: 100
+                    format: int32
+                    type: integer
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/JotPage'
+                    description: Success
+            tags:
+                - Jots
+        post:
+            description: Post a Tweet.
+            operationId: postJot
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                message:
+                                    type: string
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Jot'
+                    description: Success
+            tags:
+                - Jots
+    /v1/jots/{id}:
+        delete:
+            description: Delete a tweet (only creator has access)
+            operationId: deleteJot
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Jot'
+                    description: Success
+            tags:
+                - Jots
+        get:
+            description: Get a tweet by id.
+            operationId: getJot
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Jot'
+                    description: Success
+            tags:
+                - Jots
+    /v1/jots/{id}/like:
+        delete:
+            description: Unlike a tweet
+            operationId: unlike
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                    type: string
+            responses: null
+            tags:
+                - Jots
+        get:
+            description: Like a tweet
+            operationId: like
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                    type: string
+            responses: null
+            tags:
+                - Jots
+    /v1/jots/{id}/likes:
+        get:
+            description: Get the users that like a jot.
+            operationId: likes
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                    type: string
+                - description: Offset
+                  in: query
+                  name: offset
+                  schema:
+                    default: 0
+                    description: Offset
+                    format: int32
+                    type: integer
+                - description: Limit
+                  in: query
+                  name: limit
+                  schema:
+                    default: 100
+                    description: Limit
+                    format: int32
+                    type: integer
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserPage'
+                    description: Success
+            tags:
+                - Jots
+    /v1/users/{handle}:
+        get:
+            description: Get the user's profile
+            operationId: getProfile
+            parameters:
+                - in: path
+                  name: handle
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+                    description: Success
+            tags:
+                - Users
+    /v1/users/{handle}/follow:
+        delete:
+            description: Unfollow a user
+            operationId: unfollow
+            parameters:
+                - in: path
+                  name: handle
+                  required: true
+                  schema:
+                    type: string
+            responses: null
+            tags:
+                - Users
+        get:
+            description: Follow a user
+            operationId: follow
+            parameters:
+                - in: path
+                  name: handle
+                  required: true
+                  schema:
+                    type: string
+            responses: null
+            tags:
+                - Users
+    /v1/users/{handle}/followers:
+        get:
+            description: Get followers of a user
+            operationId: getFollowers
+            parameters:
+                - in: path
+                  name: handle
+                  required: true
+                  schema:
+                    type: string
+                - description: Offset
+                  in: query
+                  name: offset
+                  schema:
+                    default: 0
+                    description: Offset
+                    format: int32
+                    type: integer
+                - description: Limit
+                  in: query
+                  name: limit
+                  schema:
+                    default: 100
+                    description: Limit
+                    format: int32
+                    type: integer
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserPage'
+                    description: Success
+            tags:
+                - Users
+    /v1/users/{handle}/follows:
+        get:
+            description: Get users the followed by the users
+            operationId: getFollows
+            parameters:
+                - in: path
+                  name: handle
+                  required: true
+                  schema:
+                    type: string
+                - description: Offset
+                  in: query
+                  name: offset
+                  schema:
+                    default: 0
+                    description: Offset
+                    format: int32
+                    type: integer
+                - description: Limit
+                  in: query
+                  name: limit
+                  schema:
+                    default: 100
+                    description: Limit
+                    format: int32
+                    type: integer
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserPage'
+                    description: Success
+            tags:
+                - Users
+    /v1/users/{handle}/jots:
+        get:
+            description: Get the user's jots.
+            operationId: getJots
+            parameters:
+                - in: path
+                  name: handle
+                  required: true
+                  schema:
+                    type: string
+                - in: query
+                  name: before
+                  schema:
+                    format: date-time
+                    type: string
+                - in: query
+                  name: limit
+                  schema:
+                    default: 100
+                    format: int32
+                    type: integer
+            responses:
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/JotPage'
+                    description: Success
+            tags:
+                - Users
+servers:
+    - url: 'http://localhost:8080'
+tags:
+    - description: Jot API
+      name: Jots
+    - description: Users API
+      name: Users
