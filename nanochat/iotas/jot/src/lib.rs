@@ -10,13 +10,12 @@ impl JotsService for JotsComponent {
     ) -> Result<jots_service::post_jot::Outputs, GenericError> {
         let inputs = inputs.await?;
 
-        /*
+        
         Ok(jot_store::store_jot(jot_store::store_jot::Inputs {
             message: &inputs.message,
         })
         .await?)
-         */
-        todo!()
+         
     }
 
     /// Get the jot feed
@@ -97,22 +96,21 @@ impl JotsService for JotsComponent {
 
         let jots_generated: Vec<_> = stream.collect().await;
 
-        /*                                                                                                                                     
-        let jots_try =                                                                                                                         
-            vec![                                                                                                                              
-                generated::Jot { id: "0bae024b-2703-4d47-808f-41abe2742691".to_string(),                                                       
-                                 user_id: "c961095d-c5c8-4805-b762-743864614d62".to_string(),                                                  
-                                 message: "foo".to_string(),                                                                                   
-                                 time: Timestamp::new(0,0).unwrap(),                                                                           
-                                 likes: 0 } ];                                                                                                 
+        /*
+        let jots_try =
+            vec![
+                generated::Jot { id: "0bae024b-2703-4d47-808f-41abe2742691".to_string(),
+                                  user_id: "c961095d-c5c8-4805-b762-743864614d62".to_string(),
+                                 message: "foo".to_string(),
+                                 time: Timestamp::new(0,0).unwrap(),
+                                 likes: 0 } ];
         */
 
         Ok(jots_service::get_others_timeline::Outputs {
             before: inputs.before,
             limit: inputs.limit,
-            // items: jots_try })                                                                                                              
+            // items: jots_try })
             items: jots_generated.into_iter().map(|x| x.unwrap()).collect() })
-
     }
 
     async fn get_jot(

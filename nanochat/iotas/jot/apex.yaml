@@ -70,6 +70,17 @@ config:
       parse: uuid.Parse
       format: String
 generates:
+  ./src/user/mod.rs:
+    #module: "@nanobus/rust"
+    module: "../../../../iota/codegen/packages/rust"
+    config:
+      serde: true
+      derive:
+        _all:
+          - Debug
+      datetime: wasmrs_guest::Timestamp
+      visibility:
+        _all: pub
   pkg/user/msgpack.go:
     module: "@nanobus/tinygo"
     visitorClass: MsgPackVisitor
@@ -92,6 +103,17 @@ config:
       parse: uuid.Parse
       format: String
 generates:
+  ./src/follow/mod.rs:
+    #module: "@nanobus/rust"
+    module: "../../../../iota/codegen/packages/rust"
+    config:
+      serde: true
+      derive:
+        _all:
+          - Debug
+      datetime: wasmrs_guest::Timestamp
+      visibility:
+        _all: pub
   pkg/follow/msgpack.go:
     module: "@nanobus/tinygo"
     visitorClass: MsgPackVisitor
@@ -114,6 +136,17 @@ config:
       parse: uuid.Parse
       format: String
 generates:
+  ./src/message/mod.rs:
+    #module: "@nanobus/rust"
+    module: "../../../../iota/codegen/packages/rust"
+    config:
+      serde: true
+      derive:
+        _all:
+          - Debug
+      datetime: wasmrs_guest::Timestamp
+      visibility:
+        _all: pub
   pkg/message/msgpack.go:
     module: "@nanobus/tinygo"
     visitorClass: MsgPackVisitor
@@ -136,6 +169,17 @@ config:
       parse: uuid.Parse
       format: String
 generates:
+  ./src/like/mod.rs:
+    #module: "@nanobus/rust"
+    module: "../../../../iota/codegen/packages/rust"
+    config:
+      serde: true
+      derive:
+        _all:
+          - Debug
+      datetime: wasmrs_guest::Timestamp
+      visibility:
+        _all: pub
   pkg/like/msgpack.go:
     module: "@nanobus/tinygo"
     visitorClass: MsgPackVisitor
