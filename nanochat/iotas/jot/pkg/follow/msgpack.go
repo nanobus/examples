@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/nanobus/iota/go/msgpack"
 	"github.com/nanobus/iota/go/msgpack/convert"
-	"time"
 )
 
 var _ = convert.Package

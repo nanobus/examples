@@ -3,7 +3,17 @@
 package user
 
 import (
+	"context"
+	"encoding/binary"
+
+	"github.com/google/uuid"
+	"github.com/nanobus/iota/go/msgpack"
 	"github.com/nanobus/iota/go/wasmrs/invoke"
+	"github.com/nanobus/iota/go/wasmrs/payload"
+	"github.com/nanobus/iota/go/wasmrs/proxy"
+	"github.com/nanobus/iota/go/wasmrs/rx/flux"
+	"github.com/nanobus/iota/go/wasmrs/rx/mono"
+	"github.com/nanobus/iota/go/wasmrs/transform"
 )
 
 var (
@@ -38,9 +48,9 @@ func (u *UserStoreImpl) Me(ctx context.Context) mono.Mono[User] {
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestResponse(ctx, p)
-	return mono.Map(m, transform.MsgPackDecode[User])
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestResponse(ctx, pl)
+	return mono.Map(future, transform.MsgPackDecode[User])
 }
 
 func (u *UserStoreImpl) Load(ctx context.Context, userID uuid.UUID) mono.Mono[User] {
@@ -57,9 +67,9 @@ func (u *UserStoreImpl) Load(ctx context.Context, userID uuid.UUID) mono.Mono[Us
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestResponse(ctx, p)
-	return mono.Map(m, transform.MsgPackDecode[User])
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestResponse(ctx, pl)
+	return mono.Map(future, transform.MsgPackDecode[User])
 }
 
 func (u *UserStoreImpl) GetMultiple(ctx context.Context, userIds []uuid.UUID) flux.Flux[User] {
@@ -76,9 +86,9 @@ func (u *UserStoreImpl) GetMultiple(ctx context.Context, userIds []uuid.UUID) fl
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestStream(ctx, p)
-	return flux.Map(m, transform.MsgPackDecode[User])
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestStream(ctx, pl)
+	return flux.Map(future, transform.MsgPackDecode[User])
 }
 
 func (u *UserStoreImpl) FindByHandle(ctx context.Context, handle string) mono.Mono[User] {
@@ -95,7 +105,7 @@ func (u *UserStoreImpl) FindByHandle(ctx context.Context, handle string) mono.Mo
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestResponse(ctx, p)
-	return mono.Map(m, transform.MsgPackDecode[User])
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestResponse(ctx, pl)
+	return mono.Map(future, transform.MsgPackDecode[User])
 }

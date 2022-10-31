@@ -3,7 +3,17 @@
 package like
 
 import (
+	"context"
+	"encoding/binary"
+
+	"github.com/google/uuid"
+	"github.com/nanobus/iota/go/msgpack"
 	"github.com/nanobus/iota/go/wasmrs/invoke"
+	"github.com/nanobus/iota/go/wasmrs/payload"
+	"github.com/nanobus/iota/go/wasmrs/proxy"
+	"github.com/nanobus/iota/go/wasmrs/rx/flux"
+	"github.com/nanobus/iota/go/wasmrs/rx/mono"
+	"github.com/nanobus/iota/go/wasmrs/transform"
 )
 
 var (
@@ -48,9 +58,9 @@ func (l *LikeStoreImpl) Like(ctx context.Context, likableID uuid.UUID) mono.Void
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestResponse(ctx, p)
-	return mono.Map(m, transform.Void.Decode)
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestResponse(ctx, pl)
+	return mono.Map(future, transform.Void.Decode)
 }
 
 func (l *LikeStoreImpl) Unlike(ctx context.Context, likableID uuid.UUID) mono.Void {
@@ -67,9 +77,9 @@ func (l *LikeStoreImpl) Unlike(ctx context.Context, likableID uuid.UUID) mono.Vo
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestResponse(ctx, p)
-	return mono.Map(m, transform.Void.Decode)
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestResponse(ctx, pl)
+	return mono.Map(future, transform.Void.Decode)
 }
 
 func (l *LikeStoreImpl) Load(ctx context.Context, likableID uuid.UUID) mono.Mono[Likable] {
@@ -86,9 +96,9 @@ func (l *LikeStoreImpl) Load(ctx context.Context, likableID uuid.UUID) mono.Mono
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestResponse(ctx, p)
-	return mono.Map(m, transform.MsgPackDecode[Likable])
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestResponse(ctx, pl)
+	return mono.Map(future, transform.MsgPackDecode[Likable])
 }
 
 func (l *LikeStoreImpl) Delete(ctx context.Context, likableID uuid.UUID) mono.Mono[Likable] {
@@ -105,9 +115,9 @@ func (l *LikeStoreImpl) Delete(ctx context.Context, likableID uuid.UUID) mono.Mo
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestResponse(ctx, p)
-	return mono.Map(m, transform.MsgPackDecode[Likable])
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestResponse(ctx, pl)
+	return mono.Map(future, transform.MsgPackDecode[Likable])
 }
 
 func (l *LikeStoreImpl) GetMultiple(ctx context.Context, likableIds []uuid.UUID) flux.Flux[Likable] {
@@ -124,9 +134,9 @@ func (l *LikeStoreImpl) GetMultiple(ctx context.Context, likableIds []uuid.UUID)
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestStream(ctx, p)
-	return flux.Map(m, transform.MsgPackDecode[Likable])
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestStream(ctx, pl)
+	return flux.Map(future, transform.MsgPackDecode[Likable])
 }
 
 func (l *LikeStoreImpl) GetLikedBy(ctx context.Context, likableID uuid.UUID, offset uint32, limit uint32) flux.Flux[LikeRef] {
@@ -145,7 +155,7 @@ func (l *LikeStoreImpl) GetLikedBy(ctx context.Context, likableID uuid.UUID, off
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestStream(ctx, p)
-	return flux.Map(m, transform.MsgPackDecode[LikeRef])
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestStream(ctx, pl)
+	return flux.Map(future, transform.MsgPackDecode[LikeRef])
 }
