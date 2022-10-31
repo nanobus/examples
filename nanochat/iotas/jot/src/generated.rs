@@ -201,7 +201,7 @@ pub mod jots_service {
         #[derive(serde::Deserialize, Debug)]
         pub(crate) struct Inputs {
             #[serde(rename = "before")]
-            pub(crate) before: Option<time::OffsetDateTime>,
+            pub(crate) before: Option<wasmrs_guest::Timestamp>,
 
             #[serde(rename = "limit")]
             pub(crate) limit: u32,
@@ -431,7 +431,7 @@ pub mod users_service {
             pub(crate) handle: String,
 
             #[serde(rename = "before")]
-            pub(crate) before: Option<time::OffsetDateTime>,
+            pub(crate) before: Option<wasmrs_guest::Timestamp>,
 
             #[serde(rename = "limit")]
             pub(crate) limit: u32,
@@ -507,8 +507,8 @@ pub struct Jot {
     #[serde(rename = "message")]
     pub message: String,
     /// The time the tweet was entered.
-    #[serde(rename = "time", with = "time::serde::rfc3339")]
-    pub time: time::OffsetDateTime,
+    #[serde(rename = "time")]
+    pub time: wasmrs_guest::Timestamp,
     /// The number of likes.
     #[serde(rename = "likes")]
     pub likes: u32,
@@ -518,7 +518,7 @@ pub struct Jot {
 pub struct JotPage {
     /// Before timestamp
     #[serde(rename = "before")]
-    pub before: Option<time::OffsetDateTime>,
+    pub before: Option<wasmrs_guest::Timestamp>,
     /// Limit result
     #[serde(rename = "limit")]
     pub limit: u32,
