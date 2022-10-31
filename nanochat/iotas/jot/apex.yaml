@@ -11,8 +11,7 @@ config:
       format: String
 generates:
   ./src/generated.rs:
-    #module: "@nanobus/rust"
-    module: "../../../../iota/codegen/packages/rust"
+    module: "@nanobus/rust"
     config:
       serde: true
       derive:
@@ -71,8 +70,7 @@ config:
       format: String
 generates:
   ./src/user/mod.rs:
-    #module: "@nanobus/rust"
-    module: "../../../../iota/codegen/packages/rust"
+    module: "@nanobus/rust"
     config:
       serde: true
       derive:
@@ -104,8 +102,7 @@ config:
       format: String
 generates:
   ./src/follow/mod.rs:
-    #module: "@nanobus/rust"
-    module: "../../../../iota/codegen/packages/rust"
+    module: "@nanobus/rust"
     config:
       serde: true
       derive:
@@ -137,8 +134,7 @@ config:
       format: String
 generates:
   ./src/message/mod.rs:
-    #module: "@nanobus/rust"
-    module: "../../../../iota/codegen/packages/rust"
+    module: "@nanobus/rust"
     config:
       serde: true
       derive:
@@ -170,8 +166,7 @@ config:
       format: String
 generates:
   ./src/like/mod.rs:
-    #module: "@nanobus/rust"
-    module: "../../../../iota/codegen/packages/rust"
+    module: "@nanobus/rust"
     config:
       serde: true
       derive:

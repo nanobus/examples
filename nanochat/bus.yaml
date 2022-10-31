@@ -19,8 +19,11 @@ transports:
             endpoint:
               authUrl: ${env:OAUTH_AUTH_URL}
               tokenUrl: ${env:OAUTH_TOKEN_URL}
+              userInfoUrl: ${env:USERINFO_URL}
+              authStyle: inheader
             redirectUrl: ${env:OAUTH_REDIRECT_URL}
             pipeline: storeSession
+            scopes: ${env:OAUTH_SCOPES}
             debug: true
   httprpc:
     uses: httprpc
@@ -55,6 +58,10 @@ filters:
       with:
         pipeline: getAccessToken
         debug: true
+    - uses: userinfo
+      with:
+        userInfoUrl: ${env:USERINFO_URL}
+        debug: true
     - uses: jwt
       with:
         jwksUrl: ${env:OAUTH_JWKS_URL}
@@ -88,7 +95,7 @@ pipelines:
             ON CONFLICT DO NOTHING
           args:
             - claims.sub
-            - claims.preferred_username
+            - claims.${env:HANDLE_CLAIM}
             - claims.email
       - name: Create a session
         uses: "@postgres/exec"

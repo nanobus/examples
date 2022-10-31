@@ -1,47 +1,36 @@
 version: '3'
 
 services:
+  jaeger:
+    image: jaegertracing/all-in-one:1.6
+    environment:
+      COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "9411:9411"
+
   postgres:
     image: postgres
     environment:
       PGUSER: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: nanochat
+      POSTGRES_MULTIPLE_DATABASES: iota_follow,iota_like,iota_message,iota_user
     ports:
       - "5432:5432"
     volumes:
       - ./data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
       interval: 10s
       timeout: 5s
       retries: 5
-  nanobus:
-    image: candlecorp/nanobus:v2
-    depends_on:
-      postgres:
-        condition: service_healthy
-      oidc:
-        condition: service_healthy
-    volumes:
-      - ./bus.yaml:/app/bus.yaml
-      - ./web/static:/app/static
-      - ./sql:/app/sql
-      - ./iotas/jot/bus.yaml:/app/iotas/jot/bus.yaml
-      - ./iotas/jot/apex.aidl:/app/iotas/jot/apex.aidl
-      - ./iotas/jot/build:/app/iotas/jot/build
-    environment:
-      NANOCHAT_SQL: file://sql
-      NANOCHAT_DB: postgresql://postgres:postgres@postgres:5432/nanochat?sslmode=disable
-      OAUTH_CLIENT_ID: foo
-      OAUTH_CLIENT_SECRET: bar
-      OAUTH_AUTH_URL: http://localhost:9000/auth
-      OAUTH_TOKEN_URL: http://localhost:9000/token
-      OAUTH_REDIRECT_URL: http://localhost:8080/oauth/callback
-      OAUTH_JWKS_URL: http://oidc:9000/certs
-    ports:
-      - "8080:8080"
 
   oidc:
     image: qlik/simple-oidc-provider
@@ -59,3 +48,39 @@ services:
       interval: 10s
       retries: 5
       timeout: 10s
+
+  nanobus:
+    image: candlereg.azurecr.io/nanobus/server:v5
+    depends_on:
+      postgres:
+        condition: service_healthy
+      oidc:
+        condition: service_healthy
+    volumes:
+      - ./bus.yaml:/app/bus.yaml
+      - ./web/static:/app/static
+      - ./ui:/app/ui
+      - ./iotas/jot/apex.aidl:/app/iotas/jot/apex.aidl
+      - ./iotas/jot/bus.yaml:/app/iotas/jot/bus.yaml
+      - ./iotas/jot/build:/app/iotas/jot/build
+      - ./iotas/follow:/app/iotas/follow
+      - ./iotas/like:/app/iotas/like
+      - ./iotas/message:/app/iotas/message
+      - ./iotas/user:/app/iotas/user
+    environment:
+      IOTA_FOLLOW_DB: postgres://postgres:postgres@postgres:5432/iota_follow?sslmode=disable
+      IOTA_LIKE_DB: postgres://postgres:postgres@postgres:5432/iota_like?sslmode=disable
+      IOTA_MESSAGE_DB: postgres://postgres:postgres@postgres:5432/iota_message?sslmode=disable
+      IOTA_USER_DB: postgres://postgres:postgres@postgres:5432/iota_user?sslmode=disable
+      JAEGER_TRACE_ENDPOINT: http://jaeger:14268/api/traces
+      OAUTH_CLIENT_ID: foo
+      OAUTH_CLIENT_SECRET: bar
+      OAUTH_AUTH_URL: http://localhost:9000/auth
+      OAUTH_TOKEN_URL: http://oidc:9000/token
+      OAUTH_REDIRECT_URL: http://localhost:8080/oauth/callback
+      OAUTH_JWKS_URL: http://oidc:9000/certs
+      OAUTH_SCOPES: '["openid","offline_access","email","profile"]'
+      USERINFO_URL: http://oidc:9000/me
+      HANDLE_CLAIM: nickname
+    ports:
+      - "8080:8080"

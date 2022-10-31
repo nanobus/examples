@@ -1,0 +1,2 @@
+iotas:
+  just iotas/jot/codegen tinygo
