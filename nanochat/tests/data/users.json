@@ -1,0 +1,24 @@
+[
+    {
+        "id": "SIMPLE_OIDC_USER_FOO",
+        "email": "foo@candle.dev",
+        "email_verified": true,
+        "name": "foo bar",
+        "nickname": "foo",
+        "password": "bar",
+        "groups": [
+            "Everyone"
+        ]
+    },
+    {
+        "id": "SIMPLE_OIDC_USER_BAR",
+        "email": "bar@candle.dev",
+        "email_verified": true,
+        "name": "foo bar",
+        "nickname": "bar",
+        "password": "foo",
+        "groups": [
+            "Everyone"
+        ]
+    }
+]
