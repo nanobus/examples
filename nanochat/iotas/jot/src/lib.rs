@@ -10,12 +10,60 @@ impl JotsService for JotsComponent {
     ) -> Result<jots_service::post_jot::Outputs, GenericError> {
         let inputs = inputs.await?;
 
+        /*
         Ok(jot_store::store_jot(jot_store::store_jot::Inputs {
             message: &inputs.message,
         })
         .await?)
+         */
+        todo!()
     }
-/*
+
+    /// Get the jot feed
+    async fn get_feed(
+        inputs: Mono<jots_service::get_feed::Inputs, PayloadError>,
+    ) -> Result<jots_service::get_feed::Outputs, GenericError> {
+        todo!()
+    }
+
+    /// Get a tweet by id.
+    async fn get_jot(
+	inputs: Mono<jots_service::get_jot::Inputs, PayloadError>,
+    ) -> Result<jots_service::get_jot::Outputs, GenericError> {
+        todo!()
+    }
+
+    /// Delete a tweet (only creator has access)
+    async fn delete_jot(
+        inputs: Mono<jots_service::delete_jot::Inputs, PayloadError>,
+    ) -> Result<jots_service::delete_jot::Outputs, GenericError> {
+        todo!()
+    }
+
+    /// Like a tweet
+    async fn like(
+        inputs: Mono<jots_service::like::Inputs, PayloadError>,
+    ) -> Result<jots_service::like::Outputs, GenericError> {
+        todo!()
+    }
+
+    /// Unlike a tweet
+    async fn unlike(
+        inputs: Mono<jots_service::unlike::Inputs, PayloadError>,
+    ) -> Result<jots_service::unlike::Outputs, GenericError> {
+        todo!()
+    }
+
+    /// Get the users that like a jot.
+    async fn likes(
+        inputs: Mono<jots_service::likes::Inputs, PayloadError>,
+    ) -> Result<jots_service::likes::Outputs, GenericError> {
+        todo!()
+    }
+
+    
+
+    /*
     
     async fn get_own_timeline(
         inputs: Mono<jots_service::get_own_timeline::Inputs, PayloadError>,
@@ -97,4 +145,50 @@ impl JotsService for JotsComponent {
         .await?)
     }
      */
+}
+
+
+#[async_trait::async_trait(?Send)]
+impl UsersService for UsersComponent {
+    async fn get_profile(
+        inputs: Mono<users_service::get_profile::Inputs, PayloadError>,
+    ) -> Result<users_service::get_profile::Outputs, GenericError> {
+        todo!()
+    }
+
+    /// Get the user's jots.
+    async fn get_jots(
+	inputs: Mono<users_service::get_jots::Inputs, PayloadError>,
+    ) -> Result<users_service::get_jots::Outputs, GenericError> {
+        todo!()
+    }
+
+    /// Follow a user
+    async fn follow(
+	inputs: Mono<users_service::follow::Inputs, PayloadError>,
+    ) -> Result<users_service::follow::Outputs, GenericError> {
+        todo!()
+    }
+
+    /// Unfollow a user
+    async fn unfollow(
+        inputs: Mono<users_service::unfollow::Inputs, PayloadError>,
+    ) -> Result<users_service::unfollow::Outputs, GenericError> {
+        todo!()
+    }
+
+    /// Get users the followed by the users
+    async fn get_follows(
+	inputs: Mono<users_service::get_follows::Inputs, PayloadError>,
+    ) -> Result<users_service::get_follows::Outputs, GenericError> {
+        todo!()
+    }
+
+    /// Get followers of a user
+    async fn get_followers(
+	inputs: Mono<users_service::get_followers::Inputs, PayloadError>,
+    ) -> Result<users_service::get_followers::Outputs, GenericError> {
+        todo!()
+    }
+
 }
