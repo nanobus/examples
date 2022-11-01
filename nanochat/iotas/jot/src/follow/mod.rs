@@ -57,6 +57,23 @@ impl FollowStoreComponent {
         Ok(Mono::from_future(async move { rx.await? }))
     }
 
+    fn is_following_wrapper(input: IncomingMono) -> Result<OutgoingMono, GenericError> {
+        let (tx, rx) = runtime::oneshot();
+
+        let input = Mono::from_future(input.map(|r| r.map(|v| Ok(deserialize(&v.data)?))?));
+        let task = FollowStoreComponent::is_following(input)
+            .map(|result| {
+                let output = result?;
+                Ok(serialize(&output)
+                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+            })
+            .map(|output| tx.send(output).unwrap());
+
+        spawn(task);
+
+        Ok(Mono::from_future(async move { rx.await? }))
+    }
+
     fn follow_wrapper(input: IncomingMono) -> Result<OutgoingMono, GenericError> {
         let (tx, rx) = runtime::oneshot();
 
@@ -154,6 +171,10 @@ pub(crate) trait FollowStoreService {
         inputs: Mono<follow_store_service::get_multiple::Inputs, PayloadError>,
     ) -> Result<follow_store_service::get_multiple::Outputs, GenericError>;
 
+    async fn is_following(
+        inputs: Mono<follow_store_service::is_following::Inputs, PayloadError>,
+    ) -> Result<follow_store_service::is_following::Outputs, GenericError>;
+
     async fn follow(
         inputs: Mono<follow_store_service::follow::Inputs, PayloadError>,
     ) -> Result<follow_store_service::follow::Outputs, GenericError>;
@@ -198,6 +219,17 @@ pub mod follow_store_service {
         }
 
         pub(crate) type Outputs = Box<dyn Stream<Item = UserRef>>;
+    }
+
+    pub mod is_following {
+        use super::*;
+        #[derive(serde::Deserialize, Debug)]
+        pub(crate) struct Inputs {
+            #[serde(rename = "userId")]
+            pub(crate) user_id: Uuid,
+        }
+
+        pub(crate) type Outputs = bool;
     }
 
     pub mod follow {
@@ -312,6 +344,12 @@ pub(crate) fn init_exports() {
         "nanochat.io.follows.v1.FollowStore",
         "getMultiple",
         FollowStoreComponent::get_multiple_wrapper,
+    );
+
+    wasmrs_guest::register_request_response(
+        "nanochat.io.follows.v1.FollowStore",
+        "isFollowing",
+        FollowStoreComponent::is_following_wrapper,
     );
 
     wasmrs_guest::register_request_response(

@@ -27,6 +27,7 @@ func Initialize(caller invoke.Caller) {
 type FollowStoreImpl struct {
 	opLoad           uint32
 	opGetMultiple    uint32
+	opIsFollowing    uint32
 	opFollow         uint32
 	opUnfollow       uint32
 	opFetchFollowers uint32
@@ -38,6 +39,7 @@ func NewFollowStore() *FollowStoreImpl {
 	return &FollowStoreImpl{
 		opLoad:           invoke.ImportRequestResponse("nanochat.io.follows.v1.FollowStore", "load"),
 		opGetMultiple:    invoke.ImportRequestStream("nanochat.io.follows.v1.FollowStore", "getMultiple"),
+		opIsFollowing:    invoke.ImportRequestResponse("nanochat.io.follows.v1.FollowStore", "isFollowing"),
 		opFollow:         invoke.ImportRequestResponse("nanochat.io.follows.v1.FollowStore", "follow"),
 		opUnfollow:       invoke.ImportRequestResponse("nanochat.io.follows.v1.FollowStore", "unfollow"),
 		opFetchFollowers: invoke.ImportRequestStream("nanochat.io.follows.v1.FollowStore", "fetchFollowers"),
@@ -82,6 +84,25 @@ func (f *FollowStoreImpl) GetMultiple(ctx context.Context, userIds []uuid.UUID) 
 	pl := payload.New(payloadData, metadata[:])
 	future := gCaller.RequestStream(ctx, pl)
 	return flux.Map(future, transform.MsgPackDecode[UserRef])
+}
+
+func (f *FollowStoreImpl) IsFollowing(ctx context.Context, userID uuid.UUID) mono.Mono[bool] {
+	request := FollowStoreIsFollowingArgs{
+		UserID: userID,
+	}
+	payloadData, err := msgpack.ToBytes(&request)
+	if err != nil {
+		return mono.Error[bool](err)
+	}
+	var metadata [8]byte
+	stream, ok := proxy.FromContext(ctx)
+	binary.BigEndian.PutUint32(metadata[0:4], f.opIsFollowing)
+	if ok {
+		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
+	}
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestResponse(ctx, pl)
+	return mono.Map(future, transform.Bool.Decode)
 }
 
 func (f *FollowStoreImpl) Follow(ctx context.Context, followedID uuid.UUID) mono.Void {

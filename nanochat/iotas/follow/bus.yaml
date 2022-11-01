@@ -60,12 +60,36 @@ providers:
           # retry: database
           # circuitBreaker: database
 
+    isFollowing:
+      steps:
+        - name: Store follower
+          uses: "@postgres/query"
+          with:
+            single: true
+            resource: followdb
+            sql: |
+              SELECT EXISTS (
+                SELECT *
+                FROM follow
+                WHERE follower = $1
+                  AND follows = $2
+              ) as following;
+            args:
+              - claims.sub
+              - input.userId
+          returns: exists
+          # retry: database
+          # circuitBreaker: database
+        - name: Return boolean
+          uses: assign
+          with:
+            value: exists.following
+
     follow:
       steps:
         - name: Store follower
           uses: "@postgres/exec"
           with:
-            single: true
             resource: followdb
             sql: |
               SELECT fn_follow($1, $2) as success;

@@ -10,6 +10,7 @@ interface FollowStore @service {
   # TODO: unique follower/followed relationship - unique constraint
   load(userId: UUID): UserRef
   getMultiple(userIds: [UUID]): stream UserRef
+  isFollowing(userId: UUID): bool
   follow(followedId: UUID) # followerId: UUID, 
   unfollow(followedId: UUID) # followerId: UUID, 
   fetchFollowers(userId: UUID, offset: u32 = 0, limit: u32 = 100): stream FollowRef

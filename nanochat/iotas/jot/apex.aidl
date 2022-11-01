@@ -107,6 +107,8 @@ type User {
   followers: u32
   "The number of users followed"
   follows: u32
+  "If the authenticated user is following this user. Will return false if unauthenticated or outside of Users::getProfile."
+  isFollowing: bool
 }
 
 "User page"

@@ -1,7 +1,7 @@
 compute:
   - uses: wasmrs
     with:
-      filename: build/jot.wasm
+      filename: build/jot-go.wasm
       # filename: build/jot-rust.wasm
 
 specs:

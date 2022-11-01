@@ -50,7 +50,7 @@ services:
       timeout: 10s
 
   nanobus:
-    image: candlereg.azurecr.io/nanobus/server:v5
+    image: candlecorp/nanobus:v7
     depends_on:
       postgres:
         condition: service_healthy

@@ -20,190 +20,222 @@ extern "C" fn __wasmrs_init(
 
 pub type Uuid = String;
 
-static MESSAGE_STORE_STORE_INDEX_BYTES: [u8; 4] = 0u32.to_be_bytes();
-static MESSAGE_STORE_LOAD_INDEX_BYTES: [u8; 4] = 1u32.to_be_bytes();
-static MESSAGE_STORE_DELETE_INDEX_BYTES: [u8; 4] = 2u32.to_be_bytes();
-static MESSAGE_STORE_MY_MESSAGES_INDEX_BYTES: [u8; 4] = 3u32.to_be_bytes();
-static MESSAGE_STORE_GET_FEED_INDEX_BYTES: [u8; 4] = 4u32.to_be_bytes();
-static MESSAGE_STORE_GET_USER_MESSAGES_INDEX_BYTES: [u8; 4] = 5u32.to_be_bytes();
+pub(crate) struct MessageStoreComponent();
 
-pub mod message_store {
+impl MessageStoreComponent {
+    fn store_wrapper(input: IncomingMono) -> Result<OutgoingMono, GenericError> {
+        let (tx, rx) = runtime::oneshot();
+
+        let input = Mono::from_future(input.map(|r| r.map(|v| Ok(deserialize(&v.data)?))?));
+        let task = MessageStoreComponent::store(input)
+            .map(|result| {
+                let output = result?;
+                Ok(serialize(&output)
+                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+            })
+            .map(|output| tx.send(output).unwrap());
+
+        spawn(task);
+
+        Ok(Mono::from_future(async move { rx.await? }))
+    }
+
+    fn load_wrapper(input: IncomingMono) -> Result<OutgoingMono, GenericError> {
+        let (tx, rx) = runtime::oneshot();
+
+        let input = Mono::from_future(input.map(|r| r.map(|v| Ok(deserialize(&v.data)?))?));
+        let task = MessageStoreComponent::load(input)
+            .map(|result| {
+                let output = result?;
+                Ok(serialize(&output)
+                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+            })
+            .map(|output| tx.send(output).unwrap());
+
+        spawn(task);
+
+        Ok(Mono::from_future(async move { rx.await? }))
+    }
+
+    fn delete_wrapper(input: IncomingMono) -> Result<OutgoingMono, GenericError> {
+        let (tx, rx) = runtime::oneshot();
+
+        let input = Mono::from_future(input.map(|r| r.map(|v| Ok(deserialize(&v.data)?))?));
+        let task = MessageStoreComponent::delete(input)
+            .map(|result| {
+                let output = result?;
+                Ok(serialize(&output)
+                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+            })
+            .map(|output| tx.send(output).unwrap());
+
+        spawn(task);
+
+        Ok(Mono::from_future(async move { rx.await? }))
+    }
+
+    fn my_messages_wrapper(input: IncomingMono) -> Result<OutgoingMono, GenericError> {
+        let (tx, rx) = runtime::oneshot();
+
+        let input = Mono::from_future(input.map(|r| r.map(|v| Ok(deserialize(&v.data)?))?));
+        let task = MessageStoreComponent::my_messages(input)
+            .map(|result| {
+                let output = result?;
+                Ok(serialize(&output)
+                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+            })
+            .map(|output| tx.send(output).unwrap());
+
+        spawn(task);
+
+        Ok(Mono::from_future(async move { rx.await? }))
+    }
+
+    fn get_feed_wrapper(input: IncomingMono) -> Result<OutgoingMono, GenericError> {
+        let (tx, rx) = runtime::oneshot();
+
+        let input = Mono::from_future(input.map(|r| r.map(|v| Ok(deserialize(&v.data)?))?));
+        let task = MessageStoreComponent::get_feed(input)
+            .map(|result| {
+                let output = result?;
+                Ok(serialize(&output)
+                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+            })
+            .map(|output| tx.send(output).unwrap());
+
+        spawn(task);
+
+        Ok(Mono::from_future(async move { rx.await? }))
+    }
+
+    fn get_user_messages_wrapper(input: IncomingMono) -> Result<OutgoingMono, GenericError> {
+        let (tx, rx) = runtime::oneshot();
+
+        let input = Mono::from_future(input.map(|r| r.map(|v| Ok(deserialize(&v.data)?))?));
+        let task = MessageStoreComponent::get_user_messages(input)
+            .map(|result| {
+                let output = result?;
+                Ok(serialize(&output)
+                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+            })
+            .map(|output| tx.send(output).unwrap());
+
+        spawn(task);
+
+        Ok(Mono::from_future(async move { rx.await? }))
+    }
+}
+
+#[async_trait::async_trait(?Send)]
+
+pub(crate) trait MessageStoreService {
+    async fn store(
+        inputs: Mono<message_store_service::store::Inputs, PayloadError>,
+    ) -> Result<message_store_service::store::Outputs, GenericError>;
+
+    async fn load(
+        inputs: Mono<message_store_service::load::Inputs, PayloadError>,
+    ) -> Result<message_store_service::load::Outputs, GenericError>;
+
+    async fn delete(
+        inputs: Mono<message_store_service::delete::Inputs, PayloadError>,
+    ) -> Result<message_store_service::delete::Outputs, GenericError>;
+
+    async fn my_messages(
+        inputs: Mono<message_store_service::my_messages::Inputs, PayloadError>,
+    ) -> Result<message_store_service::my_messages::Outputs, GenericError>;
+
+    async fn get_feed(
+        inputs: Mono<message_store_service::get_feed::Inputs, PayloadError>,
+    ) -> Result<message_store_service::get_feed::Outputs, GenericError>;
+
+    async fn get_user_messages(
+        inputs: Mono<message_store_service::get_user_messages::Inputs, PayloadError>,
+    ) -> Result<message_store_service::get_user_messages::Outputs, GenericError>;
+}
+
+pub mod message_store_service {
     use super::*;
 
-    pub(crate) fn store(
-        inputs: store::Inputs<'_>,
-    ) -> wasmrs_guest::Mono<store::Outputs, PayloadError> {
-        let op_id_bytes = MESSAGE_STORE_STORE_INDEX_BYTES.as_slice();
-        let payload = match wasmrs_guest::serialize(&inputs) {
-            Ok(bytes) => Payload::new([op_id_bytes, &[0, 0, 0, 0]].concat().into(), bytes.into()),
-            Err(e) => return Mono::new_error(PayloadError::application_error(e.to_string())),
-        };
-        let fut = Host::default().request_response(payload).map(|result| {
-            result.map(|payload| Ok(deserialize::<store::Outputs>(&payload.data.unwrap())?))?
-        });
-        Mono::from_future(fut)
-    }
-
-    pub(crate) mod store {
+    pub mod store {
         use super::*;
-
-        #[derive(serde::Serialize)]
-        pub struct Inputs<'a> {
+        #[derive(serde::Deserialize, Debug)]
+        pub(crate) struct Inputs {
             #[serde(rename = "message")]
-            pub(crate) message: &'a str,
+            pub(crate) message: String,
         }
 
         pub(crate) type Outputs = Message;
     }
 
-    pub(crate) fn load(
-        inputs: load::Inputs<'_>,
-    ) -> wasmrs_guest::Mono<load::Outputs, PayloadError> {
-        let op_id_bytes = MESSAGE_STORE_LOAD_INDEX_BYTES.as_slice();
-        let payload = match wasmrs_guest::serialize(&inputs) {
-            Ok(bytes) => Payload::new([op_id_bytes, &[0, 0, 0, 0]].concat().into(), bytes.into()),
-            Err(e) => return Mono::new_error(PayloadError::application_error(e.to_string())),
-        };
-        let fut = Host::default().request_response(payload).map(|result| {
-            result.map(|payload| Ok(deserialize::<load::Outputs>(&payload.data.unwrap())?))?
-        });
-        Mono::from_future(fut)
-    }
-
-    pub(crate) mod load {
+    pub mod load {
         use super::*;
-
-        #[derive(serde::Serialize)]
-        pub struct Inputs<'a> {
+        #[derive(serde::Deserialize, Debug)]
+        pub(crate) struct Inputs {
             #[serde(rename = "id")]
-            pub(crate) id: &'a Uuid,
+            pub(crate) id: Uuid,
         }
 
         pub(crate) type Outputs = Message;
     }
 
-    pub(crate) fn delete(
-        inputs: delete::Inputs<'_>,
-    ) -> wasmrs_guest::Mono<delete::Outputs, PayloadError> {
-        let op_id_bytes = MESSAGE_STORE_DELETE_INDEX_BYTES.as_slice();
-        let payload = match wasmrs_guest::serialize(&inputs) {
-            Ok(bytes) => Payload::new([op_id_bytes, &[0, 0, 0, 0]].concat().into(), bytes.into()),
-            Err(e) => return Mono::new_error(PayloadError::application_error(e.to_string())),
-        };
-        let fut = Host::default().request_response(payload).map(|result| {
-            result.map(|payload| Ok(deserialize::<delete::Outputs>(&payload.data.unwrap())?))?
-        });
-        Mono::from_future(fut)
-    }
-
-    pub(crate) mod delete {
+    pub mod delete {
         use super::*;
-
-        #[derive(serde::Serialize)]
-        pub struct Inputs<'a> {
+        #[derive(serde::Deserialize, Debug)]
+        pub(crate) struct Inputs {
             #[serde(rename = "id")]
-            pub(crate) id: &'a Uuid,
+            pub(crate) id: Uuid,
         }
 
         pub(crate) type Outputs = Message;
     }
 
-    pub(crate) fn my_messages(
-        inputs: my_messages::Inputs<'_>,
-    ) -> impl Stream<Item = Result<my_messages::Outputs, PayloadError>> {
-        //) -> wasmrs_guest::Flux<my_messages::Outputs, PayloadError> {
-        let op_id_bytes = MESSAGE_STORE_MY_MESSAGES_INDEX_BYTES.as_slice();
-        let payload = match wasmrs_guest::serialize(&inputs) {
-            Ok(bytes) => Payload::new([op_id_bytes, &[0, 0, 0, 0]].concat().into(), bytes.into()),
-            Err(_) => unreachable!(),
-        };
-        Host::default().request_stream(payload).map(|result| {
-            result
-                .map(|payload| Ok(deserialize::<my_messages::Outputs>(&payload.data.unwrap())?))?
-        })
-    }
-
-    pub(crate) mod my_messages {
+    pub mod my_messages {
         use super::*;
-
-        #[derive(serde::Serialize)]
-        pub struct Inputs<'a> {
+        #[derive(serde::Deserialize, Debug)]
+        pub(crate) struct Inputs {
             #[serde(rename = "before")]
-            pub(crate) before: &'a Option<wasmrs_guest::Timestamp>,
+            pub(crate) before: Option<wasmrs_guest::Timestamp>,
 
             #[serde(rename = "limit")]
-            pub(crate) limit: &'a u32,
+            pub(crate) limit: u32,
         }
 
-        pub(crate) type Outputs = Message;
+        pub(crate) type Outputs = Box<dyn Stream<Item = Message>>;
     }
 
-    pub(crate) fn get_feed(
-        inputs: get_feed::Inputs<'_>,
-    ) -> impl Stream<Item = Result<get_feed::Outputs, PayloadError>> {
-        //) -> wasmrs_guest::Flux<get_feed::Outputs, PayloadError> {
-        let op_id_bytes = MESSAGE_STORE_GET_FEED_INDEX_BYTES.as_slice();
-        let payload = match wasmrs_guest::serialize(&inputs) {
-            Ok(bytes) => Payload::new([op_id_bytes, &[0, 0, 0, 0]].concat().into(), bytes.into()),
-            Err(_) => unreachable!(),
-        };
-        Host::default().request_stream(payload).map(|result| {
-            result.map(|payload| Ok(deserialize::<get_feed::Outputs>(&payload.data.unwrap())?))?
-        })
-    }
-
-    pub(crate) mod get_feed {
+    pub mod get_feed {
         use super::*;
-
-        #[derive(serde::Serialize)]
-        pub struct Inputs<'a> {
+        #[derive(serde::Deserialize, Debug)]
+        pub(crate) struct Inputs {
             #[serde(rename = "userIds")]
-            pub(crate) user_ids: &'a [Uuid],
+            pub(crate) user_ids: Vec<Uuid>,
 
             #[serde(rename = "before")]
-            pub(crate) before: &'a Option<wasmrs_guest::Timestamp>,
+            pub(crate) before: Option<wasmrs_guest::Timestamp>,
 
             #[serde(rename = "limit")]
-            pub(crate) limit: &'a u32,
+            pub(crate) limit: u32,
         }
 
-        pub(crate) type Outputs = Message;
+        pub(crate) type Outputs = Box<dyn Stream<Item = Message>>;
     }
 
-    pub(crate) fn get_user_messages(
-        inputs: get_user_messages::Inputs<'_>,
-    ) -> impl Stream<Item = Result<get_user_messages::Outputs, PayloadError>> {
-        //) -> wasmrs_guest::Flux<get_user_messages::Outputs, PayloadError> {
-        let op_id_bytes = MESSAGE_STORE_GET_USER_MESSAGES_INDEX_BYTES.as_slice();
-        let payload = match wasmrs_guest::serialize(&inputs) {
-            Ok(bytes) => Payload::new([op_id_bytes, &[0, 0, 0, 0]].concat().into(), bytes.into()),
-            Err(_) => unreachable!(),
-        };
-        Host::default().request_stream(payload).map(|result| {
-            result.map(|payload| {
-                Ok(deserialize::<get_user_messages::Outputs>(
-                    &payload.data.unwrap(),
-                )?)
-            })?
-        })
-    }
-
-    pub(crate) mod get_user_messages {
+    pub mod get_user_messages {
         use super::*;
-
-        #[derive(serde::Serialize)]
-        pub struct Inputs<'a> {
+        #[derive(serde::Deserialize, Debug)]
+        pub(crate) struct Inputs {
             #[serde(rename = "userId")]
-            pub(crate) user_id: &'a Uuid,
+            pub(crate) user_id: Uuid,
 
             #[serde(rename = "before")]
-            pub(crate) before: &'a Option<wasmrs_guest::Timestamp>,
+            pub(crate) before: Option<wasmrs_guest::Timestamp>,
 
             #[serde(rename = "limit")]
-            pub(crate) limit: &'a u32,
+            pub(crate) limit: u32,
         }
 
-        pub(crate) type Outputs = Message;
+        pub(crate) type Outputs = Box<dyn Stream<Item = Message>>;
     }
 }
 
@@ -223,47 +255,41 @@ pub struct Message {
     #[serde(rename = "time")]
     pub time: wasmrs_guest::Timestamp,
 }
-pub(crate) fn init_imports() {
-    wasmrs_guest::add_import(
-        u32::from_be_bytes(MESSAGE_STORE_STORE_INDEX_BYTES),
-        OperationType::RequestResponse,
+pub(crate) fn init_imports() {}
+pub(crate) fn init_exports() {
+    wasmrs_guest::register_request_response(
         "nanochat.io.messsage.v1.MessageStore",
         "store",
+        MessageStoreComponent::store_wrapper,
     );
 
-    wasmrs_guest::add_import(
-        u32::from_be_bytes(MESSAGE_STORE_LOAD_INDEX_BYTES),
-        OperationType::RequestResponse,
+    wasmrs_guest::register_request_response(
         "nanochat.io.messsage.v1.MessageStore",
         "load",
+        MessageStoreComponent::load_wrapper,
     );
 
-    wasmrs_guest::add_import(
-        u32::from_be_bytes(MESSAGE_STORE_DELETE_INDEX_BYTES),
-        OperationType::RequestResponse,
+    wasmrs_guest::register_request_response(
         "nanochat.io.messsage.v1.MessageStore",
         "delete",
+        MessageStoreComponent::delete_wrapper,
     );
 
-    wasmrs_guest::add_import(
-        u32::from_be_bytes(MESSAGE_STORE_MY_MESSAGES_INDEX_BYTES),
-        OperationType::RequestResponse,
+    wasmrs_guest::register_request_response(
         "nanochat.io.messsage.v1.MessageStore",
         "myMessages",
+        MessageStoreComponent::my_messages_wrapper,
     );
 
-    wasmrs_guest::add_import(
-        u32::from_be_bytes(MESSAGE_STORE_GET_FEED_INDEX_BYTES),
-        OperationType::RequestResponse,
+    wasmrs_guest::register_request_response(
         "nanochat.io.messsage.v1.MessageStore",
         "getFeed",
+        MessageStoreComponent::get_feed_wrapper,
     );
 
-    wasmrs_guest::add_import(
-        u32::from_be_bytes(MESSAGE_STORE_GET_USER_MESSAGES_INDEX_BYTES),
-        OperationType::RequestResponse,
+    wasmrs_guest::register_request_response(
         "nanochat.io.messsage.v1.MessageStore",
         "getUserMessages",
+        MessageStoreComponent::get_user_messages_wrapper,
     );
 }
-pub(crate) fn init_exports() {}

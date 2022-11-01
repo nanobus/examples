@@ -17,11 +17,14 @@
 
 ## Locations
 
-| Default URL                                             | Description                      |
-| :------------------------------------------------------ | :------------------------------- |
-| http://localhost:8080                                   | Nanobus Web Interface            |
-| http://localhost:9000                                   | OpenID Connect                   |
-| postgresql://postgres:postgres@postgresql:5432/nanochat | [PostgreSQL Database] Connection |
+| Default URL                                                 | Description                      |
+| :---------------------------------------------------------- | :------------------------------- |
+| http://localhost:8080                                       | Nanobus Web Interface            |
+| http://localhost:9000                                       | OpenID Connect                   |
+| postgresql://postgres:postgres@localhost:5432/iota_follow  | [PostgreSQL Database] Connection |
+| postgresql://postgres:postgres@localhost:5432/iota_like    | [PostgreSQL Database] Connection |
+| postgresql://postgres:postgres@localhost:5432/iota_message | [PostgreSQL Database] Connection |
+| postgresql://postgres:postgres@localhost:5432/iota_user    | [PostgreSQL Database] Connection |
 
 ## Dependencies
 
@@ -29,12 +32,12 @@ To setup a local development environment
 
 | Dependency             | Min. Version | Check             | Description                                                |
 | :--------------------- | :----------- | :---------------- | :--------------------------------------------------------- |
-| [apex] [^1]            | edge         | $ apex version    | [apexlang.io] Code generation                              |
+| [apex] [^1]            | v0.1.16      | $ apex version    | [apexlang.io] Code generation                              |
 | [go] [^1]              | go1.19.2[^2] | $ go version      | Building Go [iOTAs]                                        |
 | [rust] [^1]            | Stable-2[^2] | $ rustup show     | Building Rust [iOTAs]                                      |
 | [npm] [^1]             | 8.11.0[^2]   | $ npm --version   | [apexlang.io] dependency                                   |
 | [npx] [^1]             | 8.11.0[^2]   | $ npx --version   | [apexlang.io] dependency                                   |
-| [nanobus] [^1]         | 0.0.1        | $ nanobus version | [Nanobus](https://github.com/nanobus/nanobus) to run iOTAs |
+| [nanobus] [^1]         | 0.0.2        | $ nanobus version | [Nanobus](https://github.com/nanobus/nanobus) to run iOTAs |
 | [postgres] server [^3] | 12.00[^2]    | $ psql --version  | [PostgreSQL Database] server                               |
 | [just] [^1]            | 1.5.0[^2]    | $ just --version  | Like Makefile [just] runs the needed commands              |
 
@@ -81,9 +84,10 @@ $ `docker compose up`
 
 Provides all the running parts;
 
-- postgres - Postgres running in the standard 5842 port
-- nanobus - The nanobus back-end
-- oidc - OIDC for User authentication
+- Postgres - Postgres running in the standard 5842 port
+- Jaeger - Distributed tracing system. Navigate to [http://localhost:16686](http://localhost:16686) at access the Jaeger UI.
+- NanoBus - The nanobus back-end
+- oidc - Simple OIDC provider for User authentication and local develment
 
 ## Run Separately
 
@@ -104,23 +108,13 @@ Or run nanobus in local host manually
 $
 
 ```
-env \
- NANOCHAT_SQL="file:./sql" \
- NANOCHAT_DB="postgres://postgres:postgres@localhost:5432/nanochat?sslmode=disable" \
- OAUTH_CLIENT_ID="foo" \
- OAUTH_CLIENT_SECRET="bar" \
- OAUTH_AUTH_URL="http://localhost:9000/auth" \
- OAUTH_TOKEN_URL="http://localhost:9000/token" \
- OAUTH_REDIRECT_URL="http://localhost:8080/oauth/callback" \
- OAUTH_JWKS_URL="http://localhost:9000/certs" \
- nanobus
+nanobus
 ```
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
 
-[aidl]: https://developer.android.com/guide/components/aidl
 [apex]: https://apexlang.io/docs/getting-started
 [apexlang.io]: https://apexlang.io
 [docker]: https://docs.docker.com/engine/install/

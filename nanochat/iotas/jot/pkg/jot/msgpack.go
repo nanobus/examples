@@ -728,6 +728,8 @@ func (o *User) Decode(decoder msgpack.Reader) error {
 			o.Followers, err = decoder.ReadUint32()
 		case "follows":
 			o.Follows, err = decoder.ReadUint32()
+		case "isFollowing":
+			o.IsFollowing, err = decoder.ReadBool()
 		default:
 			err = decoder.Skip()
 		}
@@ -744,7 +746,7 @@ func (o *User) Encode(encoder msgpack.Writer) error {
 		encoder.WriteNil()
 		return nil
 	}
-	encoder.WriteMapSize(4)
+	encoder.WriteMapSize(5)
 	encoder.WriteString("id")
 	encoder.WriteString(o.ID.String())
 	encoder.WriteString("handle")
@@ -753,6 +755,8 @@ func (o *User) Encode(encoder msgpack.Writer) error {
 	encoder.WriteUint32(o.Followers)
 	encoder.WriteString("follows")
 	encoder.WriteUint32(o.Follows)
+	encoder.WriteString("isFollowing")
+	encoder.WriteBool(o.IsFollowing)
 
 	return nil
 }

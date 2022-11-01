@@ -37,10 +37,11 @@ func NewUsers(deps *Dependencies) *UsersImpl {
 
 func (u *UsersImpl) GetProfile(ctx context.Context, handle string) mono.Mono[User] {
 	var (
-		f          = flow.New[User]()
-		userMono   mono.Mono[user.User]
-		userResult user.User
-		followMono mono.Mono[follow.UserRef]
+		f             = flow.New[User]()
+		userMono      mono.Mono[user.User]
+		userResult    user.User
+		followMono    mono.Mono[follow.UserRef]
+		followingMono mono.Mono[bool]
 	)
 
 	return f.Steps(func() (await.Group, error) {
@@ -50,24 +51,28 @@ func (u *UsersImpl) GetProfile(ctx context.Context, handle string) mono.Mono[Use
 		var err error
 		userResult, err = userMono.Get()
 		if err != nil {
-			return f.Error(err)
+			return f.Error(errors.New("user_not_found\n[handle] " + handle))
 		}
 
 		followMono = u.followStore.Load(ctx, userResult.ID)
-		return await.All(followMono)
+		followingMono = u.followStore.IsFollowing(ctx, userResult.ID)
+		return await.All(followMono, followingMono)
 	}, func() (await.Group, error) {
 		var followers uint32
 		var follows uint32
+
 		if ref, err := followMono.Get(); err == nil {
 			followers = ref.Followers
 			follows = ref.Follows
 		}
+		isFollowing, _ := followingMono.Get()
 
 		return f.Success(User{
-			ID:        userResult.ID,
-			Handle:    userResult.Handle,
-			Followers: followers,
-			Follows:   follows,
+			ID:          userResult.ID,
+			Handle:      userResult.Handle,
+			Followers:   followers,
+			Follows:     follows,
+			IsFollowing: isFollowing,
 		})
 	}).Mono()
 }
@@ -94,7 +99,7 @@ func (u *UsersImpl) GetJots(ctx context.Context, handle string, before *time.Tim
 		var err error
 		userResult, err = userMono.Get()
 		if err != nil {
-			return f.Error(err)
+			return f.Error(errors.New("user_not_found\n[handle] " + handle))
 		}
 
 		messagesFlux = u.messageStore.GetUserMessages(ctx, userResult.ID, before, limit)

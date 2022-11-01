@@ -20,6 +20,7 @@ func (n *ns) Namespace() string {
 type FollowStore interface {
 	Load(ctx context.Context, userID uuid.UUID) mono.Mono[UserRef]
 	GetMultiple(ctx context.Context, userIds []uuid.UUID) flux.Flux[UserRef]
+	IsFollowing(ctx context.Context, userID uuid.UUID) mono.Mono[bool]
 	Follow(ctx context.Context, followedID uuid.UUID) mono.Void
 	Unfollow(ctx context.Context, followedID uuid.UUID) mono.Void
 	FetchFollowers(ctx context.Context, userID uuid.UUID, offset uint32, limit uint32) flux.Flux[FollowRef]

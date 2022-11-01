@@ -541,6 +541,9 @@ pub struct User {
     /// The number of users followed
     #[serde(rename = "follows")]
     pub follows: u32,
+    /// If the authenticated user is following this user.
+    #[serde(rename = "isFollowing")]
+    pub is_following: bool,
 }
 /// User page
 #[derive(Debug, serde::Serialize, serde::Deserialize)]

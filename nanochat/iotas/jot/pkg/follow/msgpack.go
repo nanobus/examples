@@ -110,6 +110,48 @@ func (o *FollowStoreGetMultipleArgs) Encode(encoder msgpack.Writer) error {
 	return nil
 }
 
+type FollowStoreIsFollowingArgs struct {
+	UserID uuid.UUID `json:"userId" yaml:"userId" msgpack:"userId"`
+}
+
+func (o *FollowStoreIsFollowingArgs) Decode(decoder msgpack.Reader) error {
+	numFields, err := decoder.ReadMapSize()
+	if err != nil {
+		return err
+	}
+
+	for numFields > 0 {
+		numFields--
+		field, err := decoder.ReadString()
+		if err != nil {
+			return err
+		}
+		switch field {
+		case "userId":
+			o.UserID, err = convert.Parse(uuid.Parse)(decoder.ReadString())
+		default:
+			err = decoder.Skip()
+		}
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *FollowStoreIsFollowingArgs) Encode(encoder msgpack.Writer) error {
+	if o == nil {
+		encoder.WriteNil()
+		return nil
+	}
+	encoder.WriteMapSize(1)
+	encoder.WriteString("userId")
+	encoder.WriteString(o.UserID.String())
+
+	return nil
+}
+
 type FollowStoreFollowArgs struct {
 	FollowedID uuid.UUID `json:"followedId" yaml:"followedId" msgpack:"followedId"`
 }
