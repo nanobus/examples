@@ -97,7 +97,8 @@ type User struct {
 	Followers uint32 `json:"followers" yaml:"followers" msgpack:"followers"`
 	// The number of users followed
 	Follows uint32 `json:"follows" yaml:"follows" msgpack:"follows"`
-	// If the authenticated user is following this user.
+	// If the authenticated user is following this user. Will return false if
+	// unauthenticated or outside of Users::getProfile.
 	IsFollowing bool `json:"isFollowing" yaml:"isFollowing" msgpack:"isFollowing"`
 }
 

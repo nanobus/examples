@@ -541,7 +541,7 @@ pub struct User {
     /// The number of users followed
     #[serde(rename = "follows")]
     pub follows: u32,
-    /// If the authenticated user is following this user.
+    /// If the authenticated user is following this user. Will return false if unauthenticated or outside of Users::getProfile.
     #[serde(rename = "isFollowing")]
     pub is_following: bool,
 }

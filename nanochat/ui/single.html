@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>tweet | Nanochat</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="./images/logo/favicon.png" />
+
+    <link rel="stylesheet" href="./css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="./js/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-2--5">
+          <header class="d-flex flex-column ">
+            <div class="header-top">
+              <div class="header-logo">
+                <div class="header-logo--wrapper">
+                  <a href="#">
+                    <img src="./images/logo/candle-short.png" />
+                  </a>
+                </div>
+              </div>
+
+              <div class="header-bottom">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="user-profile d-flex align-items-center">
+                    <div class="user-profile--image">
+                      <img src="./images/profile.jpg" />
+                    </div>
+                    <div class="user-profile--info">
+                      <p class="mb-0"><strong>User Name</strong></p>
+                      <p class="mb-0">@username</p>
+                    </div>
+                  </div>
+                  <div class="user-profile-more">
+                    <img src="./images/icons/more.svg" width="12" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="header-menu">
+                <!-- <nav>
+                  <ul>
+                    <li>
+                      <a href="#">
+                        <span class="menu-icon"
+                          ><img src="./images/icons/home.svg"
+                        /></span>
+                        <span class="menu-text">Home</span>
+                      </a>
+                    </li>
+
+                    <li>
+                      <a href="#">
+                        <span class="menu-icon"
+                          ><img src="./images/icons/hashtag.svg"
+                        /></span>
+                        <span class="menu-text">Explore</span>
+                      </a>
+                    </li>
+
+                    <li>
+                      <a href="#">
+                        <span class="menu-icon"
+                          ><img src="./images/icons/bell.svg"
+                        /></span>
+                        <span class="menu-text">Notification</span>
+                      </a>
+                    </li>
+
+                    <li>
+                      <a href="#">
+                        <span class="menu-icon"
+                          ><img src="./images/icons/envelope.svg"
+                        /></span>
+                        <span class="menu-text">Messages</span>
+                      </a>
+                    </li>
+
+                    <li>
+                      <a href="#">
+                        <span class="menu-icon"
+                          ><img src="./images/icons/file-lines.svg"
+                        /></span>
+                        <span class="menu-text">Lists</span>
+                      </a>
+                    </li>
+
+                    <li>
+                      <a href="#">
+                        <span class="menu-icon"
+                          ><img src="./images/icons/user.svg"
+                        /></span>
+                        <span class="menu-text">Profile</span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav> -->
+              </div>
+              <div class="new-tweet">
+                <button
+                  type="button"
+                  class="btn btn-primary w-100"
+                  data-bs-toggle="modal"
+                  data-bs-target="#newTweet"
+                >
+                  Tweet
+                </button>
+              </div>
+            </div>
+            
+          </header>
+        </div>
+        <div class="col-lg-6">
+          <main class="main-section">
+            <div class="main-wrapper">
+              <!-- page title -->
+              <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h4 class="mb-0">Tweet</h4>
+                  <!-- <div class="top-tweets">
+                      <img src="./images/icons/top-tweets.svg" width="20" />
+                    </div> -->
+                </div>
+              </div>
+              <!-- page title -->
+              <div class="tweets-wrapper">
+                <div class="view-single-tweet single-tweet">
+                  <div
+                    class="d-flex align-items-center justify-content-between mb-3"
+                  >
+                    <div class="user-profile d-flex align-items-center">
+                      <div class="user-profile--image">
+                        <img src="./images/profile.jpg" class="w-48" />
+                      </div>
+                      <div class="user-profile--info">
+                        <p class="mb-0"><strong>User Name</strong></p>
+                        <p class="mb-0">@username</p>
+                      </div>
+                    </div>
+                    <div class="user-profile-more">
+                      <img src="./images/icons/more.svg" width="12" />
+                    </div>
+                  </div>
+
+                  <div class="single-tweet--tweet-content w-100">
+                    <div class="tweet-description">
+                      What on earth is going on? You lost both your matches by
+                      just 1 run. Gather yourselves please.
+                      <a href="#">#PAKvsZIM</a>
+                    </div>
+                    <div class="tweet-meta mt-3">8:15 AM · Oct 31, 2022</div>
+                    <div class="tweet-stats d-flex">
+                      <div class="tweet-stat">
+                        <strong>184</strong> Retweets
+                      </div>
+                      <div class="tweet-stat">
+                        <strong>25</strong> Quote Retweets
+                      </div>
+                      <div class="tweet-stat"><strong>6,929</strong> Likes</div>
+                    </div>
+                    <div class="tweet-footer">
+                      <div
+                        class="tweet-reactions d-flex justify-content-around"
+                      >
+                        <div class="tweet-reaction tweet-comment">
+                          <div class="mr-75">
+                            <img src="./images/icons/comment.svg" />
+                          </div>
+                        </div>
+
+                        <div class="tweet-reaction tweet-comment">
+                          <div class="mr-75">
+                            <img src="./images/icons/retweet.svg" />
+                          </div>
+                        </div>
+
+                        <!-- <div class="tweet-reaction tweet-comment">
+                          <div class="mr-75">
+                            <img src="./images/icons/heart.svg" />
+                          </div>
+                        </div> -->
+
+                        <div class="tweet-reaction tweet-comment">
+                          <div class="mr-75">
+                            <img src="./images/icons/share.svg" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="replay-tweet-wrapper">
+                  <form id="tweet-replay">
+                    <div class="new-tweet d-flex p-1">
+                      <div class="new-tweet--profile-img">
+                        <img
+                          src="./images/profile.jpg"
+                          width="48"
+                          height="48"
+                        />
+                      </div>
+                      <div class="new-tweet-content">
+                        <div class="tweet-visibilty mb-1">
+                          <select name="tweet-visibilty">
+                            <option value="" selected disabled>
+                              Choose Audience
+                            </option>
+                            <option value="everyone">Everyone</option>
+                            <option value="twitter-circle">
+                              Twitter Circle
+                            </option>
+                          </select>
+                        </div>
+                        <div class="tweet-textarea">
+                          <textarea
+                            name="description"
+                            placeholder="What's happening?"
+                          ></textarea>
+                        </div>
+
+                        <div
+                          class="new-tweet--footer d-flex justify-content-between align-content-center"
+                        >
+                          <div class="new-tweet-actions d-flex">
+                            <!-- <div class="new-tweet-action">
+                              <img src="./images/icons/image.svg" />
+                            </div> -->
+
+                            <!-- <div class="new-tweet-action">
+                              <img src="./images/icons/face-smile.svg" />
+                            </div> -->
+
+                            <!-- <div class="new-tweet-action">
+                              <img src="./images/icons/calendar.svg" />
+                            </div> -->
+
+                            <!-- <div class="new-tweet-action">
+                              <img src="./images/icons/location.svg" />
+                            </div> -->
+                          </div>
+                          <div class="new-tweet-post">
+                            <button
+                              class="btn btn-xs btn-primary"
+                              type="submit"
+                            >
+                              Reply
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <div class="retweet-wrapper">
+                  <div class="single-tweet d-flex">
+                    <div class="single-tweet--tweet-profile-icon">
+                      <img src="./images/profile.jpg" />
+                    </div>
+                    <div class="single-tweet--tweet-content">
+                      <div
+                        class="tweet-head d-flex align-items-center justify-content-between"
+                      >
+                        <div class="tweet-head--left d-flex align-items-center">
+                          <h4 class="mb-0">Elon Musk</h4>
+                          <div class="profile-premium">
+                            <img
+                              src="./images/icons/circle-check.svg"
+                              width="16"
+                            />
+                          </div>
+                          <div class="tweet-username">@elonmusk</div>
+                          <div class="time-sprator">-</div>
+                          <div class="tweet-time">4h</div>
+                        </div>
+                        <div class="tweet-actions">
+                          <img src="./images/icons/more.svg" width="12" />
+                        </div>
+                      </div>
+
+                      <div class="tweet-description">
+                        What on earth is going on? You lost both your matches by
+                        just 1 run. Gather yourselves please.
+                        <a href="#">#PAKvsZIM</a>
+                      </div>
+                      <div class="tweet-image">
+                        <div class="tweet-image--wrapper">
+                          <img src="./images/tweet-image.jpg" />
+                        </div>
+                      </div>
+                      <div class="tweet-footer">
+                        <div
+                          class="tweet-reactions d-flex justify-content-between"
+                        >
+                          <div class="tweet-reaction tweet-comment">
+                            <div class="mr-75">
+                              <img src="./images/icons/comment.svg" />
+                            </div>
+                            <span>363</span>
+                          </div>
+
+                          <div class="tweet-reaction tweet-comment">
+                            <div class="mr-75">
+                              <img src="./images/icons/retweet.svg" />
+                            </div>
+                            <span>10.9k</span>
+                          </div>
+
+                          <div class="tweet-reaction tweet-comment">
+                            <div class="mr-75">
+                              <img src="./images/icons/heart.svg" />
+                            </div>
+                            <span>95.5k</span>
+                          </div>
+
+                          <div class="tweet-reaction tweet-comment">
+                            <div class="mr-75">
+                              <img src="./images/icons/share.svg" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="single-tweet d-flex">
+                    <div class="single-tweet--tweet-profile-icon">
+                      <img src="./images/profile.jpg" />
+                    </div>
+                    <div class="single-tweet--tweet-content">
+                      <div
+                        class="tweet-head d-flex align-items-center justify-content-between"
+                      >
+                        <div class="tweet-head--left d-flex align-items-center">
+                          <h4 class="mb-0">Elon Musk</h4>
+                          <div class="profile-premium">
+                            <img
+                              src="./images/icons/circle-check.svg"
+                              width="16"
+                            />
+                          </div>
+                          <div class="tweet-username">@elonmusk</div>
+                          <div class="time-sprator">-</div>
+                          <div class="tweet-time">4h</div>
+                        </div>
+                        <div class="tweet-actions">
+                          <img src="./images/icons/more.svg" width="12" />
+                        </div>
+                      </div>
+
+                      <div class="tweet-description">
+                        What on earth is going on? You lost both your matches by
+                        just 1 run. Gather yourselves please.
+                        <a href="#">#PAKvsZIM</a>
+                      </div>
+                      <div class="tweet-video">
+                        <div class="tweet-video--wrapper">
+                          <video width="100%" controls muted autoplay loop>
+                            <source
+                              src="./videos/sample-video.mp4"
+                              type="video/mp4"
+                            />
+                            Your browser does not support HTML video.
+                          </video>
+                        </div>
+                      </div>
+                      <div class="tweet-footer">
+                        <div
+                          class="tweet-reactions d-flex justify-content-between"
+                        >
+                          <div class="tweet-reaction tweet-comment">
+                            <div class="mr-75">
+                              <img src="./images/icons/comment.svg" />
+                            </div>
+                            <span>363</span>
+                          </div>
+
+                          <div class="tweet-reaction tweet-comment">
+                            <div class="mr-75">
+                              <img src="./images/icons/retweet.svg" />
+                            </div>
+                            <span>10.9k</span>
+                          </div>
+
+                          <div class="tweet-reaction tweet-comment">
+                            <div class="mr-75">
+                              <img src="./images/icons/heart.svg" />
+                            </div>
+                            <span>95.5k</span>
+                          </div>
+
+                          <div class="tweet-reaction tweet-comment">
+                            <div class="mr-75">
+                              <img src="./images/icons/share.svg" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <div class="col-lg-3--5">
+          <aside>
+            <div class="card">
+              <h5 class="font-bold suggestion-title mb-0">Who to follow</h5>
+              <div class="suggestions-wrapper">
+                <div class="suggestion-profile">
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <div class="user-profile d-flex align-items-center">
+                      <div class="user-profile--image">
+                        <img src="./images/profile.jpg" />
+                      </div>
+                      <div class="user-profile--info">
+                        <p class="mb-0"><strong>User Name</strong></p>
+                        <p class="mb-0">@username</p>
+                      </div>
+                    </div>
+                    <div class="user-profile-more">
+                      <button class="btn btn-dark btn-sm">Follow</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="suggestion-profile">
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <div class="user-profile d-flex align-items-center">
+                      <div class="user-profile--image">
+                        <img src="./images/profile.jpg" />
+                      </div>
+                      <div class="user-profile--info">
+                        <p class="mb-0"><strong>User Name</strong></p>
+                        <p class="mb-0">@username</p>
+                      </div>
+                    </div>
+                    <div class="user-profile-more">
+                      <button class="btn btn-dark btn-sm">Follow</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="suggestion-profile">
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <div class="user-profile d-flex align-items-center">
+                      <div class="user-profile--image">
+                        <img src="./images/profile.jpg" />
+                      </div>
+                      <div class="user-profile--info">
+                        <p class="mb-0"><strong>User Name</strong></p>
+                        <p class="mb-0">@username</p>
+                      </div>
+                    </div>
+                    <div class="user-profile-more">
+                      <button class="btn btn-dark btn-sm">Follow</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="suggestion-profile">
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <div class="user-profile d-flex align-items-center">
+                      <div class="user-profile--image">
+                        <img src="./images/profile.jpg" />
+                      </div>
+                      <div class="user-profile--info">
+                        <p class="mb-0"><strong>User Name</strong></p>
+                        <p class="mb-0">@username</p>
+                      </div>
+                    </div>
+                    <div class="user-profile-more">
+                      <button class="btn btn-dark btn-sm">Follow</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="footer">
+              <p>
+                <a href="https://candle.dev/privacy.html" target="_blank"
+                  >Privacy Policy</a
+                >
+                - © 2022 Nanochat, Inc.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Tweet Modal -->
+    <div
+      class="modal fade"
+      id="newTweet"
+      tabindex="-1"
+      aria-labelledby="newTweetLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-body">
+            <form>
+              <div class="new-tweet d-flex">
+                <div class="new-tweet--profile-img">
+                  <img src="./images/profile.jpg" width="48" height="48" />
+                </div>
+                <div class="new-tweet-content">
+                  <div class="tweet-visibilty mb-1">
+                    <select name="tweet-visibilty">
+                      <option value="" selected disabled>
+                        Choose Audience
+                      </option>
+                      <option value="everyone">Everyone</option>
+                      <option value="twitter-circle">Twitter Circle</option>
+                    </select>
+                  </div>
+                  <div class="tweet-textarea">
+                    <textarea
+                      name="description"
+                      placeholder="What's happening?"
+                    ></textarea>
+                  </div>
+                  <div class="replay-visibility">
+                    <select name="tweet-visibilty">
+                      <option value="" selected disabled>Who can reply</option>
+                      <option value="everyone">Everyone</option>
+                      <option value="people-you-follow">
+                        People you follow
+                      </option>
+                      <option value="only-people-you-mention">
+                        Only people you mention
+                      </option>
+                    </select>
+                  </div>
+                  <div
+                    class="new-tweet--footer d-flex justify-content-between align-content-center"
+                  >
+                    <div class="new-tweet-actions d-flex">
+                      <div class="new-tweet-action">
+                        <img src="./images/icons/image.svg" />
+                      </div>
+
+                      <div class="new-tweet-action">
+                        <img src="./images/icons/face-smile.svg" />
+                      </div>
+
+                      <div class="new-tweet-action">
+                        <img src="./images/icons/calendar.svg" />
+                      </div>
+
+                      <div class="new-tweet-action">
+                        <img src="./images/icons/location.svg" />
+                      </div>
+                    </div>
+                    <div class="new-tweet-post">
+                      <button class="btn btn-xs btn-primary" type="submit">
+                        Tweet
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- New Tweet Modal End-->
+
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/lib.js"></script>
+  </body>
+</html>

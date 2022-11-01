@@ -13,7 +13,7 @@
 | sql                 | Database schema (Postgres)         |
 | tests               | Integration Tests                  |
 | tests/data          | Integration Test data              |
-| web/static          | Web Static HTML & JS               |
+| ui                  | Web Static HTML & JS               |
 
 ## Locations
 
