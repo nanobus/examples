@@ -3,6 +3,22 @@ import * from "@apexlang/rest"
 import * from "@apexlang/openapi"
 
 namespace "nanochat.io.v1.jots"
+@info(
+    title: "Simple chat app"
+    description: "Simple chat application created using NanoBus and IOtas."
+    version: "1.0.0"
+    termsOfService: "https://nanochat.io/terms/"
+    contact: {
+      name: "API Support",
+      url: "https://nanochat.io/support",
+      email: "api@nanochat.io"
+    },
+    license: {
+      name: "Apache 2.0",
+      url: "https://www.apache.org/licenses/LICENSE-2.0"
+    }
+  )
+  @host("nanochat.io")
   @path("/v1")
 
 alias UUID = string
@@ -70,8 +86,7 @@ interface Users @service @path("/users") {
   ): UserPage @GET @path("/{handle}/followers")
 }
 
-
-"Jot."
+"Jot entity"
 type Jot {
   "The dynamically generated ID."
   id: UUID

@@ -1,6 +1,18 @@
-components: {}
-info: null
 openapi: 3.0.0
+info:
+    title: Simple chat app
+    description: Simple chat application created using NanoBus and IOtas.
+    version: 1.0.0
+    contact:
+        email: api@nanochat.io
+        name: API Support
+        url: https://nanochat.io/support
+    license:
+        name: Apache 2.0
+        url: https://www.apache.org/licenses/LICENSE-2.0
+    termsOfService: https://nanochat.io/terms/
+servers:
+    - url: 'http://localhost:8080'
 paths:
     /v1/jots:
         get:
@@ -287,10 +299,85 @@ paths:
                     description: Success
             tags:
                 - Users
-servers:
-    - url: 'http://localhost:8080'
 tags:
     - description: Jot API
       name: Jots
     - description: Users API
       name: Users
+components:
+    schemas:
+        Jot:
+            description: Jot entity
+            properties:
+                handle:
+                    description: The jot owner handle
+                    type: string
+                id:
+                    description: The dynamically generated ID.
+                    type: string
+                likes:
+                    description: The number of likes.
+                    format: int32
+                    type: integer
+                message:
+                    description: The message body.
+                    type: string
+                time:
+                    description: The time the tweet was entered.
+                    format: date-time
+                    type: string
+                userId:
+                    description: The jot owner ID.
+                    type: string
+        JotPage:
+            description: Jot page
+            properties:
+                before:
+                    description: Before timestamp
+                    format: date-time
+                    type: string
+                items:
+                    description: The tweets returned
+                    items:
+                        $ref: '#/components/schemas/Jot'
+                    type: array
+                limit:
+                    description: Limit result
+                    format: int32
+                    type: integer
+        User:
+            description: User entity
+            properties:
+                followers:
+                    description: The number of followers
+                    format: int32
+                    type: integer
+                follows:
+                    description: The number of users followed
+                    format: int32
+                    type: integer
+                handle:
+                    description: Handle.
+                    type: string
+                id:
+                    description: User ID.
+                    type: string
+                isFollowing:
+                    description: If the authenticated user is following this user. Will return false if unauthenticated or outside of Users::getProfile.
+                    type: boolean
+        UserPage:
+            description: User page
+            properties:
+                items:
+                    description: The users returned
+                    items:
+                        $ref: '#/components/schemas/User'
+                    type: array
+                limit:
+                    description: Limit
+                    format: int32
+                    type: integer
+                offset:
+                    description: Offet
+                    format: int32
+                    type: integer
