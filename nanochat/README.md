@@ -87,7 +87,7 @@ Provides all the running parts;
 - Postgres - Postgres running in the standard 5842 port
 - Jaeger - Distributed tracing system. Navigate to [http://localhost:16686](http://localhost:16686) at access the Jaeger UI.
 - NanoBus - The nanobus back-end
-- oidc - Simple OIDC provider for User authentication and local develment
+- qlik/simple-oidc-provider - Simple OIDC provider for User authentication and local develment
 
 ## Run Separately
 
