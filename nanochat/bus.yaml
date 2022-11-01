@@ -25,6 +25,10 @@ transports:
             pipeline: storeSession
             scopes: ${env:OAUTH_SCOPES}
             debug: true
+      documentation:
+        swaggerUI: true
+        postman: true
+        restClient: true
   httprpc:
     uses: httprpc
     with:
