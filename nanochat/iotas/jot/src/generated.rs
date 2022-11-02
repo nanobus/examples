@@ -272,6 +272,23 @@ pub mod jots_service {
 pub(crate) struct UsersComponent();
 
 impl UsersComponent {
+    fn me_wrapper(input: IncomingMono) -> Result<OutgoingMono, GenericError> {
+        let (tx, rx) = runtime::oneshot();
+
+        let input = Mono::from_future(input.map(|r| r.map(|v| Ok(deserialize(&v.data)?))?));
+        let task = UsersComponent::me(input)
+            .map(|result| {
+                let output = result?;
+                Ok(serialize(&output)
+                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+            })
+            .map(|output| tx.send(output).unwrap());
+
+        spawn(task);
+
+        Ok(Mono::from_future(async move { rx.await? }))
+    }
+
     fn get_profile_wrapper(input: IncomingMono) -> Result<OutgoingMono, GenericError> {
         let (tx, rx) = runtime::oneshot();
 
@@ -378,6 +395,10 @@ impl UsersComponent {
 #[async_trait::async_trait(?Send)]
 /// Users API
 pub(crate) trait UsersService {
+    async fn me(
+        inputs: Mono<users_service::me::Inputs, PayloadError>,
+    ) -> Result<users_service::me::Outputs, GenericError>;
+
     /// Get the user's profile
     async fn get_profile(
         inputs: Mono<users_service::get_profile::Inputs, PayloadError>,
@@ -411,6 +432,14 @@ pub(crate) trait UsersService {
 
 pub mod users_service {
     use super::*;
+
+    pub mod me {
+        use super::*;
+        #[derive(serde::Deserialize, Debug)]
+        pub(crate) struct Inputs {}
+
+        pub(crate) type Outputs = User;
+    }
 
     pub mod get_profile {
         use super::*;
@@ -491,7 +520,7 @@ pub mod users_service {
     }
 }
 
-/// Jot.
+/// Jot entity
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct Jot {
     /// The dynamically generated ID.
@@ -610,6 +639,12 @@ pub(crate) fn init_exports() {
         "nanochat.io.v1.jots.Jots",
         "likes",
         JotsComponent::likes_wrapper,
+    );
+
+    wasmrs_guest::register_request_response(
+        "nanochat.io.v1.jots.Users",
+        "me",
+        UsersComponent::me_wrapper,
     );
 
     wasmrs_guest::register_request_response(

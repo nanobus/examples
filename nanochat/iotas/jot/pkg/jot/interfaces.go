@@ -36,6 +36,7 @@ type Jots interface {
 
 // Users API
 type Users interface {
+	Me(ctx context.Context) mono.Mono[User]
 	// Get the user's profile
 	GetProfile(ctx context.Context, handle string) mono.Mono[User]
 	// Get the user's jots.
@@ -50,7 +51,7 @@ type Users interface {
 	GetFollowers(ctx context.Context, handle string, pagination *Pagination) mono.Mono[UserPage]
 }
 
-// Jot.
+// Jot entity
 type Jot struct {
 	ns
 	// The dynamically generated ID.

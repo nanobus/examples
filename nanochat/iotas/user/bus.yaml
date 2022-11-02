@@ -31,7 +31,7 @@ providers:
   'nanochat.io.user.v1.UserStore':
     me:
       steps:
-        - name: Loads the user of the request
+        - name: Loads my profile
           uses: "@postgres/query"
           with:
             single: true

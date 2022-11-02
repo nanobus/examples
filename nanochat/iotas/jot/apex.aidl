@@ -57,6 +57,8 @@ interface Jots @service @path("/jots") {
 
 "Users API"
 interface Users @service @path("/users") {
+  me(): User @GET @path("/me")
+
   "Get the user's profile"
   getProfile(handle: string): User @GET @path("/{handle}")
 

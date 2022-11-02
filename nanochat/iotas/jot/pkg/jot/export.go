@@ -22,6 +22,7 @@ func RegisterJots(svc Jots) {
 }
 
 func RegisterUsers(svc Users) {
+	invoke.ExportRequestResponse("nanochat.io.v1.jots.Users", "me", usersMeWrapper(svc))
 	invoke.ExportRequestResponse("nanochat.io.v1.jots.Users", "getProfile", usersGetProfileWrapper(svc))
 	invoke.ExportRequestResponse("nanochat.io.v1.jots.Users", "getJots", usersGetJotsWrapper(svc))
 	invoke.ExportRequestResponse("nanochat.io.v1.jots.Users", "follow", usersFollowWrapper(svc))
@@ -104,6 +105,13 @@ func jotsLikesWrapper(svc Jots) invoke.RequestResponseHandler {
 		}
 		response := svc.Likes(ctx, inputArgs.ID, &inputArgs.Pagination)
 		return mono.Map(response, transform.MsgPackEncode[UserPage])
+	}
+}
+
+func usersMeWrapper(svc Users) invoke.RequestResponseHandler {
+	return func(ctx context.Context, p payload.Payload) mono.Mono[payload.Payload] {
+		response := svc.Me(ctx)
+		return mono.Map(response, transform.MsgPackEncode[User])
 	}
 }
 

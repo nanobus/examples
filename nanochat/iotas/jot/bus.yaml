@@ -59,6 +59,14 @@ services:
           uses: invoke
 
   'nanochat.io.v1.jots.Users':
+    me:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
 
     follow:
       steps:
