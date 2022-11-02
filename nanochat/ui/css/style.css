@@ -222,6 +222,11 @@ h6 {
   bottom: -12px;
   right: 0;
 }
+
+
+.login-prompt{
+  height: 100vh;
+}
 /* Login Screen end */
 
 /* twitter clone */
