@@ -17,7 +17,14 @@
 
 const baseURL = "";
 const currentUserID = localStorage.getItem("seession");
-const sid = localStorage.getItem("sid");
+const sid = localStorage.getItem('sid');
+
+function redirect_to_home() {
+  var mycookies = document.cookie;
+  if (mycookies.match(/sid=(.*);/)[1] !== null) {
+    window.location.replace(window.location.href + "/home.html");
+  }
+}
 
 // get all jots
 function get_all_jots() {
