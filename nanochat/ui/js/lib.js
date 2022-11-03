@@ -70,15 +70,15 @@ function get_all_jots() {
           "                                  <a" +
           '                                    href="#"' +
           '                                    class="dropdown-item delete-tweet"' +
-          '                                    data-tweet-id="1"' +
+          '                                    data-tweet-id="' + jotID + '"' +
           "                                    >Delete</a" +
           "                                  >" +
           "                                </li>" +
-          "                                <li>" +
-          '                                  <a class="dropdown-item" href="#"' +
-          "                                    >Another action</a" +
-          "                                  >" +
-          "                                </li>" +
+          // "                                <li>" +
+          // '                                  <a class="dropdown-item" href="#"' +
+          // "                                    >Another action</a" +
+          // "                                  >" +
+          // "                                </li>" +
           "                              </ul>" +
           "                            </div>" +
           "                          </div>" +
@@ -87,15 +87,15 @@ function get_all_jots() {
           "                              <a" +
           '                                href="#"' +
           '                                class="dropdown-item delete-tweet"' +
-          '                                data-tweet-id="1"' +
+          '                                data-tweet-id="' + jotID + '"' +
           "                                >Delete</a" +
           "                              >" +
           "                            </li>" +
-          "                            <li>" +
-          '                              <a class="dropdown-item" href="#"' +
-          "                                >Another action</a" +
-          "                              >" +
-          "                            </li>" +
+          // "                            <li>" +
+          // '                              <a class="dropdown-item" href="#"' +
+          // "                                >Another action</a" +
+          // "                              >" +
+          // "                            </li>" +
           "                          </ul>" +
           "                        </div>" +
           "                      </div>" +
@@ -202,7 +202,7 @@ $(document).on("click", ".delete-tweet", function (event) {
 });
 
 //   Unlike a jot
-$(document).on("click", ".like-tweet", function (event) {
+$(document).on("click", ".dislike-tweet", function (event) {
   event.preventDefault();
   let jotID = $(this).closest(".single-tweet").data("tweet-id");
   let requestURL = baseURL + "/v1/jots/" + jotID + "/like";
@@ -217,13 +217,13 @@ $(document).on("click", ".like-tweet", function (event) {
 });
 
 //   Like a jot
-$(document).on("click", ".dislike-tweet", function (event) {
+$(document).on("click", ".like-tweet", function (event) {
   event.preventDefault();
   let jotID = $(this).closest(".single-tweet").data("tweet-id");
   let requestURL = baseURL + "/v1/jots/" + jotID + "/like";
   var settings = {
     url: requestURL,
-    method: "PUT",
+    method: "GET",
     timeout: 0,
   };
   $.ajax(settings).done(function (response) {
