@@ -11,6 +11,7 @@ interface UserStore @service {
   load(userId: UUID): User
   getMultiple(userIds: [UUID]): stream User
   findByHandle(handle: string): User
+  getFive(): stream User
 }
 
 "User record"

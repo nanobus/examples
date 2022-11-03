@@ -28,7 +28,7 @@ resiliency:
       duration: 3s
 
 providers:
-  'nanochat.io.user.v1.UserStore':
+  "nanochat.io.user.v1.UserStore":
     me:
       steps:
         - name: Loads my profile
@@ -56,6 +56,21 @@ providers:
               WHERE id = $1
             args:
               - input.userId
+          # retry: database
+          # circuitBreaker: database
+
+    getFive:
+      steps:
+        - name: Find five random users
+          uses: "@postgres/query"
+          with:
+            resource: userdb
+            sql: |
+              SELECT * FROM "user"
+              ORDER BY RAND()
+              LIMIT 5
+            args:
+              - input.userIds
           # retry: database
           # circuitBreaker: database
 
