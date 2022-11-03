@@ -21,7 +21,7 @@ const sid = localStorage.getItem('sid');
 
 function redirect_to_home() {
   var mycookies = document.cookie;
-  if (mycookies.match(/sid=(.*);/)[1] !== null) {
+  if (mycookies.match(/sid=(\S*)/)[1] !== null) {
     window.location.replace(window.location.href + "/home.html");
   }
 }
