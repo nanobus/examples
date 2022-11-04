@@ -172,6 +172,11 @@ function get_jot_by_id(jotID) {
   });
 }
 
+function logoff() {
+  document.cookie = 'sid=;Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  location.reload();
+};
+
 //post a jot
 $("#postJot").submit(function (event) {
   event.preventDefault();

@@ -1,5 +1,18 @@
 # nanochat
 
+## See it in action
+Build:
+`docker run -v $(PWD):/opt/project/src/app -ti candlecorp/iota-builder:v8 'just'`
+run:
+`docker-compose --profile app up `
+visit: http://localhost:8080
+
+Login:
+```
+u: foo@candle.dev
+p: bar
+```
+
 ## Repository
 
 | Path                | Description                        |
