@@ -71,12 +71,11 @@ services:
       oidc:
         condition: service_healthy
     volumes:
+      - ./apex.aidl:/app/apex.aidl
       - ./bus.yaml:/app/bus.yaml
       - ./web/static:/app/static
       - ./ui:/app/ui
-      - ./iotas/jot/apex.aidl:/app/iotas/jot/apex.aidl
-      - ./iotas/jot/bus.yaml:/app/iotas/jot/bus.yaml
-      - ./iotas/jot/build:/app/iotas/jot/build
+      - ./build:/app/build
       - ./iotas/follow:/app/iotas/follow
       - ./iotas/like:/app/iotas/like
       - ./iotas/message:/app/iotas/message

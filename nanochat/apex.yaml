@@ -1,8 +1,8 @@
 spec: apex.aidl
 config:
-  name: jot
-  package: jot
-  module: github.com/candlecorp/nanochat/iotas/jot
+  name: nanochat
+  package: nanochat
+  module: github.com/nanobus/examples/nanochat
   aliases:
     UUID:
       type: uuid.UUID
@@ -25,27 +25,27 @@ generates:
     module: "@nanobus/tinygo"
     visitorClass: MainVisitor
     config:
-      import: github.com/candlecorp/nanochat/iotas/jot/pkg/jot
-  pkg/jot/msgpack.go:
+      import: github.com/nanobus/examples/nanochat
+  pkg/nanochat/msgpack.go:
     module: "@nanobus/tinygo"
     visitorClass: MsgPackVisitor
-  pkg/jot/interfaces.go:
+  pkg/nanochat/interfaces.go:
     module: "@nanobus/tinygo"
     visitorClass: InterfacesVisitor
-  pkg/jot/export.go:
+  pkg/nanochat/export.go:
     module: "@nanobus/tinygo"
     visitorClass: ExportVisitor
-  pkg/jot/providers.go:
+  pkg/nanochat/providers.go:
     module: "@nanobus/tinygo"
     visitorClass: ProviderVisitor
-  pkg/jot/jots.go:
+  pkg/nanochat/jots.go:
     ifNotExists: true
     module: "@nanobus/tinygo"
     visitorClass: ScaffoldVisitor
     config:
       names:
         - Jots
-  pkg/jot/users.go:
+  pkg/nanochat/users.go:
     ifNotExists: true
     module: "@nanobus/tinygo"
     visitorClass: ScaffoldVisitor
@@ -57,11 +57,11 @@ generates:
     module: "@nanobus/bus"
     visitorClass: BusVisitor
 ---
-spec: ../user/apex.aidl
+spec: iotas/user/apex.aidl
 config:
   name: user
   package: user
-  module: github.com/candlecorp/nanochat/iotas/jot
+  module: github.com/nanobus/examples/nanochat/pkg/imports/iotas/user
   aliases:
     UUID:
       type: uuid.UUID
@@ -79,21 +79,21 @@ generates:
       datetime: wasmrs_guest::Timestamp
       visibility:
         _all: pub
-  pkg/user/msgpack.go:
+  pkg/imports/user/msgpack.go:
     module: "@nanobus/tinygo"
     visitorClass: MsgPackVisitor
-  pkg/user/interfaces.go:
+  pkg/imports/user/interfaces.go:
     module: "@nanobus/tinygo"
     visitorClass: InterfacesVisitor
-  pkg/user/import.go:
+  pkg/imports/user/import.go:
     module: "@nanobus/tinygo"
     visitorClass: ImportVisitor
 ---
-spec: ../follow/apex.aidl
+spec: iotas/follow/apex.aidl
 config:
   name: follow
   package: follow
-  module: github.com/candlecorp/nanochat/iotas/jot
+  module: github.com/nanobus/examples/nanochat/pkg/imports/iotas/follow
   aliases:
     UUID:
       type: uuid.UUID
@@ -111,21 +111,21 @@ generates:
       datetime: wasmrs_guest::Timestamp
       visibility:
         _all: pub
-  pkg/follow/msgpack.go:
+  pkg/imports/follow/msgpack.go:
     module: "@nanobus/tinygo"
     visitorClass: MsgPackVisitor
-  pkg/follow/interfaces.go:
+  pkg/imports/follow/interfaces.go:
     module: "@nanobus/tinygo"
     visitorClass: InterfacesVisitor
-  pkg/follow/import.go:
+  pkg/imports/follow/import.go:
     module: "@nanobus/tinygo"
     visitorClass: ImportVisitor
 ---
-spec: ../message/apex.aidl
+spec: iotas/message/apex.aidl
 config:
   name: message
   package: message
-  module: github.com/candlecorp/nanochat/iotas/jot
+  module: github.com/nanobus/examples/nanochat/pkg/imports/iotas/message
   aliases:
     UUID:
       type: uuid.UUID
@@ -143,21 +143,21 @@ generates:
       datetime: wasmrs_guest::Timestamp
       visibility:
         _all: pub
-  pkg/message/msgpack.go:
+  pkg/imports/message/msgpack.go:
     module: "@nanobus/tinygo"
     visitorClass: MsgPackVisitor
-  pkg/message/interfaces.go:
+  pkg/imports/message/interfaces.go:
     module: "@nanobus/tinygo"
     visitorClass: InterfacesVisitor
-  pkg/message/import.go:
+  pkg/imports/message/import.go:
     module: "@nanobus/tinygo"
     visitorClass: ImportVisitor
 ---
-spec: ../like/apex.aidl
+spec: iotas/like/apex.aidl
 config:
   name: like
   package: like
-  module: github.com/candlecorp/nanochat/iotas/jot
+  module: github.com/nanobus/examples/nanochat/pkg/imports/iotas/like
   aliases:
     UUID:
       type: uuid.UUID
@@ -175,12 +175,12 @@ generates:
       datetime: wasmrs_guest::Timestamp
       visibility:
         _all: pub
-  pkg/like/msgpack.go:
+  pkg/imports/like/msgpack.go:
     module: "@nanobus/tinygo"
     visitorClass: MsgPackVisitor
-  pkg/like/interfaces.go:
+  pkg/imports/like/interfaces.go:
     module: "@nanobus/tinygo"
     visitorClass: InterfacesVisitor
-  pkg/like/import.go:
+  pkg/imports/like/import.go:
     module: "@nanobus/tinygo"
     visitorClass: ImportVisitor

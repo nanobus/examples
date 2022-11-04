@@ -1,4 +1,4 @@
-package jot
+package nanochat
 
 import (
 	"context"
@@ -11,10 +11,10 @@ import (
 	"github.com/nanobus/iota/go/wasmrs/rx/flux"
 	"github.com/nanobus/iota/go/wasmrs/rx/mono"
 
-	"github.com/nanobus/examples/nanochat/iotas/jot/pkg/follow"
-	"github.com/nanobus/examples/nanochat/iotas/jot/pkg/like"
-	"github.com/nanobus/examples/nanochat/iotas/jot/pkg/message"
-	"github.com/nanobus/examples/nanochat/iotas/jot/pkg/user"
+	"github.com/nanobus/examples/nanochat/pkg/imports/follow"
+	"github.com/nanobus/examples/nanochat/pkg/imports/like"
+	"github.com/nanobus/examples/nanochat/pkg/imports/message"
+	"github.com/nanobus/examples/nanochat/pkg/imports/user"
 )
 
 type UsersImpl struct {

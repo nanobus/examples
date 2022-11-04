@@ -1,4 +1,6 @@
 /archive
+/build
 /target
 /Cargo.lock
 /data
+/requests.http

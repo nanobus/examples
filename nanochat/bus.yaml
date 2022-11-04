@@ -3,6 +3,17 @@ application:
   version: 0.0.1
   environment: local
 
+compute:
+  - uses: wasmrs
+    with:
+      filename: build/jot-go.wasm
+      # filename: build/jot-rust.wasm
+
+specs:
+  - uses: apex
+    with:
+      filename: apex.aidl
+
 transports:
   rest:
     uses: rest
@@ -71,6 +82,81 @@ filters:
         jwksUrl: ${env:OAUTH_JWKS_URL}
         debug: true
 
+services:
+  'nanochat.io.v1.jots.Jots':
+    postJot:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+    getFeed:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+    deleteJot:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+    
+    like:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+    
+    unlike:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+  'nanochat.io.v1.jots.Users':
+    me:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+    follow:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+    unfollow:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
 pipelines:
   getAccessToken:
     steps:
@@ -123,11 +209,10 @@ tracing:
   with:
     collectorEndpoint: ${env:JAEGER_TRACE_ENDPOINT}
 
+# For example purposes, we are importing from the filesystem.
+# In a real-world scenario, these IOta dependencies
+# could be fetched from an OCI registry.
 import:
-  # API
-  - iotas/jot/bus.yaml
-
-  # Stores
   - iotas/follow/bus.yaml
   - iotas/like/bus.yaml
   - iotas/message/bus.yaml

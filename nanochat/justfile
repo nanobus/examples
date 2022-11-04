@@ -1,2 +1,36 @@
-iotas:
-  just iotas/jot/codegen tinygo
+RUST_TARGET := "wasm32-wasi"
+RUST_NAME := "jot"
+GO_TARGET := "wasi"
+GO_NAME := "jot"
+
+all: deps codegen tidy build
+
+deps:
+
+codegen:
+	apex generate
+
+tidy:
+	go mod tidy
+
+build: codegen tinygo
+
+tinygo:
+	@mkdir -p build
+	tinygo build -o build/{{GO_NAME}}-go.wasm --scheduler=none --target={{GO_TARGET}} -no-debug cmd/main.go
+	wasm-opt -O build/{{GO_NAME}}-go.wasm -o build/{{GO_NAME}}-go.wasm
+	wasmrs-ops build/{{GO_NAME}}-go.wasm
+
+rust:
+	cargo build --target={{RUST_TARGET}} --target-dir=./target --release
+	wasmrs-ops ./target/{{RUST_TARGET}}/release/{{RUST_NAME}}.wasm
+	mkdir -p build
+	cp ./target/{{RUST_TARGET}}/release/{{RUST_NAME}}.wasm ./build/{{RUST_NAME}}-rust.wasm
+
+clean:
+	rm -Rf build
+
+doc:
+
+test:
+	go test --count=1 ./pkg/...

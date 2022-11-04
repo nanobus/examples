@@ -1,4 +1,4 @@
-module github.com/nanobus/examples/nanochat/iotas/jot
+module github.com/nanobus/examples/nanochat
 
 go 1.19
 
