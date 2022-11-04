@@ -29,6 +29,7 @@ type UserStoreImpl struct {
 	opLoad         uint32
 	opGetMultiple  uint32
 	opFindByHandle uint32
+	opGetFive      uint32
 }
 
 func NewUserStore() *UserStoreImpl {
@@ -37,6 +38,7 @@ func NewUserStore() *UserStoreImpl {
 		opLoad:         invoke.ImportRequestResponse("nanochat.io.user.v1.UserStore", "load"),
 		opGetMultiple:  invoke.ImportRequestStream("nanochat.io.user.v1.UserStore", "getMultiple"),
 		opFindByHandle: invoke.ImportRequestResponse("nanochat.io.user.v1.UserStore", "findByHandle"),
+		opGetFive:      invoke.ImportRequestStream("nanochat.io.user.v1.UserStore", "getFive"),
 	}
 }
 
@@ -108,4 +110,17 @@ func (u *UserStoreImpl) FindByHandle(ctx context.Context, handle string) mono.Mo
 	pl := payload.New(payloadData, metadata[:])
 	future := gCaller.RequestResponse(ctx, pl)
 	return mono.Map(future, transform.MsgPackDecode[User])
+}
+
+func (u *UserStoreImpl) GetFive(ctx context.Context) flux.Flux[User] {
+	payloadData := []byte{}
+	var metadata [8]byte
+	stream, ok := proxy.FromContext(ctx)
+	binary.BigEndian.PutUint32(metadata[0:4], u.opGetFive)
+	if ok {
+		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
+	}
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestStream(ctx, pl)
+	return flux.Map(future, transform.MsgPackDecode[User])
 }

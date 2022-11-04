@@ -21,6 +21,7 @@ type UserStore interface {
 	Load(ctx context.Context, userID uuid.UUID) mono.Mono[User]
 	GetMultiple(ctx context.Context, userIds []uuid.UUID) flux.Flux[User]
 	FindByHandle(ctx context.Context, handle string) mono.Mono[User]
+	GetFive(ctx context.Context) flux.Flux[User]
 }
 
 // User record

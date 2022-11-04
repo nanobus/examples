@@ -1,5 +1,3 @@
-// $(function () {
-
 // function calcDate(date1, date2) {
 //   var diff = Math.floor(date1.getTime() - date2.getTime());
 //   var day = 1000 * 60 * 60 * 24;
@@ -13,22 +11,26 @@
 //   return message;
 // }
 
+function redirect_to_login() {
+  var mycookies = document.cookie;
+  if (mycookies.match(/sid=(\S*)/) == null) {
+    window.location.replace("http://" + window.location.host + "/index.html");
+  }
 
-
-const baseURL = "";
-const currentUserID = localStorage.getItem("seession");
-const sid = localStorage.getItem('sid');
+  get_loggedin_user();
+  get_all_jots();
+}
 
 function redirect_to_home() {
   var mycookies = document.cookie;
-  if (mycookies.match(/sid=(\S*)/)[1] !== null) {
-    window.location.replace(window.location.href + "/home.html");
+  if (mycookies.match(/sid=(\S*)/)[1] !== null && window.location.pathname != "/home.html") {
+    window.location.replace("http://" + window.location.host + "/home.html");
   }
 }
 
 // get all jots
 function get_all_jots() {
-  let requestURL = baseURL + "/v1/jots";
+  let requestURL = "/v1/jots";
   $.get(requestURL, function (response, status) {
     if (status == "success") {
       data = response;
@@ -41,17 +43,17 @@ function get_all_jots() {
         let userID = jot.userId;
 
         jotHTML +=
-          '<div class="single-tweet d-flex" data-tweet-id="' +
+          '                <div class="single-chat d-flex" data-chat-id="' +
           jotID +
           '">' +
-          '                  <div class="single-tweet--tweet-profile-icon">' +
+          '                  <div class="single-chat--chat-profile-icon">' +
           '                    <img src="./images/profile.jpg" />' +
           "                  </div>" +
-          '                  <div class="single-tweet--tweet-content">' +
+          '                  <div class="single-chat--chat-content">' +
           "                    <div" +
-          '                      class="tweet-head d-flex align-items-center justify-content-between"' +
+          '                      class="chat-head d-flex align-items-center justify-content-between"' +
           "                    >" +
-          '                      <div class="tweet-head--left d-flex align-items-center">' +
+          '                      <div class="chat-head--left d-flex align-items-center">' +
           '                        <h4 class="mb-0">' + handle + '</h4>' +
           '                        <div class="profile-premium">' +
           "                          <img" +
@@ -59,13 +61,13 @@ function get_all_jots() {
           '                            width="16"' +
           "                          />" +
           "                        </div>" +
-          '                        <div class="tweet-username">@' +
+          '                        <div class="chat-username">@' +
           handle +
           "</div>" +
           '                        <div class="time-sprator">-</div>' +
-          '                        <div class="tweet-time">4h</div>' +
+          '                        <div class="chat-time">4h</div>' +
           "                      </div>" +
-          '                      <div class="tweet-actions">' +
+          '                      <div class="chat-actions">' +
           '                        <div class="dropdown">' +
           '                          <div data-bs-toggle="dropdown">' +
           '                            <div class="dropdown">' +
@@ -76,8 +78,8 @@ function get_all_jots() {
           "                                <li>" +
           "                                  <a" +
           '                                    href="#"' +
-          '                                    class="dropdown-item delete-tweet"' +
-          '                                    data-tweet-id="' + jotID + '"' +
+          '                                    class="dropdown-item delete-chat"' +
+          '                                    data-chat-id="' + jotID + '"' +
           "                                    >Delete</a" +
           "                                  >" +
           "                                </li>" +
@@ -93,8 +95,8 @@ function get_all_jots() {
           "                            <li>" +
           "                              <a" +
           '                                href="#"' +
-          '                                class="dropdown-item delete-tweet"' +
-          '                                data-tweet-id="' + jotID + '"' +
+          '                                class="dropdown-item delete-chat"' +
+          '                                data-chat-id="' + jotID + '"' +
           "                                >Delete</a" +
           "                              >" +
           "                            </li>" +
@@ -108,29 +110,29 @@ function get_all_jots() {
           "                      </div>" +
           "                    </div>" +
           "" +
-          '                    <div class="tweet-description">' +
+          '                    <div class="chat-description">' +
           jotMessage +
           "                    </div>" +
           "" +
-          '                    <div class="tweet-footer">' +
+          '                    <div class="chat-footer">' +
           "                      <div" +
-          '                        class="tweet-reactions d-flex justify-content-between"' +
+          '                        class="chat-reactions d-flex justify-content-between"' +
           "                      >" +
-          '                        <div class="tweet-reaction comment-tweet">' +
+          '                        <div class="chat-reaction comment-chat">' +
           // '                          <div class="mr-75">' +
           // '                            <img src="./images/icons/comment.svg" />' +
           // "                          </div>" +
           // "                          <span>363</span>" +
           "                        </div>" +
           "" +
-          '                        <div class="tweet-reaction comment-tweet">' +
+          '                        <div class="chat-reaction comment-chat">' +
           // '                          <div class="mr-75">' +
-          // '                            <img src="./images/icons/retweet.svg" />' +
+          // '                            <img src="./images/icons/rechat.svg" />' +
           // "                          </div>" +
           // "                          <span>10.9k</span>" +
           "                        </div>" +
           "" +
-          '                        <div class="tweet-reaction like-tweet">' +
+          '                        <div class="chat-reaction like-chat">' +
           '                          <div class="mr-75">' +
           '                            <img src="./images/icons/heart.svg" />' +
           "                          </div>" +
@@ -139,7 +141,7 @@ function get_all_jots() {
           "</span>" +
           "                        </div>" +
           "" +
-          '                        <div class="tweet-reaction comment-tweet">' +
+          '                        <div class="chat-reaction comment-chat">' +
           '                          <div class="mr-75">' +
           '                            <img src="./images/icons/share.svg" />' +
           "                          </div>" +
@@ -149,16 +151,14 @@ function get_all_jots() {
           "                  </div>" +
           "                </div>";
       });
-      $("#tweetsWrapper").append(jotHTML);
+      $("#chatsWrapper").append(jotHTML);
     }
   });
-}
-
-get_all_jots();
+};
 
 // get Jot by id
 function get_jot_by_id(jotID) {
-  let requestURL = baseURL + "/v1/jots" + jotID;
+  let requestURL = "/v1/jots" + jotID;
   $.get(requestURL, function (response, status) {
     if (status == "success") {
       jot = response;
@@ -166,6 +166,8 @@ function get_jot_by_id(jotID) {
       let jotLikes = jot.likes;
       let jotMessage = jot.message;
       let userID = jot.userID;
+
+      location.reload();
     }
   });
 }
@@ -174,7 +176,7 @@ function get_jot_by_id(jotID) {
 $("#postJot").submit(function (event) {
   event.preventDefault();
   let jotMessage = $("[name='description']").val();
-  let requestURL = baseURL + "/v1/jots";
+  let requestURL = "/v1/jots";
   var settings = {
     url: requestURL,
     method: "POST",
@@ -189,15 +191,18 @@ $("#postJot").submit(function (event) {
 
   $.ajax(settings).done(function (response) {
     console.log(response);
-    $("#newTweet").modal("hide");
+    $("#newChat").modal("hide");
+    location.reload();
   });
+
+
 });
 
 //   Delete a jot
-$(document).on("click", ".delete-tweet", function (event) {
+$(document).on("click", ".delete-chat", function (event) {
   event.preventDefault();
-  let jotID = $(this).data("tweet-id");
-  let requestURL = baseURL + "/v1/jots/" + jotID;
+  let jotID = $(this).data("chat-id");
+  let requestURL = "/v1/jots/" + jotID;
   var settings = {
     url: requestURL,
     method: "DELETE",
@@ -205,14 +210,17 @@ $(document).on("click", ".delete-tweet", function (event) {
   };
   $.ajax(settings).done(function (response) {
     console.log(response);
+    location.reload();
   });
+
+
 });
 
 //   Unlike a jot
-$(document).on("click", ".dislike-tweet", function (event) {
+$(document).on("click", ".dislike-chat", function (event) {
   event.preventDefault();
-  let jotID = $(this).closest(".single-tweet").data("tweet-id");
-  let requestURL = baseURL + "/v1/jots/" + jotID + "/like";
+  let jotID = $(this).closest(".single-chat").data("chat-id");
+  let requestURL = "/v1/jots/" + jotID + "/like";
   var settings = {
     url: requestURL,
     method: "DELETE",
@@ -220,14 +228,17 @@ $(document).on("click", ".dislike-tweet", function (event) {
   };
   $.ajax(settings).done(function (response) {
     console.log(response);
+    location.reload();
   });
+
+
 });
 
 //   Like a jot
-$(document).on("click", ".like-tweet", function (event) {
+$(document).on("click", ".like-chat", function (event) {
   event.preventDefault();
-  let jotID = $(this).closest(".single-tweet").data("tweet-id");
-  let requestURL = baseURL + "/v1/jots/" + jotID + "/like";
+  let jotID = $(this).closest(".single-chat").data("chat-id");
+  let requestURL = "/v1/jots/" + jotID + "/like";
   var settings = {
     url: requestURL,
     method: "GET",
@@ -235,12 +246,13 @@ $(document).on("click", ".like-tweet", function (event) {
   };
   $.ajax(settings).done(function (response) {
     console.log(response);
+    location.reload();
   });
 });
 
 //   Get the users that like a jot.
 function get_users_by_liked(jotID) {
-  let requestURL = baseURL + "/v1/jots/" + jotID + "/likes";
+  let requestURL = "/v1/jots/" + jotID + "/likes";
   $.get(requestURL, function (response, status) {
     if (status == "success") {
       data = response;
@@ -249,7 +261,23 @@ function get_users_by_liked(jotID) {
         let handle = user.handle;
         let userID = user.id;
       });
+      location.reload();
     }
   });
-}
-// });
+};
+
+
+//   Get the logged in user
+function get_loggedin_user() {
+  let requestURL = "/v1/users/me";
+  $.get(requestURL, function (response, status) {
+    if (status == "success") {
+      data = response;
+      let userhtml = "";
+      let handle = data.handle;
+      let userID = data.id;
+      userhtml += '<p class="mb-0"><strong>' + handle + '</strong></p><p class="mb-0">@' + handle + '</p>';
+      $("#userinfo").append(userhtml);
+    }
+  });
+};

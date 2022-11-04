@@ -44,11 +44,11 @@ h6 {
 }
 
 /* dropdown */
-.single-tweet .dropdown {
+.single-chat .dropdown {
   cursor: pointer;
 }
 
-.single-tweet .dropdown-menu.show {
+.single-chat .dropdown-menu.show {
   left: unset !important;
   right: 0 !important;
 }
@@ -355,7 +355,7 @@ header {
   z-index: 99;
 }
 
-.top-tweets {
+.top-chats {
   cursor: pointer;
   width: 36px;
   height: 36px;
@@ -365,69 +365,69 @@ header {
   align-items: center;
 }
 
-.top-tweets:hover {
+.top-chats:hover {
   background-color: var(--primary-opacity);
 }
 
-.single-tweet {
+.single-chat {
   position: relative;
   padding: 1rem 1rem 0;
   border-bottom: var(--border);
   transition: var(--transition);
 }
 
-.single-tweet:hover {
+.single-chat:hover {
   background-color: #eff1f1;
 }
 
-.single-tweet--tweet-profile-icon {
+.single-chat--chat-profile-icon {
   width: 64px;
 }
 
-.single-tweet--tweet-profile-icon img {
+.single-chat--chat-profile-icon img {
   width: 3rem;
   height: 3rem;
   object-fit: cover;
   border-radius: var(--border-radius);
 }
 
-.tweet-head--left>div {
+.chat-head--left>div {
   padding-left: 0.5rem;
 }
 
-.tweet-head h4 {
+.chat-head h4 {
   font-weight: 600;
 }
 
-.single-tweet--tweet-content {
+.single-chat--chat-content {
   width: calc(100% - 64px);
 }
 
-.tweet-footer {
+.chat-footer {
   padding: 1rem 0;
 }
 
-.tweet-reaction {
+.chat-reaction {
   display: flex;
   cursor: pointer;
 }
 
-.tweet-reaction img {
+.chat-reaction img {
   width: 1rem;
   max-height: 1rem;
 }
 
-.tweet-image,
-.tweet-video {
+.chat-image,
+.chat-video {
   padding-top: 1rem;
 }
 
-.tweet-video--wrapper {
+.chat-video--wrapper {
   line-height: 0;
 }
 
-.tweet-image--wrapper img,
-.tweet-video--wrapper video {
+.chat-image--wrapper img,
+.chat-video--wrapper video {
   border-radius: 1rem;
 }
 
@@ -481,21 +481,21 @@ aside {
   padding: 0;
 }
 
-/* New tweet */
-.new-tweet--profile-img img {
+/* New chat */
+.new-chat--profile-img img {
   border-radius: 50px;
   object-fit: cover;
 }
 
-.new-tweet-content {
+.new-chat-content {
   width: calc(100% - 64px);
 }
 
-.new-tweet--profile-img {
+.new-chat--profile-img {
   margin-right: 18px;
 }
 
-.new-tweet-content select {
+.new-chat-content select {
   border-radius: 50px;
   border-color: rgb(100 116 139 / 20%);
   padding: 4px;
@@ -504,7 +504,7 @@ aside {
   outline: none !important;
 }
 
-.tweet-textarea textarea {
+.chat-textarea textarea {
   width: 100%;
   border: 0;
   min-height: 100px;
@@ -512,28 +512,28 @@ aside {
   outline: none !important;
 }
 
-.new-tweet--footer {
+.new-chat--footer {
   border-top: var(--border);
   margin-top: 1rem;
   padding-top: 1rem;
 }
 
-.new-tweet-action:not(:last-child) {
+.new-chat-action:not(:last-child) {
   margin-right: 1rem;
 }
 
-.new-tweet-action img {
+.new-chat-action img {
   width: 14px;
   max-height: 14px;
 }
 
-/* View tweet */
+/* View chat */
 .w-48 {
   width: 48px !important;
   height: 48px !important;
 }
 
-.tweet-stats.d-flex {
+.chat-stats.d-flex {
   width: 100%;
   border-top: var(--border);
   border-bottom: var(--border);
@@ -541,11 +541,11 @@ aside {
   margin-top: 1rem;
 }
 
-.tweet-stat:not(:last-child) {
+.chat-stat:not(:last-child) {
   margin-right: 3rem;
 }
 
-.replay-tweet-wrapper {
+.replay-chat-wrapper {
   border-bottom: var(--border);
 }
 

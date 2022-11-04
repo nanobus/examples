@@ -90,6 +90,23 @@ impl UserStoreComponent {
 
         Ok(Mono::from_future(async move { rx.await? }))
     }
+
+    fn get_five_wrapper(input: IncomingMono) -> Result<OutgoingMono, GenericError> {
+        let (tx, rx) = runtime::oneshot();
+
+        let input = Mono::from_future(input.map(|r| r.map(|v| Ok(deserialize(&v.data)?))?));
+        let task = UserStoreComponent::get_five(input)
+            .map(|result| {
+                let output = result?;
+                Ok(serialize(&output)
+                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+            })
+            .map(|output| tx.send(output).unwrap());
+
+        spawn(task);
+
+        Ok(Mono::from_future(async move { rx.await? }))
+    }
 }
 
 #[async_trait::async_trait(?Send)]
@@ -110,6 +127,10 @@ pub(crate) trait UserStoreService {
     async fn find_by_handle(
         inputs: Mono<user_store_service::find_by_handle::Inputs, PayloadError>,
     ) -> Result<user_store_service::find_by_handle::Outputs, GenericError>;
+
+    async fn get_five(
+        inputs: Mono<user_store_service::get_five::Inputs, PayloadError>,
+    ) -> Result<user_store_service::get_five::Outputs, GenericError>;
 }
 
 pub mod user_store_service {
@@ -155,6 +176,14 @@ pub mod user_store_service {
 
         pub(crate) type Outputs = User;
     }
+
+    pub mod get_five {
+        use super::*;
+        #[derive(serde::Deserialize, Debug)]
+        pub(crate) struct Inputs {}
+
+        pub(crate) type Outputs = Box<dyn Stream<Item = User>>;
+    }
 }
 
 /// User record
@@ -191,5 +220,11 @@ pub(crate) fn init_exports() {
         "nanochat.io.user.v1.UserStore",
         "findByHandle",
         UserStoreComponent::find_by_handle_wrapper,
+    );
+
+    wasmrs_guest::register_request_response(
+        "nanochat.io.user.v1.UserStore",
+        "getFive",
+        UserStoreComponent::get_five_wrapper,
     );
 }
