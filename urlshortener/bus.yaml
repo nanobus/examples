@@ -250,6 +250,7 @@ providers:
             data: |
               {
                 "type": "url.created.v1",
+                "source": "urlshortener",
                 "data": input
               }
             codec: cloudevents+json
