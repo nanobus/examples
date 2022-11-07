@@ -84,7 +84,7 @@ services:
       CANDLE_DB_TYPE: postgres
       CANDLE_DB_USER: postgres
       CANDLE_DB_PASSWORD: postgres
-      CANDLE_DB_HOSTNAME: localhost
+      CANDLE_DB_HOSTNAME: postgres
       CANDLE_DB_PORT: 5432
       CANDLE_DB_PARAMS: 'sslmode=disable'
       JAEGER_TRACE_ENDPOINT: http://jaeger:14268/api/traces
