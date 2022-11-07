@@ -7,14 +7,14 @@ migrate:
   likedb:
     uses: postgres
     with:
-      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_like
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_like?${env:CANDLE_DB_PARAMS}
       directory: sql
 
 resources:
   likedb:
     uses: postgres
     with:
-      url: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_like
+      url: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_like?${env:CANDLE_DB_PARAMS}
 
 resiliency:
   retries:
