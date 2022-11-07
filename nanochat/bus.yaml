@@ -49,22 +49,22 @@ migrate:
   followdb:
     uses: postgres
     with:
-      dataSource: ${env:IOTA_FOLLOW_DB}
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_follow?${env:CANDLE_DB_PARAMS}
       directory: iotas/follow/sql
   likedb:
     uses: postgres
     with:
-      dataSource: ${env:IOTA_LIKE_DB}
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_like?${env:CANDLE_DB_PARAMS}
       directory: iotas/like/sql
   messagedb:
     uses: postgres
     with:
-      dataSource: ${env:IOTA_MESSAGE_DB}
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_message?${env:CANDLE_DB_PARAMS}
       directory: iotas/message/sql
   userdb:
     uses: postgres
     with:
-      dataSource: ${env:IOTA_USER_DB}
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_user?${env:CANDLE_DB_PARAMS}
       directory: iotas/user/sql
 
 filters:
@@ -83,7 +83,7 @@ filters:
         debug: true
 
 services:
-  'nanochat.io.v1.jots.Jots':
+  "nanochat.io.v1.jots.Jots":
     postJot:
       steps:
         - name: Authorize
@@ -110,7 +110,7 @@ services:
             has: [sub]
         - name: Invoke
           uses: invoke
-    
+
     like:
       steps:
         - name: Authorize
@@ -119,7 +119,7 @@ services:
             has: [sub]
         - name: Invoke
           uses: invoke
-    
+
     unlike:
       steps:
         - name: Authorize
@@ -129,7 +129,7 @@ services:
         - name: Invoke
           uses: invoke
 
-  'nanochat.io.v1.jots.Users':
+  "nanochat.io.v1.jots.Users":
     me:
       steps:
         - name: Authorize
@@ -204,10 +204,10 @@ pipelines:
             - refresh_token
             - token_type
 
-tracing:
-  uses: jaeger
-  with:
-    collectorEndpoint: ${env:JAEGER_TRACE_ENDPOINT}
+# tracing:
+#   uses: jaeger
+#   with:
+#     collectorEndpoint: ${env:JAEGER_TRACE_ENDPOINT}
 
 # For example purposes, we are importing from the filesystem.
 # In a real-world scenario, these IOta dependencies

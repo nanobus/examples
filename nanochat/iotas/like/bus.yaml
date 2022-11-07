@@ -7,14 +7,14 @@ migrate:
   likedb:
     uses: postgres
     with:
-      dataSource: ${env:IOTA_LIKE_DB}
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_like?${env:CANDLE_DB_PARAMS}
       directory: sql
 
 resources:
   likedb:
     uses: postgres
     with:
-      url: ${env:IOTA_LIKE_DB}
+      url: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_like?${env:CANDLE_DB_PARAMS}
 
 resiliency:
   retries:
@@ -28,7 +28,7 @@ resiliency:
       duration: 3s
 
 providers:
-  'nanochat.io.like.v1.LikeStore':
+  "nanochat.io.like.v1.LikeStore":
     like:
       steps:
         - name: Store like

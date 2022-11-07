@@ -565,3 +565,14 @@ aside {
     width: 30%;
   }
 }
+
+/* fix sidebar height on mobile */
+@media only screen and (max-width: 991px) {
+  .main-section {
+    min-height: 35vh;
+  }
+
+  header {
+    height: 25vh;
+  }
+}
