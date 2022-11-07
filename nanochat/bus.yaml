@@ -49,22 +49,22 @@ migrate:
   followdb:
     uses: postgres
     with:
-      dataSource: ${env:IOTA_FOLLOW_DB}
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_follow
       directory: iotas/follow/sql
   likedb:
     uses: postgres
     with:
-      dataSource: ${env:IOTA_LIKE_DB}
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_like
       directory: iotas/like/sql
   messagedb:
     uses: postgres
     with:
-      dataSource: ${env:IOTA_MESSAGE_DB}
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_message
       directory: iotas/message/sql
   userdb:
     uses: postgres
     with:
-      dataSource: ${env:IOTA_USER_DB}
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_user
       directory: iotas/user/sql
 
 filters:
@@ -204,10 +204,10 @@ pipelines:
             - refresh_token
             - token_type
 
-tracing:
-  uses: jaeger
-  with:
-    collectorEndpoint: ${env:JAEGER_TRACE_ENDPOINT}
+# tracing:
+#   uses: jaeger
+#   with:
+#     collectorEndpoint: ${env:JAEGER_TRACE_ENDPOINT}
 
 # For example purposes, we are importing from the filesystem.
 # In a real-world scenario, these IOta dependencies

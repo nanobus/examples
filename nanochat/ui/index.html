@@ -1,41 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Nanochat</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" href="./images/logo/favicon.png" />
 
-    <link rel="stylesheet" href="./css/bootstrap.min.css" />
-    <link rel="stylesheet" href="./css/style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <script src="./js/jquery.min.js"></script>
-  </head>
-  <body onload="redirect_to_home()">
-    <!-- Login Container -->
-    <div class="container">
-      <div
-        class="login-prompt text-center p-5 d-flex justify-content-center align-items-center"
-      >
-        <div class="login-prompt-wrapper">
-          <div class="login-prompt--header">
-            <img src="./images/logo/candle-logo.png" width="" />
-          </div>
-          <div class="login-prompt--btn mt-5">
-            <a href="http://localhost:8080/oauth/login" class="btn btn-primary">Login</a>
-            <p class="mb-0 mt-3">Please login to your account</p>
-          </div>
+<head>
+  <title>Nanochat</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" href="./images/logo/favicon.png" />
+
+  <link rel="stylesheet" href="./css/bootstrap.min.css" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <script src="./js/jquery.min.js"></script>
+</head>
+
+<body onload="redirect_to_home()">
+  <!-- Login Container -->
+  <div class="container">
+    <div class="login-prompt text-center p-5 d-flex justify-content-center align-items-center">
+      <div class="login-prompt-wrapper">
+        <div class="login-prompt--header">
+          <img src="./images/logo/candle-logo.png" width="" />
+        </div>
+        <div class="login-prompt--btn mt-5">
+          <a href="/oauth/login" class="btn btn-primary">Login</a>
+          <p class="mb-0 mt-3">Please login to your account</p>
         </div>
       </div>
     </div>
+  </div>
 
-    <script src="./js/popper.min.js"></script>
-    <script src="./js/bootstrap.min.js"></script>
-    <script src="./js/lib.js"></script>
-  </body>
+  <script src="./js/popper.min.js"></script>
+  <script src="./js/bootstrap.min.js"></script>
+  <script src="./js/lib.js"></script>
+</body>
+
 </html>

@@ -7,14 +7,14 @@ migrate:
   followdb:
     uses: postgres
     with:
-      dataSource: ${env:IOTA_FOLLOW_DB}
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_follow
       directory: sql
 
 resources:
   followdb:
     uses: postgres
     with:
-      url: ${env:IOTA_FOLLOW_DB}
+      url: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_follow
 
 resiliency:
   retries:
@@ -28,7 +28,7 @@ resiliency:
       duration: 3s
 
 providers:
-  'nanochat.io.follows.v1.FollowStore':
+  "nanochat.io.follows.v1.FollowStore":
     load:
       steps:
         - name: Lookup user by ID
@@ -44,7 +44,7 @@ providers:
               - input.userId
           # retry: database
           # circuitBreaker: database
-    
+
     getMultiple:
       steps:
         - name: Lookup multiple users by ID

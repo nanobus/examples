@@ -7,14 +7,14 @@ migrate:
   messagedb:
     uses: postgres
     with:
-      dataSource: ${env:IOTA_MESSAGE_DB}
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_message
       directory: sql
 
 resources:
   messagedb:
     uses: postgres
     with:
-      url: ${env:IOTA_MESSAGE_DB}
+      url: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_message
 
 resiliency:
   retries:
@@ -28,7 +28,7 @@ resiliency:
       duration: 3s
 
 providers:
-  'nanochat.io.messsage.v1.MessageStore':
+  "nanochat.io.messsage.v1.MessageStore":
     store:
       steps:
         - name: Store a tweet.
@@ -115,7 +115,7 @@ providers:
               - input.before
           # retry: database
           # circuitBreaker: database
-  
+
     getUserMessages:
       steps:
         - name: Get a user's message timeline.

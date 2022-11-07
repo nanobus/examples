@@ -7,14 +7,14 @@ migrate:
   userdb:
     uses: postgres
     with:
-      dataSource: ${env:IOTA_USER_DB}
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_user
       directory: sql
 
 resources:
   userdb:
     uses: postgres
     with:
-      url: ${env:IOTA_USER_DB}
+      url: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_user
 
 resiliency:
   retries:
