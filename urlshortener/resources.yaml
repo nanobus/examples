@@ -4,6 +4,11 @@ resources:
     with:
       url: ${env:URLSHORTENER_DB}
 
+  # dapr:
+  #   uses: dapr/connection
+  #   with:
+  #     address: :19090
+
   # kafka:
   #   uses: dapr/pubsub.pluggable.v1
   #   with:
