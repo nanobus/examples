@@ -11,5 +11,7 @@
             }
         ],
         "scanLimit": 200
-    }
+    },
+    "deno.enable": true,
+    "deno.unstable": true
 }

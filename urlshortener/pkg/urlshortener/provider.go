@@ -6,12 +6,12 @@ import (
 	"context"
 	"encoding/binary"
 
+	"github.com/nanobus/iota/go/invoke"
 	"github.com/nanobus/iota/go/msgpack"
-	"github.com/nanobus/iota/go/wasmrs/invoke"
-	"github.com/nanobus/iota/go/wasmrs/payload"
-	"github.com/nanobus/iota/go/wasmrs/proxy"
-	"github.com/nanobus/iota/go/wasmrs/rx/mono"
-	"github.com/nanobus/iota/go/wasmrs/transform"
+	"github.com/nanobus/iota/go/payload"
+	"github.com/nanobus/iota/go/proxy"
+	"github.com/nanobus/iota/go/rx/mono"
+	"github.com/nanobus/iota/go/transform"
 )
 
 var (
@@ -50,9 +50,9 @@ func (r *RepositoryImpl) LoadByID(ctx context.Context, id string) mono.Mono[URL]
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestResponse(ctx, p)
-	return mono.Map(m, transform.MsgPackDecode[URL])
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestResponse(ctx, pl)
+	return mono.Map(future, transform.MsgPackDecode[URL])
 }
 
 func (r *RepositoryImpl) LoadByURL(ctx context.Context, url string) mono.Mono[URL] {
@@ -69,9 +69,9 @@ func (r *RepositoryImpl) LoadByURL(ctx context.Context, url string) mono.Mono[UR
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestResponse(ctx, p)
-	return mono.Map(m, transform.MsgPackDecode[URL])
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestResponse(ctx, pl)
+	return mono.Map(future, transform.MsgPackDecode[URL])
 }
 
 func (r *RepositoryImpl) StoreURL(ctx context.Context, url *URL) mono.Void {
@@ -85,7 +85,7 @@ func (r *RepositoryImpl) StoreURL(ctx context.Context, url *URL) mono.Void {
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
-	p := payload.New(payloadData, metadata[:])
-	m := gCaller.RequestResponse(ctx, p)
-	return mono.Map(m, transform.Void.Decode)
+	pl := payload.New(payloadData, metadata[:])
+	future := gCaller.RequestResponse(ctx, pl)
+	return mono.Map(future, transform.Void.Decode)
 }
