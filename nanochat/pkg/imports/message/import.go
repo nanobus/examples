@@ -8,13 +8,13 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/nanobus/iota/go/invoke"
 	"github.com/nanobus/iota/go/msgpack"
-	"github.com/nanobus/iota/go/wasmrs/invoke"
-	"github.com/nanobus/iota/go/wasmrs/payload"
-	"github.com/nanobus/iota/go/wasmrs/proxy"
-	"github.com/nanobus/iota/go/wasmrs/rx/flux"
-	"github.com/nanobus/iota/go/wasmrs/rx/mono"
-	"github.com/nanobus/iota/go/wasmrs/transform"
+	"github.com/nanobus/iota/go/payload"
+	"github.com/nanobus/iota/go/proxy"
+	"github.com/nanobus/iota/go/rx/flux"
+	"github.com/nanobus/iota/go/rx/mono"
+	"github.com/nanobus/iota/go/transform"
 )
 
 var (

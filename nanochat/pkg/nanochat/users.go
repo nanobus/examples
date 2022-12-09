@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/nanobus/iota/go/wasmrs/await"
-	"github.com/nanobus/iota/go/wasmrs/flow"
-	"github.com/nanobus/iota/go/wasmrs/rx/flux"
-	"github.com/nanobus/iota/go/wasmrs/rx/mono"
+	"github.com/nanobus/iota/go/rx/await"
+	"github.com/nanobus/iota/go/rx/flow"
+	"github.com/nanobus/iota/go/rx/flux"
+	"github.com/nanobus/iota/go/rx/mono"
 
 	"github.com/nanobus/examples/nanochat/pkg/imports/follow"
 	"github.com/nanobus/examples/nanochat/pkg/imports/like"

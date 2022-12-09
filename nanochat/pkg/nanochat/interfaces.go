@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/nanobus/iota/go/wasmrs/rx/mono"
+	"github.com/nanobus/iota/go/rx/mono"
 )
 
 type ns struct{}

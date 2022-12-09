@@ -1,7 +1,7 @@
 specs:
   - uses: apex
     with:
-      filename: apex.aidl
+      filename: apex.axdl
 
 migrate:
   messagedb:

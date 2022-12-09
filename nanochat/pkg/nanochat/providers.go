@@ -3,7 +3,7 @@
 package nanochat
 
 import (
-	"github.com/nanobus/iota/go/wasmrs/invoke"
+	"github.com/nanobus/iota/go/invoke"
 )
 
 var (

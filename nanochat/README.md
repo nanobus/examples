@@ -19,7 +19,7 @@ p: bar
 | :------------------ | :--------------------------------- |
 | bus.yaml            | [Nanobus] nanochat configuration   |
 | iotas/jot           | jot API [iOTA]                     |
-| iotas/jot/apex.aidl | [apexlang.io] jot [AIDL]           |
+| iotas/jot/apex.axdl | [apexlang.io] jot [AIDL]           |
 | iotas/jot/apex.yaml | [apexlang.io] jot configuration    |
 | iotas/jot/bus.yaml  | [Nanobus] nano API configuration   |
 | ops                 | Operational utils including Docker |

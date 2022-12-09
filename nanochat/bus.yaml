@@ -12,7 +12,7 @@ compute:
 specs:
   - uses: apex
     with:
-      filename: apex.aidl
+      filename: apex.axdl
 
 transports:
   rest:
