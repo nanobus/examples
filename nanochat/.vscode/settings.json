@@ -1,3 +1,5 @@
 {
-  "task.allowAutomaticTasks": "on"
+  "task.allowAutomaticTasks": "on",
+  "deno.enable": true,
+  "deno.unstable": true
 }

@@ -1,73 +1,65 @@
-specs:
-  - uses: apex
-    with:
-      filename: apex.axdl
-
-migrate:
-  followdb:
-    uses: postgres
-    with:
-      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_follow?${env:CANDLE_DB_PARAMS}
-      directory: sql
-
+id: follow
+version: 0.0.1
+spec: apex.axdl
 resources:
-  followdb:
-    uses: postgres
-    with:
-      url: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_follow?${env:CANDLE_DB_PARAMS}
-
+  - followdb
+includes: []
 resiliency:
+  timeouts: {}
   retries:
     database:
-      policy: constant
-      duration: 3s
-
+      constant:
+        duration: 3s
   circuitBreakers:
-    database:
-      policy: constant
-      duration: 3s
-
-providers:
-  "nanochat.io.follows.v1.FollowStore":
+    database: {}
+initializers:
+  followdb:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: '${env:FOLLOW_DB}'
+      directory: sql
+transports: {}
+preauth: {}
+authorization: {}
+postauth: {}
+interfaces:
+  nanochat.io.follows.v1.FollowStore:
     load:
       steps:
         - name: Lookup user by ID
-          uses: "@postgres/query"
+          uses: '@postgres/query'
           with:
             single: true
             resource: followdb
-            sql: |
+            sql: |-
+
               SELECT u.id, u.followers, u.follows
               FROM follow_user u
               WHERE id = $1
             args:
               - input.userId
-          # retry: database
-          # circuitBreaker: database
-
     getMultiple:
       steps:
         - name: Lookup multiple users by ID
-          uses: "@postgres/query"
+          uses: '@postgres/query'
           with:
             resource: followdb
-            sql: |
+            sql: |-
+
               SELECT u.id, u.followers, u.follows
               FROM follow_user u
               WHERE id = any($1)
             args:
               - input.userIds
-          # retry: database
-          # circuitBreaker: database
-
     isFollowing:
       steps:
-        - name: Store follower
-          uses: "@postgres/query"
+        - name: Lookup user by ID
+          uses: '@postgres/query'
           with:
             single: true
             resource: followdb
-            sql: |
+            sql: |-
+
               SELECT EXISTS (
                 SELECT *
                 FROM follow
@@ -78,48 +70,42 @@ providers:
               - claims.sub
               - input.userId
           returns: exists
-          # retry: database
-          # circuitBreaker: database
         - name: Return boolean
           uses: assign
           with:
             value: exists.following
-
     follow:
       steps:
         - name: Store follower
-          uses: "@postgres/exec"
+          uses: '@postgres/exec'
           with:
             resource: followdb
-            sql: |
+            sql: |-
+
               SELECT fn_follow($1, $2) as success;
             args:
               - claims.sub
               - input.followedId
-          # retry: database
-          # circuitBreaker: database
-
     unfollow:
       steps:
         - name: Delete follower
-          uses: "@postgres/exec"
+          uses: '@postgres/exec'
           with:
             resource: followdb
-            sql: |
+            sql: |-
+
               SELECT fn_unfollow($1, $2) as success;
             args:
               - claims.sub
               - input.followedId
-          # retry: database
-          # circuitBreaker: database
-
     fetchFollowers:
       steps:
         - name: Fetch followers
-          uses: "@postgres/query"
+          uses: '@postgres/query'
           with:
             resource: followdb
-            sql: |
+            sql: |-
+
               SELECT u.id, f.time
               FROM follow_user u
               JOIN follow f ON u.id = f.follower
@@ -131,16 +117,14 @@ providers:
               - input.userId
               - input.offset
               - input.limit
-          # retry: database
-          # circuitBreaker: database
-
     fetchFollows:
       steps:
         - name: Fetch follows
-          uses: "@postgres/query"
+          uses: '@postgres/query'
           with:
             resource: followdb
-            sql: |
+            sql: |-
+
               SELECT u.id, f.time
               FROM follow_user u
               JOIN follow f ON u.id = f.follows
@@ -152,21 +136,19 @@ providers:
               - input.userId
               - input.offset
               - input.limit
-          # retry: database
-          # circuitBreaker: database
-
     myFollows:
       steps:
-        - name: Fetch follows
-          uses: "@postgres/query"
+        - name: Fetch my follows
+          uses: '@postgres/query'
           with:
             resource: followdb
-            sql: |
+            sql: |-
+
               SELECT u.id, f.time
               FROM follow_user u
               JOIN follow f ON u.id = f.follows
               WHERE f.follower = $1
             args:
               - claims.sub
-          # retry: database
-          # circuitBreaker: database
+providers: {}
+errors: {}

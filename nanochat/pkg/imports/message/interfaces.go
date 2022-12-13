@@ -14,7 +14,7 @@ import (
 type ns struct{}
 
 func (n *ns) Namespace() string {
-	return "nanochat.io.messsage.v1"
+	return "nanochat.io.message.v1"
 }
 
 type MessageStore interface {

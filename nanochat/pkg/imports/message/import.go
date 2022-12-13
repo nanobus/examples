@@ -36,12 +36,12 @@ type MessageStoreImpl struct {
 
 func NewMessageStore() *MessageStoreImpl {
 	return &MessageStoreImpl{
-		opStore:           invoke.ImportRequestResponse("nanochat.io.messsage.v1.MessageStore", "store"),
-		opLoad:            invoke.ImportRequestResponse("nanochat.io.messsage.v1.MessageStore", "load"),
-		opDelete:          invoke.ImportRequestResponse("nanochat.io.messsage.v1.MessageStore", "delete"),
-		opMyMessages:      invoke.ImportRequestStream("nanochat.io.messsage.v1.MessageStore", "myMessages"),
-		opGetFeed:         invoke.ImportRequestStream("nanochat.io.messsage.v1.MessageStore", "getFeed"),
-		opGetUserMessages: invoke.ImportRequestStream("nanochat.io.messsage.v1.MessageStore", "getUserMessages"),
+		opStore:           invoke.ImportRequestResponse("nanochat.io.message.v1.MessageStore", "store"),
+		opLoad:            invoke.ImportRequestResponse("nanochat.io.message.v1.MessageStore", "load"),
+		opDelete:          invoke.ImportRequestResponse("nanochat.io.message.v1.MessageStore", "delete"),
+		opMyMessages:      invoke.ImportRequestStream("nanochat.io.message.v1.MessageStore", "myMessages"),
+		opGetFeed:         invoke.ImportRequestStream("nanochat.io.message.v1.MessageStore", "getFeed"),
+		opGetUserMessages: invoke.ImportRequestStream("nanochat.io.message.v1.MessageStore", "getUserMessages"),
 	}
 }
 

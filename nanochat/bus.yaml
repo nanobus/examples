@@ -1,236 +1,211 @@
-application:
-  id: nanochat
-  version: 0.0.1
-  environment: local
-
-compute:
-  - uses: wasmrs
-    with:
-      filename: build/jot-go.wasm
-      # filename: build/jot-rust.wasm
-
-specs:
-  - uses: apex
-    with:
-      filename: apex.axdl
-
-transports:
-  rest:
-    uses: rest
-    with:
-      address: :8080
-      static:
-        - path: /
-          dir: ui
-      routes:
-        - uses: oauth2
-          with:
-            clientId: ${env:OAUTH_CLIENT_ID}
-            clientSecret: ${env:OAUTH_CLIENT_SECRET}
-            endpoint:
-              authUrl: ${env:OAUTH_AUTH_URL}
-              tokenUrl: ${env:OAUTH_TOKEN_URL}
-              userInfoUrl: ${env:USERINFO_URL}
-              authStyle: inheader
-            redirectUrl: ${env:OAUTH_REDIRECT_URL}
-            pipeline: storeSession
-            scopes: ${env:OAUTH_SCOPES}
-            debug: true
-      documentation:
-        swaggerUI: true
-        postman: true
-        restClient: true
-  httprpc:
-    uses: httprpc
-    with:
-      address: :9090
-
-migrate:
+id: nanochat
+version: 0.0.1
+spec: apex.axdl
+main: build/jot-go.wasm
+resources:
+  - followdb
+  - likedb
+  - messagedb
+  - userdb
+includes:
+  - ref: iotas/follow
+    resourceLinks:
+      followdb: followdb
+  - ref: iotas/like
+    resourceLinks:
+      likedb: likedb
+  - ref: iotas/message
+    resourceLinks:
+      messagedb: messagedb
+  - ref: iotas/user
+    resourceLinks:
+      userdb: userdb
+resiliency:
+  timeouts: {}
+  retries: {}
+  circuitBreakers: {}
+initializers:
   followdb:
-    uses: postgres
+    uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_follow?${env:CANDLE_DB_PARAMS}
+      dataSource: '${env:FOLLOW_DB}'
       directory: iotas/follow/sql
   likedb:
-    uses: postgres
+    uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_like?${env:CANDLE_DB_PARAMS}
+      dataSource: '${env:LIKE_DB}'
       directory: iotas/like/sql
   messagedb:
-    uses: postgres
+    uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_message?${env:CANDLE_DB_PARAMS}
+      dataSource: '${env:MESSAGE_DB}'
       directory: iotas/message/sql
-  userdb:
-    uses: postgres
+  user:
+    uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_user?${env:CANDLE_DB_PARAMS}
+      dataSource: '${env:USER_DB}'
       directory: iotas/user/sql
-
-filters:
+transports:
   http:
-    - uses: session
-      with:
-        pipeline: getAccessToken
-        debug: true
-    - uses: userinfo
-      with:
-        userInfoUrl: ${env:USERINFO_URL}
-        debug: true
-    - uses: jwt
-      with:
-        jwksUrl: ${env:OAUTH_JWKS_URL}
-        debug: true
-
-services:
-  "nanochat.io.v1.jots.Jots":
+    uses: nanobus.transport.http.server/v1
+    with:
+      address: ':8080'
+      routes:
+        - uses: nanobus.transport.http.oauth2/v1
+          with:
+            clientId: '${env:OAUTH_CLIENT_ID}'
+            clientSecret: '${env:OAUTH_CLIENT_SECRET}'
+            endpoint:
+              authUrl: '${env:OAUTH_AUTH_URL}'
+              tokenUrl: '${env:OAUTH_TOKEN_URL}'
+              userInfoUrl: '${env:USERINFO_URL}'
+              authStyle: inheader
+            redirectUrl: '${env:OAUTH_REDIRECT_URL}'
+            handler: 'security::storeSession'
+            scopes:
+              - '${env:OAUTH_SCOPES}'
+        - uses: nanobus.transport.http.rest/v1
+          with:
+            documentation:
+              swaggerUI: true
+              postman: true
+              restClient: true
+        - uses: nanobus.transport.http.static/v1
+          with:
+            paths:
+              - dir: ui
+                path: /
+filters:
+  - uses: session
+    with:
+      pipeline: 'security::getAccessToken'
+  - uses: userinfo
+    with:
+      userInfoUrl: '${env:USERINFO_URL}'
+  - uses: jwt
+    with:
+      jwksUrl: '${env:OAUTH_JWKS_URL}'
+preauth: {}
+authorization:
+  nanochat.io.v1.jots.Jots:
     postJot:
-      steps:
-        - name: Authorize
-          uses: authorize
-          with:
-            has: [sub]
-        - name: Invoke
-          uses: invoke
-
+      has:
+        - sub
     getFeed:
-      steps:
-        - name: Authorize
-          uses: authorize
-          with:
-            has: [sub]
-        - name: Invoke
-          uses: invoke
-
+      has:
+        - sub
+    getJot:
+      unauthenticated: true
     deleteJot:
-      steps:
-        - name: Authorize
-          uses: authorize
-          with:
-            has: [sub]
-        - name: Invoke
-          uses: invoke
-
+      has:
+        - sub
     like:
-      steps:
-        - name: Authorize
-          uses: authorize
-          with:
-            has: [sub]
-        - name: Invoke
-          uses: invoke
-
+      has:
+        - sub
     unlike:
-      steps:
-        - name: Authorize
-          uses: authorize
-          with:
-            has: [sub]
-        - name: Invoke
-          uses: invoke
-
-  "nanochat.io.v1.jots.Users":
+      has:
+        - sub
+    likes:
+      unauthenticated: true
+  nanochat.io.v1.jots.Users:
     me:
-      steps:
-        - name: Authorize
-          uses: authorize
-          with:
-            has: [sub]
-        - name: Invoke
-          uses: invoke
-
+      has:
+        - sub
+    getProfile:
+      unauthenticated: true
+    getJots:
+      unauthenticated: true
     follow:
-      steps:
-        - name: Authorize
-          uses: authorize
-          with:
-            has: [sub]
-        - name: Invoke
-          uses: invoke
-
+      has:
+        - sub
     unfollow:
+      has:
+        - sub
+    getFollows:
+      unauthenticated: true
+    getFollowers:
+      unauthenticated: true
+postauth: {}
+interfaces: {}
+providers:
+  security:
+    getAccessToken:
       steps:
-        - name: Authorize
-          uses: authorize
+        - name: Select access token
+          uses: '@postgres/query'
           with:
-            has: [sub]
-        - name: Invoke
-          uses: invoke
+            resource: userdb
+            single: true
+            sql: |-
 
-pipelines:
-  getAccessToken:
-    steps:
-      - name: Select access token
-        uses: "@postgres/query"
-        with:
-          resource: userdb
-          single: true
-          sql: |
-            SELECT access_token, token_type
-            FROM "session"
-            WHERE sid = $1
-              AND expiry >= now()
-          args:
-            - sid
+              SELECT access_token, token_type
+              FROM "session"
+              WHERE sid = $1
+                AND expiry >= now()
+            args:
+              - sid
+    storeSession:
+      steps:
+        - name: Create user if none exists
+          uses: '@postgres/exec'
+          with:
+            resource: userdb
+            sql: |-
 
-  storeSession:
-    steps:
-      - name: Create user if none exists
-        uses: "@postgres/exec"
-        with:
-          resource: userdb
-          sql: |
-            INSERT INTO "user" (id, handle, email)
-            VALUES ($1, $2, $3)
-            ON CONFLICT DO NOTHING
-          args:
-            - claims.sub
-            - claims.${env:HANDLE_CLAIM}
-            - claims.email
-      - name: Create a session
-        uses: "@postgres/exec"
-        with:
-          resource: userdb
-          sql: |
-            INSERT INTO "session" (sid, uid, access_token, expiry, refresh_token, token_type)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            ON CONFLICT (sid) DO UPDATE
-            SET uid = $2, access_token = $3, expiry = $4, refresh_token = $5, token_type = $6
-          args:
-            - claims.sid
-            - claims.sub
-            - access_token
-            - expiry
-            - refresh_token
-            - token_type
+              INSERT INTO "user" (id, handle, email)
+              VALUES ($1, $2, $3)
+              ON CONFLICT DO NOTHING
+            args:
+              - claims.sub
+              - 'claims.${env:HANDLE_CLAIM}'
+              - claims.email
+        - name: Create a session
+          uses: '@postgres/exec'
+          with:
+            resource: userdb
+            sql: >-
 
-# tracing:
-#   uses: jaeger
-#   with:
-#     collectorEndpoint: ${env:JAEGER_TRACE_ENDPOINT}
+              INSERT INTO "session" (sid, uid, access_token, expiry,
+              refresh_token, token_type)
 
-# For example purposes, we are importing from the filesystem.
-# In a real-world scenario, these IOta dependencies
-# could be fetched from an OCI registry.
-import:
-  - iotas/follow/bus.yaml
-  - iotas/like/bus.yaml
-  - iotas/message/bus.yaml
-  - iotas/user/bus.yaml
+              VALUES ($1, $2, $3, $4, $5, $6)
 
+              ON CONFLICT (sid) DO UPDATE
+
+              SET uid = $2, access_token = $3, expiry = $4, refresh_token = $5,
+              token_type = $6
+            args:
+              - claims.sid
+              - claims.sub
+              - access_token
+              - expiry
+              - refresh_token
+              - token_type
 errors:
   not_found:
     type: NotFound
     code: not_found
-    title: Not found
-    message: id {{ .key }} is not found
+    title: Resource not found
+    message: 'Resource with id {{ .key }} was not found'
+  permission_denied:
+    type: PermissionDenied
+    code: permission_denied
+    title: Permission denied
+    message: >-
+      You don't have permission to access this resource or to perform the
+      operation.
+  unauthenticated:
+    type: Unauthenticated
+    code: unauthenticated
+    title: Unauthenticated
+    message: You must be logged in to perform the operation.
   user_not_found:
-    type: NotFound
+    type: UserNotFound
     code: not_found
-    title: Not found
-    message: User with handle {{ .handle }} is not found
+    title: User not found
+    message: 'User with handle {{ .handle }} is not found'
   jot_not_found:
-    type: NotFound
+    type: JotNotFound
     code: not_found
-    title: Not found
-    message: Jot with id {{ .messageId }} is not found
+    title: Jot not found
+    message: 'Jot with id {{ .messageId }} is not found'

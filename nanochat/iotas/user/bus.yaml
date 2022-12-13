@@ -1,104 +1,89 @@
-specs:
-  - uses: apex
-    with:
-      filename: apex.axdl
-
-migrate:
-  userdb:
-    uses: postgres
-    with:
-      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_user?${env:CANDLE_DB_PARAMS}
-      directory: sql
-
+id: like
+version: 0.0.1
+spec: apex.axdl
 resources:
-  userdb:
-    uses: postgres
-    with:
-      url: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_user?${env:CANDLE_DB_PARAMS}
-
+  - userdb
+includes: []
 resiliency:
+  timeouts: {}
   retries:
     database:
-      policy: constant
-      duration: 3s
-
+      constant:
+        duration: 3s
   circuitBreakers:
-    database:
-      policy: constant
-      duration: 3s
-
-providers:
-  "nanochat.io.user.v1.UserStore":
+    database: {}
+initializers:
+  userdb:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: '${env:USER_DB}'
+      directory: sql
+transports: {}
+preauth: {}
+authorization: {}
+postauth: {}
+interfaces:
+  nanochat.io.user.v1.UserStore:
     me:
       steps:
         - name: Loads my profile
-          uses: "@postgres/query"
+          uses: '@postgres/query'
           with:
-            single: true
             resource: userdb
-            sql: |
+            single: true
+            sql: |-
+
               SELECT * FROM "user"
               WHERE id = $1
             args:
               - claims.sub
-          # retry: database
-          # circuitBreaker: database
-
     load:
       steps:
         - name: Load a single user
-          uses: "@postgres/query"
+          uses: '@postgres/query'
           with:
-            single: true
             resource: userdb
-            sql: |
+            single: true
+            sql: |-
+
               SELECT * FROM "user"
               WHERE id = $1
             args:
               - input.userId
-          # retry: database
-          # circuitBreaker: database
-
-    getFive:
-      steps:
-        - name: Find five random users
-          uses: "@postgres/query"
-          with:
-            resource: userdb
-            sql: |
-              SELECT * FROM "user"
-              ORDER BY RAND()
-              LIMIT 5
-            args:
-              - input.userIds
-          # retry: database
-          # circuitBreaker: database
-
     getMultiple:
       steps:
         - name: Lookup many users
-          uses: "@postgres/query"
+          uses: '@postgres/query'
           with:
             resource: userdb
-            sql: |
+            sql: |-
+
               SELECT * FROM "user"
               WHERE id = any($1)
             args:
               - input.userIds
-          # retry: database
-          # circuitBreaker: database
-
     findByHandle:
       steps:
         - name: Lookup user by handle
-          uses: "@postgres/query"
+          uses: '@postgres/query'
           with:
-            single: true
             resource: userdb
-            sql: |
+            sql: |-
+
               SELECT * FROM "user"
               WHERE handle = $1
             args:
               - input.handle
-          # retry: database
-          # circuitBreaker: database
+    getFive:
+      steps:
+        - name: Find five random users
+          uses: '@postgres/query'
+          with:
+            resource: userdb
+            sql: |-
+
+              SELECT * FROM "user"
+              ORDER BY RAND()
+              LIMIT 5
+providers: {}
+errors: {}

@@ -1,0 +1,17 @@
+resources:
+  followdb:
+    uses: postgres
+    with:
+      url: ${env:FOLLOW_DB}
+  likedb:
+    uses: postgres
+    with:
+      url: ${env:LIKE_DB}
+  messagedb:
+    uses: postgres
+    with:
+      url: ${env:MESSAGE_DB}
+  userdb:
+    uses: postgres
+    with:
+      url: ${env:USER_DB}

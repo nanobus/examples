@@ -1,74 +1,66 @@
-specs:
-  - uses: apex
-    with:
-      filename: apex.axdl
-
-migrate:
-  messagedb:
-    uses: postgres
-    with:
-      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_message?${env:CANDLE_DB_PARAMS}
-      directory: sql
-
+id: message
+version: 0.0.1
+spec: apex.axdl
 resources:
-  messagedb:
-    uses: postgres
-    with:
-      url: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_message?${env:CANDLE_DB_PARAMS}
-
+  - messagedb
+includes: []
 resiliency:
+  timeouts: {}
   retries:
     database:
-      policy: constant
-      duration: 3s
-
+      constant:
+        duration: 3s
   circuitBreakers:
-    database:
-      policy: constant
-      duration: 3s
-
-providers:
-  "nanochat.io.messsage.v1.MessageStore":
+    database: {}
+initializers:
+  messagedb:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: '${env:MESSAGE_DB}'
+      directory: sql
+transports: {}
+preauth: {}
+authorization: {}
+postauth: {}
+interfaces:
+  nanochat.io.message.v1.MessageStore:
     store:
       steps:
-        - name: Store a tweet.
-          uses: "@postgres/query"
+        - name: Store a tweet
+          uses: '@postgres/query'
           with:
-            single: true
             resource: messagedb
-            sql: |
+            single: true
+            sql: |-
+
               INSERT INTO message (user_id, message, time)
               VALUES ($1, $2, now())
               RETURNING *
             args:
               - claims.sub
               - input.message
-          # retry: database
-          # circuitBreaker: database
-
     load:
       steps:
-        - name: Get a single message.
-          uses: "@postgres/query"
+        - name: Get a single message
+          uses: '@postgres/query'
           with:
-            single: true
             resource: messagedb
-            sql: |
+            single: true
+            sql: |-
+
               SELECT * FROM message
               WHERE id = $1
             args:
               - input.id
-          # retry: database
-          # circuitBreaker: database
-
     delete:
       steps:
         - name: Remove a message
-          uses: "@postgres/query"
+          uses: '@postgres/query'
           with:
-            single: true
             resource: messagedb
-            sql: |
+            single: true
+            sql: |-
+
               DELETE FROM message
               WHERE id = $1
                 AND user_id = $2
@@ -76,16 +68,14 @@ providers:
             args:
               - input.id
               - claims.sub
-          # retry: database
-          # circuitBreaker: database
-
     myMessages:
       steps:
-        - name: Get the tweet timeline.
-          uses: "@postgres/query"
+        - name: Get the tweet timeline
+          uses: '@postgres/query'
           with:
             resource: messagedb
-            sql: |
+            sql: |-
+
               SELECT t.* FROM message t
               JOIN follows f ON t.user_id = f.follows
               WHERE f.follower = $1
@@ -95,16 +85,14 @@ providers:
               - claims.sub
               - input.before
               - input.limit
-          # retry: database
-          # circuitBreaker: database
-
     getFeed:
       steps:
-        - name: Get a user's message timeline.
-          uses: "@postgres/query"
+        - name: Get message timeline for multiple users
+          uses: '@postgres/query'
           with:
             resource: messagedb
-            sql: |
+            sql: |-
+
               SELECT * FROM message t
               WHERE (t.user_id = any($1) OR t.user_id = $2)
                 AND (t.time < $3 OR $3 IS NULL)
@@ -113,16 +101,15 @@ providers:
               - input.userIds
               - claims.sub
               - input.before
-          # retry: database
-          # circuitBreaker: database
-
+          returns: exists
     getUserMessages:
       steps:
-        - name: Get a user's message timeline.
-          uses: "@postgres/query"
+        - name: Get message timeline for a single user
+          uses: '@postgres/query'
           with:
             resource: messagedb
-            sql: |
+            sql: |-
+
               SELECT * FROM message t
               WHERE t.user_id = $1
                 AND (t.time < $2 OR $2 IS NULL)
@@ -130,5 +117,6 @@ providers:
             args:
               - input.userId
               - input.before
-          # retry: database
-          # circuitBreaker: database
+          returns: exists
+providers: {}
+errors: {}

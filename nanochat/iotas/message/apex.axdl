@@ -2,7 +2,7 @@ import * from "@apexlang/core"
 import * from "@apexlang/rest"
 import * from "@apexlang/openapi"
 
-namespace "nanochat.io.messsage.v1"
+namespace "nanochat.io.message.v1"
 
 alias UUID = string
 
