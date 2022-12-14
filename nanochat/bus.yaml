@@ -28,42 +28,42 @@ initializers:
   followdb:
     uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: '${env:FOLLOW_DB}'
+      dataSource: "${env:FOLLOW_DB}"
       directory: iotas/follow/sql
   likedb:
     uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: '${env:LIKE_DB}'
+      dataSource: "${env:LIKE_DB}"
       directory: iotas/like/sql
   messagedb:
     uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: '${env:MESSAGE_DB}'
+      dataSource: "${env:MESSAGE_DB}"
       directory: iotas/message/sql
   user:
     uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: '${env:USER_DB}'
+      dataSource: "${env:USER_DB}"
       directory: iotas/user/sql
 transports:
   http:
     uses: nanobus.transport.http.server/v1
     with:
-      address: ':8080'
+      address: ":8080"
       routes:
         - uses: nanobus.transport.http.oauth2/v1
           with:
-            clientId: '${env:OAUTH_CLIENT_ID}'
-            clientSecret: '${env:OAUTH_CLIENT_SECRET}'
+            clientId: "${env:OAUTH_CLIENT_ID}"
+            clientSecret: "${env:OAUTH_CLIENT_SECRET}"
             endpoint:
-              authUrl: '${env:OAUTH_AUTH_URL}'
-              tokenUrl: '${env:OAUTH_TOKEN_URL}'
-              userInfoUrl: '${env:USERINFO_URL}'
+              authUrl: "${env:OAUTH_AUTH_URL}"
+              tokenUrl: "${env:OAUTH_TOKEN_URL}"
+              userInfoUrl: "${env:USERINFO_URL}"
               authStyle: inheader
-            redirectUrl: '${env:OAUTH_REDIRECT_URL}'
-            handler: 'security::storeSession'
+            redirectUrl: "${env:OAUTH_REDIRECT_URL}"
+            handler: "security::storeSession"
             scopes:
-              - '${env:OAUTH_SCOPES}'
+              - "${env:OAUTH_SCOPES}"
         - uses: nanobus.transport.http.rest/v1
           with:
             documentation:
@@ -73,18 +73,18 @@ transports:
         - uses: nanobus.transport.http.static/v1
           with:
             paths:
-              - dir: ui
+              - dir: ui/dist
                 path: /
 filters:
   - uses: nanobus.filter.session/v1
     with:
-      handler: 'security::getAccessToken'
+      handler: "security::getAccessToken"
   - uses: nanobus.filter.userinfo/v1
     with:
-      userInfoUrl: '${env:USERINFO_URL}'
+      userInfoUrl: "${env:USERINFO_URL}"
   - uses: nanobus.filter.jwt/v1
     with:
-      jwksUrl: '${env:OAUTH_JWKS_URL}'
+      jwksUrl: "${env:OAUTH_JWKS_URL}"
 preauth: {}
 authorization:
   nanochat.io.v1.jots.Jots:
@@ -132,7 +132,7 @@ providers:
     getAccessToken:
       steps:
         - name: Select access token
-          uses: '@postgres/query'
+          uses: "@postgres/query"
           with:
             resource: userdb
             single: true
@@ -147,7 +147,7 @@ providers:
     storeSession:
       steps:
         - name: Create user if none exists
-          uses: '@postgres/exec'
+          uses: "@postgres/exec"
           with:
             resource: userdb
             sql: |-
@@ -157,10 +157,10 @@ providers:
               ON CONFLICT DO NOTHING
             args:
               - claims.sub
-              - 'claims.${env:HANDLE_CLAIM}'
+              - "claims.${env:HANDLE_CLAIM}"
               - claims.email
         - name: Create a session
-          uses: '@postgres/exec'
+          uses: "@postgres/exec"
           with:
             resource: userdb
             sql: >-
@@ -186,7 +186,7 @@ errors:
     type: NotFound
     code: not_found
     title: Resource not found
-    message: 'Resource with id {{ .key }} was not found'
+    message: "Resource with id {{ .key }} was not found"
   permission_denied:
     type: PermissionDenied
     code: permission_denied
@@ -203,9 +203,9 @@ errors:
     type: UserNotFound
     code: not_found
     title: User not found
-    message: 'User with handle {{ .handle }} is not found'
+    message: "User with handle {{ .handle }} is not found"
   jot_not_found:
     type: JotNotFound
     code: not_found
     title: Jot not found
-    message: 'Jot with id {{ .messageId }} is not found'
+    message: "Jot with id {{ .messageId }} is not found"

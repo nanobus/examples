@@ -13,7 +13,7 @@ codegen:
 tidy:
 	go mod tidy
 
-build: codegen tinygo
+build: codegen tinygo ui
 
 tinygo:
 	@mkdir -p build
@@ -26,6 +26,9 @@ rust:
 	wasmrs-ops ./target/{{RUST_TARGET}}/release/{{RUST_NAME}}.wasm
 	mkdir -p build
 	cp ./target/{{RUST_TARGET}}/release/{{RUST_NAME}}.wasm ./build/{{RUST_NAME}}-rust.wasm
+
+ui:
+  cd ui && npm  install && npm run build
 
 clean:
 	rm -Rf build
