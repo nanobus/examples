@@ -160,7 +160,7 @@ app.transport(
           userInfoUrl: env("USERINFO_URL"),
           authStyle: AuthStyle.InHeader,
         },
-        redirectUrl: env("OAUTH_REDIRECT_URL"),
+        callbackUrl: env("OAUTH_REDIRECT_URL"),
         handler: security.storeSession,
         scopes: env("OAUTH_SCOPES").split(","),
       }),

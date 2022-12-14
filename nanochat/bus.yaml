@@ -60,7 +60,7 @@ transports:
               tokenUrl: "${env:OAUTH_TOKEN_URL}"
               userInfoUrl: "${env:USERINFO_URL}"
               authStyle: inheader
-            redirectUrl: "${env:OAUTH_REDIRECT_URL}"
+            callbackUrl: "${env:OAUTH_REDIRECT_URL}"
             handler: "security::storeSession"
             scopes:
               - "${env:OAUTH_SCOPES}"
