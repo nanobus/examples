@@ -20,7 +20,10 @@
           <img src="./images/logo/candle-logo.png" width="" alt="Candle logo" />
         </div>
         <div class="login-prompt--btn mt-5">
-          <a href="/oauth/login" class="btn btn-primary">Login</a>
+          <a
+            href={process.env.AUTH_BASEURL + "/oauth/login"}
+            class="btn btn-primary">Login</a
+          >
           <p class="mb-0 mt-3">Please login to your account</p>
         </div>
       </div>

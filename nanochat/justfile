@@ -30,6 +30,15 @@ rust:
 ui:
   cd ui && npm  install && npm run build
 
+dev:
+  #!/usr/bin/env bash
+  APP_ROOT_URL=http://localhost:5173 nanobus run bus.yaml --developer-mode &
+  FIRST=$!
+  AUTH_BASEURL=http://localhost:8080 just ui/dev &
+  SECOND=$!
+  trap "kill $FIRST $SECOND" SIGTERM SIGINT EXIT
+  wait $FIRST $SECOND
+
 clean:
 	rm -Rf build
 

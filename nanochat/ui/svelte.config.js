@@ -5,6 +5,12 @@ export default {
   // for more information about preprocessors
   preprocess: [
     sveltePreprocess({
+      replace: [
+        [
+          /process\.env\.AUTH_BASEURL/g,
+          JSON.stringify(process.env.AUTH_BASEURL),
+        ],
+      ],
       postcss: true,
     }),
   ],
