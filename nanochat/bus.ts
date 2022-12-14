@@ -172,8 +172,21 @@ app.transport(
         },
       }),
       StaticV1({
-        paths: [{
-          dir: "ui",
+        paths: [
+        {
+          dir: "ui/dist/assets",
+          path: "/assets",
+          strip: "/assets",
+        },{
+          dir: "ui/dist/css",
+          path: "/css",
+          strip: "/css",
+        },{
+          dir: "ui/dist/images",
+          path: "/images",
+          strip: "/images",
+        },{
+          file: "ui/dist/index.html",
           path: "/",
         }],
       }),
