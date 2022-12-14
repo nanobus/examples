@@ -1,0 +1,12 @@
+.openapi-generator-ignore
+apis/JotsApi.ts
+apis/UsersApi.ts
+apis/index.ts
+index.ts
+models/Jot.ts
+models/JotPage.ts
+models/PostJotRequest.ts
+models/User.ts
+models/UserPage.ts
+models/index.ts
+runtime.ts

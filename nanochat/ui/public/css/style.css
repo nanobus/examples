@@ -12,9 +12,11 @@
   --teal: #0096ad;
   --green: #00aa4c;
   --border-radius: 50px;
-  --gradient: linear-gradient(to right,
-      var(--primary) 0%,
-      var(--primary-light) 100%);
+  --gradient: linear-gradient(
+    to right,
+    var(--primary) 0%,
+    var(--primary-light) 100%
+  );
   --transition: all ease-in-out 0.4s;
   --border: 1px solid #eff3f4;
   --border-color: #eff3f4;
@@ -78,72 +80,12 @@ h6 {
   font-weight: 600;
 }
 
-/* Login Screen start */
-.login-screen {
-  height: 100vh;
-  background-image: url("../images/login-bg.png");
-  background-repeat: no-repeat;
-  background-position: top right;
-  background-size: 50% 100%;
-  background-color: #fff;
-}
-
-.login-header {
-  padding-top: 2.5rem;
-}
-
-.login-wrapper {
-  /* background-color: var(--primary);
-  border-radius: var(--border-radius);
-  box-shadow: 0 0 20px 6px rgb(0 0 0 / 25%);
-  background: var(--gradient); */
-}
-
-.login-wrapper {
-  height: calc(100vh - 74px);
-  display: flex;
-  width: 100%;
-  align-items: center;
-}
-
-.login-wrapper p {
-  color: var(--light-grey);
-}
-
-.login-wrapper a {
-  color: #000;
-}
-
 .form-header {
   margin-bottom: 1.5rem;
 }
 
-.login-title {
-  display: inline-block;
-  position: relative;
-  margin-bottom: 1.5rem;
-}
-
-.login-title:after {
-  content: "";
-  position: absolute;
-  background-image: url("../images/icons/mark-primary.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  width: 128px;
-  height: 18px;
-  bottom: -15px;
-  right: 0;
-}
-
 .form-group {
   margin-bottom: 1.5rem;
-}
-
-.login-wrapper label {
-  margin-bottom: 0.5rem;
-  color: var(--light-grey);
-  font-size: 14px;
 }
 
 .form-control {
@@ -256,7 +198,6 @@ h6 {
   bottom: -12px;
   right: 0;
 }
-
 
 .login-prompt {
   height: 100vh;
@@ -391,7 +332,7 @@ header {
   border-radius: var(--border-radius);
 }
 
-.chat-head--left>div {
+.chat-head--left > div {
   padding-left: 0.5rem;
 }
 
@@ -563,16 +504,5 @@ aside {
 
   .col-lg-3--5 {
     width: 30%;
-  }
-}
-
-/* fix sidebar height on mobile */
-@media only screen and (max-width: 991px) {
-  .main-section {
-    min-height: 35vh;
-  }
-
-  header {
-    height: 25vh;
   }
 }
