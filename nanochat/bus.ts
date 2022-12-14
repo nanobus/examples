@@ -3,21 +3,18 @@ import {
   Application,
   AuthStyle,
   env,
-  HttpServerV1,
   JWTV1,
-  OAuth2V1,
   postgres,
-  RestV1,
+  RestModule,
   secured,
   SessionV1,
+  singlePageAppPaths,
   standardErrors,
-  StaticV1,
   step,
   unauthenticated,
   UserInfoV1,
 } from "../../nanobus/config/ts/mod.ts";
 import { Jots, Users } from "./iota.ts";
-// import { Follow } from "./iotas/follow/iota.ts";
 
 const app = new Application("nanochat", "0.0.1")
   .spec("apex.axdl")
@@ -28,31 +25,18 @@ const likedb = app.resource("likedb");
 const messagedb = app.resource("messagedb");
 const userdb = app.resource("userdb");
 
-app.initializer(
-  "followdb",
-  MigratePostgresV1({
-    dataSource: env("FOLLOW_DB"),
-    directory: "iotas/follow/sql",
-  }),
-).initializer(
-  "likedb",
-  MigratePostgresV1({
-    dataSource: env("LIKE_DB"),
-    directory: "iotas/like/sql",
-  }),
-).initializer(
-  "messagedb",
-  MigratePostgresV1({
-    dataSource: env("MESSAGE_DB"),
-    directory: "iotas/message/sql",
-  }),
-).initializer(
-  "user",
-  MigratePostgresV1({
-    dataSource: env("USER_DB"),
-    directory: "iotas/user/sql",
-  }),
-);
+// Initialization: SQL migration
+[
+  { name: "followdb", env: "FOLLOW_DB", dir: "iotas/follow/sql" },
+  { name: "likedb", env: "LIKE_DB", dir: "iotas/like/sql" },
+  { name: "messagedb", env: "MESSAGE_DB", dir: "iotas/message/sql" },
+  { name: "user", env: "USER_DB", dir: "iotas/user/sql" },
+].forEach((db) => {
+  app.initializer(
+    db.name,
+    MigratePostgresV1({ dataSource: env(db.env), directory: db.dir }),
+  );
+});
 
 app.include("iotas/follow", {
   resourceLinks: {
@@ -146,51 +130,27 @@ SET uid = $2, access_token = $3, expiry = $4, refresh_token = $5, token_type = $
   ],
 });
 
-app.transport(
-  "http",
-  HttpServerV1({
-    address: ":8080",
-    routes: [
-      OAuth2V1({
-        clientId: env("OAUTH_CLIENT_ID"),
-        clientSecret: env("OAUTH_CLIENT_SECRET"),
-        endpoint: {
-          authUrl: env("OAUTH_AUTH_URL"),
-          tokenUrl: env("OAUTH_TOKEN_URL"),
-          userInfoUrl: env("USERINFO_URL"),
-          authStyle: AuthStyle.InHeader,
-        },
-        callbackUrl: env("OAUTH_REDIRECT_URL"),
-        handler: security.storeSession,
-        scopes: env("OAUTH_SCOPES").split(","),
-      }),
-      RestV1({
-        documentation: {
-          swaggerUI: true,
-          postman: true,
-          restClient: true,
-        },
-      }),
-      StaticV1({
-        paths: [
-        {
-          dir: "ui/dist/assets",
-          path: "/assets",
-          strip: "/assets",
-        },{
-          dir: "ui/dist/css",
-          path: "/css",
-          strip: "/css",
-        },{
-          dir: "ui/dist/images",
-          path: "/images",
-          strip: "/images",
-        },{
-          file: "ui/dist/index.html",
-          path: "/",
-        }],
-      }),
-    ],
+app.use(
+  new RestModule(":8080", {
+    oauth2: {
+      clientId: env("OAUTH_CLIENT_ID"),
+      clientSecret: env("OAUTH_CLIENT_SECRET"),
+      endpoint: {
+        authUrl: env("OAUTH_AUTH_URL"),
+        tokenUrl: env("OAUTH_TOKEN_URL"),
+        userInfoUrl: env("USERINFO_URL"),
+        authStyle: AuthStyle.InHeader,
+      },
+      callbackUrl: env("OAUTH_REDIRECT_URL"),
+      handler: security.storeSession,
+      scopes: [env("OAUTH_SCOPES")],
+    },
+    static: {
+      paths: singlePageAppPaths("ui/dist", "/assets", "/css", "/images"),
+    },
+    cors: {
+      allowedOrigins: ["nanochat.io", "localhost"],
+    },
   }),
 );
 
