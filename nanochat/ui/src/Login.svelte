@@ -1,4 +1,13 @@
 <script>
+  import { onMount } from "svelte";
+  import { navigate } from "svelte-routing";
+  import { currentUser } from "./user";
+
+  onMount(() => {
+    if (currentUser.isLoggedIn()) {
+      navigate("/home", { replace: true });
+    }
+  });
 </script>
 
 <div>

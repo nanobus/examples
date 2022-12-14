@@ -5,8 +5,6 @@
 
   import { Router, Route } from "svelte-routing";
   import ProtectedRoute from "./ProtectedRoute.svelte";
-  import { currentUser } from "./user";
-  import { navigate } from "svelte-routing";
   import { Modals, closeModal } from "svelte-modals";
 </script>
 
