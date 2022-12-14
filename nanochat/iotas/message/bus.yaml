@@ -19,6 +19,7 @@ initializers:
       dataSource: '${env:MESSAGE_DB}'
       directory: sql
 transports: {}
+filters: []
 preauth: {}
 authorization: {}
 postauth: {}

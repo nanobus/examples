@@ -98,9 +98,8 @@ WHERE t.id = any($1)`,
     postgres.Query({
       resource: likedb,
       sql: `
-SELECT u.id as user_id, l.time
-FROM likable u
-JOIN likes l ON u.id = l.user_id
+SELECT l.user_id as user_id, l.time
+FROM likes l
 WHERE l.likable_id = $1
 ORDER BY l.time DESC
 OFFSET $2

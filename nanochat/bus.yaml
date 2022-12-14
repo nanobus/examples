@@ -76,13 +76,13 @@ transports:
               - dir: ui
                 path: /
 filters:
-  - uses: session
+  - uses: nanobus.filter.session/v1
     with:
-      pipeline: 'security::getAccessToken'
-  - uses: userinfo
+      handler: 'security::getAccessToken'
+  - uses: nanobus.filter.userinfo/v1
     with:
       userInfoUrl: '${env:USERINFO_URL}'
-  - uses: jwt
+  - uses: nanobus.filter.jwt/v1
     with:
       jwksUrl: '${env:OAUTH_JWKS_URL}'
 preauth: {}

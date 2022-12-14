@@ -19,6 +19,7 @@ initializers:
       dataSource: '${env:FOLLOW_DB}'
       directory: sql
 transports: {}
+filters: []
 preauth: {}
 authorization: {}
 postauth: {}

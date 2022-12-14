@@ -4,14 +4,17 @@ import {
   AuthStyle,
   env,
   HttpServerV1,
+  JWTV1,
   OAuth2V1,
   postgres,
   RestV1,
   secured,
+  SessionV1,
   standardErrors,
   StaticV1,
   step,
   unauthenticated,
+  UserInfoV1,
 } from "../../nanobus/config/ts/mod.ts";
 import { Jots, Users } from "./iota.ts";
 // import { Follow } from "./iotas/follow/iota.ts";
@@ -54,22 +57,22 @@ app.initializer(
 app.include("iotas/follow", {
   resourceLinks: {
     followdb: followdb,
-  }
+  },
 });
 app.include("iotas/like", {
   resourceLinks: {
     likedb: likedb,
-  }
+  },
 });
 app.include("iotas/message", {
   resourceLinks: {
     messagedb: messagedb,
-  }
+  },
 });
 app.include("iotas/user", {
   resourceLinks: {
     userdb: userdb,
-  }
+  },
 });
 
 const authenticated = { has: ["sub"] };
@@ -178,22 +181,17 @@ app.transport(
   }),
 );
 
-app.filters({
-  uses: "session",
-  with: {
-    pipeline: security.getAccessToken,
-  },
-},{
-  uses: "userinfo",
-  with: {
+app.filters(
+  SessionV1({
+    handler: security.getAccessToken,
+  }),
+  UserInfoV1({
     userInfoUrl: env("USERINFO_URL"),
-  },
-}, {
-  uses: "jwt",
-  with: {
+  }),
+  JWTV1({
     jwksUrl: env("OAUTH_JWKS_URL"),
-  },
-});
+  }),
+);
 
 app.errors({
   ...standardErrors,

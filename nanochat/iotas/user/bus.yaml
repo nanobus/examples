@@ -19,6 +19,7 @@ initializers:
       dataSource: '${env:USER_DB}'
       directory: sql
 transports: {}
+filters: []
 preauth: {}
 authorization: {}
 postauth: {}
@@ -68,6 +69,7 @@ interfaces:
           uses: '@postgres/query'
           with:
             resource: userdb
+            single: true
             sql: |-
 
               SELECT * FROM "user"

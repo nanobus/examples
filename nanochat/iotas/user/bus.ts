@@ -76,6 +76,7 @@ WHERE id = any($1)`,
     "Lookup user by handle",
     postgres.Query({
       resource: userdb,
+      single: true,
       sql: `
 SELECT * FROM "user"
 WHERE handle = $1`,
