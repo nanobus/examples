@@ -53,9 +53,10 @@ transports:
       middleware:
         - uses: nanobus.transport.http.cors/v0
           with:
-            allowedOrigins: ["*"]
-            optionsSuccessStatus: 200
             allowCredentials: true
+            allowedOrigins:
+              - nanochat.io
+              - localhost
       routes:
         - uses: nanobus.transport.http.oauth2/v1
           with:
@@ -91,20 +92,6 @@ transports:
                 strip: /images
               - file: ui/dist/index.html
                 path: /
-      middleware:
-        - uses: nanobus.transport.http.cors/v0
-          with:
-            allowedMethods:
-              - HEAD
-              - GET
-              - POST
-              - PUT
-              - PATCH
-              - DELETE
-            allowCredentials: true
-            allowedOrigins:
-              - nanochat.io
-              - localhost
 filters:
   - uses: nanobus.filter.session/v1
     with:
