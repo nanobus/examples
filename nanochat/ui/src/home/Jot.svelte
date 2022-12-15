@@ -1,9 +1,5 @@
 <script lang="ts">
-  import {
-    Button,
-    Dropdown,
-    DropdownItem
-  } from "flowbite-svelte";
+  import { Button, Dropdown, DropdownItem } from "flowbite-svelte";
   import ProfilePic from "../components/ProfilePic.svelte";
   import type { Jot } from "../generated-sources/openapi";
   import Fa from "svelte-fa";
@@ -52,8 +48,8 @@
         </div>
         <div>- {timeFmt(jot.time)}</div>
       </div>
-      <Button pill={true} btnClass="button">
-        <Fa icon={faEllipsis} translateY={-0.2} />
+      <Button btnClass="btn-dropdown">
+        <Fa icon={faEllipsis} />
       </Button>
       <Dropdown>
         <DropdownItem on:click={onDelete}>Delete</DropdownItem>

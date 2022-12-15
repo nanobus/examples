@@ -1,46 +1,29 @@
 <script>
   import Navigation from "./Navigation.svelte";
   import Sidebar from "./Sidebar.svelte";
-  import Timeline from "./Feed.svelte";
-
-  async function makeRequest() {
-    try {
-      const response = await fetch("/home");
-
-      console.log("Hey your status code is: ", response.status);
-
-      if (response.status == 403) {
-        window.location.replace("/oauth/login");
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  import Feed from "./Feed.svelte";
 </script>
 
-{#await makeRequest()}
-  <p>loading data</p>
-{:then}
-  <body>
-    <div class="content">
-      <nav>
-        <Navigation />
-      </nav>
-      <main>
-        <Timeline />
-      </main>
-      <aside>
-        <Sidebar />
-      </aside>
-    </div>
-    <footer>
-      <p>
-        <a href="https://candle.dev/privacy.html">Privacy Policy</a>
-        - © 2022 Nanochat, Inc.
-      </p>
-    </footer>
-  </body>
-{/await}
+<body>
+  <div class="content">
+    <nav>
+      <Navigation />
+    </nav>
+    <main>
+      <h1 class="text-2xl mb-5">Home</h1>
+      <Feed />
+    </main>
+    <aside>
+      <Sidebar />
+    </aside>
+  </div>
+  <footer>
+    <p>
+      <a href="https://candle.dev/privacy.html">Privacy Policy</a>
+      - © 2022 Nanochat, Inc.
+    </p>
+  </footer>
+</body>
 
 <style>
   body {

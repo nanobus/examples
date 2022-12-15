@@ -11,49 +11,31 @@
   async function getUser(): Promise<User> {
     return handle ? users.getProfile({ handle }) : currentUser.userRecord();
   }
-
-  async function makeRequest() {
-    try {
-      const response = await fetch("/home");
-
-      console.log("Hey your status code is: ", response.status);
-
-      if (response.status == 403) {
-        window.location.replace("/oauth/login");
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
 </script>
 
-{#await makeRequest()}
-  <p>loading data</p>
-{:then}
-  <body>
-    <div class="content">
-      <nav>
-        <Navigation />
-      </nav>
-      <main>
-        {#await getUser()}
-          <div>Loading</div>
-        {:then user}
-          <UserFeed {user} />
-        {/await}
-      </main>
-      <aside>
-        <Sidebar />
-      </aside>
-    </div>
-    <footer>
-      <p>
-        <a href="https://candle.dev/privacy.html">Privacy Policy</a>
-        - © 2022 Nanochat, Inc.
-      </p>
-    </footer>
-  </body>
-{/await}
+<body>
+  <div class="content">
+    <nav>
+      <Navigation />
+    </nav>
+    <main>
+      {#await getUser()}
+        <div>Loading</div>
+      {:then user}
+        <UserFeed {user} />
+      {/await}
+    </main>
+    <aside>
+      <Sidebar />
+    </aside>
+  </div>
+  <footer>
+    <p>
+      <a href="https://candle.dev/privacy.html">Privacy Policy</a>
+      - © 2022 Nanochat, Inc.
+    </p>
+  </footer>
+</body>
 
 <style>
   body {
