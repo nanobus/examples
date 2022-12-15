@@ -28,7 +28,7 @@ rust:
 	cp ./target/{{RUST_TARGET}}/release/{{RUST_NAME}}.wasm ./build/{{RUST_NAME}}-rust.wasm
 
 ui:
-  cd ui && npm  install && npm run build
+  just ui/build
 
 dev:
   #!/usr/bin/env bash

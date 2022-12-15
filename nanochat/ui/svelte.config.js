@@ -8,7 +8,7 @@ export default {
       replace: [
         [
           /process\.env\.AUTH_BASEURL/g,
-          JSON.stringify(process.env.AUTH_BASEURL),
+          JSON.stringify(process.env.AUTH_BASEURL || ""),
         ],
       ],
       postcss: true,
