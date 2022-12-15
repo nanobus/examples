@@ -6,7 +6,6 @@ import {
   JWTV1,
   postgres,
   RestModule,
-  secured,
   SessionV1,
   singlePageAppPaths,
   standardErrors,
@@ -59,26 +58,29 @@ app.include("iotas/user", {
   },
 });
 
-const authenticated = { has: ["sub"] };
 
-app.authorizations(
+// A authorization rule to verify an authenticated user.
+// Make sure there is a "sub" (subject) claim.
+const secured = { has: ["sub"] };
+
+app.authorizations({
   // Jots
-  secured(Jots.postJot, authenticated),
-  secured(Jots.getFeed, authenticated),
-  unauthenticated(Jots.getJot),
-  secured(Jots.deleteJot, authenticated),
-  secured(Jots.like, authenticated),
-  secured(Jots.unlike, authenticated),
-  unauthenticated(Jots.likes),
+  [Jots.postJot]: secured,
+  [Jots.getFeed]: secured,
+  [Jots.getJot]: unauthenticated,
+  [Jots.deleteJot]: secured,
+  [Jots.like]: secured,
+  [Jots.unlike]: secured,
+  [Jots.likes]: unauthenticated,
   // Users
-  secured(Users.me, authenticated),
-  unauthenticated(Users.getProfile),
-  unauthenticated(Users.getJots),
-  secured(Users.follow, authenticated),
-  secured(Users.unfollow, authenticated),
-  unauthenticated(Users.getFollows),
-  unauthenticated(Users.getFollowers),
-);
+  [Users.me]: secured,
+  [Users.getProfile]: unauthenticated,
+  [Users.getJots]: unauthenticated,
+  [Users.follow]: secured,
+  [Users.unfollow]: secured,
+  [Users.getFollows]: unauthenticated,
+  [Users.getFollowers]: unauthenticated,
+});
 
 const security = app.provider("security", {
   getAccessToken: [

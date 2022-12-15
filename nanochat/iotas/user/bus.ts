@@ -33,69 +33,75 @@ const dbResiliency = {
   // circuitBreaker: circuitBreakers.database,
 };
 
-app.intercept(UserStore.me, [
-  step(
-    "Loads my profile",
-    postgres.Query({
-      resource: userdb,
-      single: true,
-      sql: `
+app.implement({
+  [UserStore.me]: [
+    step(
+      "Loads my profile",
+      postgres.Query({
+        resource: userdb,
+        single: true,
+        sql: `
 SELECT * FROM "user"
 WHERE id = $1`,
-      args: ["claims.sub"],
-    }),
-    dbResiliency,
-  ),
-]).intercept(UserStore.load, [
-  step(
-    "Load a single user",
-    postgres.Query({
-      resource: userdb,
-      single: true,
-      sql: `
+        args: ["claims.sub"],
+      }),
+      dbResiliency,
+    ),
+  ],
+  [UserStore.load]: [
+    step(
+      "Load a single user",
+      postgres.Query({
+        resource: userdb,
+        single: true,
+        sql: `
 SELECT * FROM "user"
 WHERE id = $1`,
-      args: ["input.userId"],
-    }),
-    dbResiliency,
-  ),
-]).intercept(UserStore.getMultiple, [
-  step(
-    "Lookup many users",
-    postgres.Query({
-      resource: userdb,
-      sql: `
+        args: ["input.userId"],
+      }),
+      dbResiliency,
+    ),
+  ],
+  [UserStore.getMultiple]: [
+    step(
+      "Lookup many users",
+      postgres.Query({
+        resource: userdb,
+        sql: `
 SELECT * FROM "user"
 WHERE id = any($1)`,
-      args: ["input.userIds"],
-    }),
-    dbResiliency,
-  ),
-]).intercept(UserStore.findByHandle, [
-  step(
-    "Lookup user by handle",
-    postgres.Query({
-      resource: userdb,
-      single: true,
-      sql: `
+        args: ["input.userIds"],
+      }),
+      dbResiliency,
+    ),
+  ],
+  [UserStore.findByHandle]: [
+    step(
+      "Lookup user by handle",
+      postgres.Query({
+        resource: userdb,
+        single: true,
+        sql: `
 SELECT * FROM "user"
 WHERE handle = $1`,
-      args: ["input.handle"],
-    }),
-    dbResiliency,
-  ),
-]).intercept(UserStore.getFive, [
-  step(
-    "Find five random users",
-    postgres.Query({
-      resource: userdb,
-      sql: `
+        args: ["input.handle"],
+      }),
+      dbResiliency,
+    ),
+  ],
+  [UserStore.getFive]: [
+    step(
+      "Find five random users",
+      postgres.Query({
+        resource: userdb,
+        sql: `
 SELECT * FROM "user"
 ORDER BY RAND()
 LIMIT 5`,
-    }),
-    dbResiliency,
-  ),
-]);
+      }),
+      dbResiliency,
+    ),
+  ],
+});
 
 app.emit();
