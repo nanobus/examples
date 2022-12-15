@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Button } from "flowbite-svelte";
   import type { User } from "../api";
   export let user: User;
 </script>
@@ -13,8 +14,7 @@
       <p class="mb-0">@{user.handle}</p>
     </div>
   </div>
-    <button class="follow-btn btn-dark btn-sm">Follow</button>
-  
+  <Button btnClass="btn-action">Follow</Button>
 </div>
 
 <!-- <div class="d-flex align-items-center justify-content-between">
@@ -46,19 +46,10 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    min-width: 275px
+    min-width: 275px;
   }
   .user-details {
     display: flex;
     flex-direction: row;
   }
-  .follow-btn {
-    background-color:#fa3b1c;
-    color:white;
-    border-radius: 25px;
-  }
-  .follow-btn:hover {
-  background-color: #fa3a1cd3;
-  color: white;
-}
 </style>

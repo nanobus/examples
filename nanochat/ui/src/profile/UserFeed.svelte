@@ -4,6 +4,7 @@
   import { currentUser } from "../user";
   import { jots, users } from "../openapi";
   import type { User } from "../generated-sources/openapi";
+  import { Button } from "flowbite-svelte";
 
   export let user: User;
   // import { Configuration, JotsApi, JotPage } from "../generated-sources/openapi";
@@ -57,11 +58,11 @@
               <p class="mb-0">@{currentUser.handle()}</p>
             </div>
           </div>
-          <button
+          <Button
+            btnClass="btn-action"
             on:click={(evt) => {
               follow();
-            }}
-            class="follow-btn btn-dark btn-sm">Follow</button
+            }}>Follow</Button
           >
         </div>
         <hr />
@@ -127,14 +128,5 @@
   .user-details {
     display: flex;
     flex-direction: row;
-  }
-  .follow-btn {
-    background-color: #fa3b1c;
-    color: white;
-    border-radius: 25px;
-  }
-  .follow-btn:hover {
-    background-color: #fa3a1cd3;
-    color: white;
   }
 </style>

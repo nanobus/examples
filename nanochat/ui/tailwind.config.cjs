@@ -1,4 +1,3 @@
-
 const config = {
   content: [
     "./src/**/*.{html,js,svelte,ts}",
@@ -6,12 +5,7 @@ const config = {
   ],
 
   theme: {
-    extend: {
-      colors: {
-
-
-      }
-    }
+    extend: {},
   },
 
   plugins: [require("flowbite/plugin")],

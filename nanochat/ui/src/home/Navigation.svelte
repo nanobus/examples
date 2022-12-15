@@ -42,7 +42,7 @@
     </div>
   </header>
   <div>
-    <Button color="red" pill={true} on:click={() => (defaultModal = true)}
+    <Button btnClass="btn-action" on:click={() => (defaultModal = true)}
       >Chat</Button
     >
   </div>
@@ -54,7 +54,7 @@
       <input type="text" placeholder="What's happening?" bind:value={body} />
     </div>
     <svelte:fragment slot="footer">
-      <Button color="alternative" on:click={onPost}>Chat</Button>
+      <Button btnClass="btn-action" on:click={onPost}>Chat</Button>
     </svelte:fragment>
   </Modal>
 </main>
@@ -64,7 +64,7 @@
     width: 48px !important;
     height: 48px !important;
   }
-  
+
   .nav-item a {
     display: flex;
     flex-direction: row;
