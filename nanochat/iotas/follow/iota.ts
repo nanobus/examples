@@ -1,4 +1,4 @@
-import { Handler } from "../../../../nanobus/config/ts/nanobus.ts";
+import { Handler, Iota } from "../../../../nanobus/config/ts/nanobus.ts";
 
 export const FollowStore = {
   load: "nanochat.io.follows.v1.FollowStore::load" as Handler,
@@ -12,6 +12,11 @@ export const FollowStore = {
   myFollows: "nanochat.io.follows.v1.FollowStore::myFollows" as Handler,
 };
 
-export const Follow = {
-  FollowStore: FollowStore,
+const Interfaces = {
+  FollowStore,
+}
+
+export const Follow: Iota<typeof Interfaces> = {
+  $ref: "iotas/follow",
+  interfaces: Interfaces,
 };

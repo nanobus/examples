@@ -8,22 +8,22 @@ resources:
   - messagedb
   - userdb
 includes:
-  - ref: iotas/follow
+  follow:
+    ref: iotas/follow
     resourceLinks:
       followdb: followdb
-  - ref: iotas/like
+  like:
+    ref: iotas/like
     resourceLinks:
       likedb: likedb
-  - ref: iotas/message
+  message:
+    ref: iotas/message
     resourceLinks:
       messagedb: messagedb
-  - ref: iotas/user
+  user:
+    ref: iotas/user
     resourceLinks:
       userdb: userdb
-resiliency:
-  timeouts: {}
-  retries: {}
-  circuitBreakers: {}
 initializers:
   followdb:
     uses: nanobus.migrate.postgres/v1
@@ -108,7 +108,6 @@ filters:
   - uses: nanobus.filter.jwt/v1
     with:
       jwksUrl: '${env:OAUTH_JWKS_URL}'
-preauth: {}
 authorization:
   nanochat.io.v1.jots.Jots:
     postJot:
@@ -148,8 +147,6 @@ authorization:
       unauthenticated: true
     getFollowers:
       unauthenticated: true
-postauth: {}
-interfaces: {}
 providers:
   security:
     getAccessToken:

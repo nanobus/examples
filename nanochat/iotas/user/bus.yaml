@@ -3,9 +3,7 @@ version: 0.0.1
 spec: apex.axdl
 resources:
   - userdb
-includes: []
 resiliency:
-  timeouts: {}
   retries:
     database:
       constant:
@@ -18,11 +16,6 @@ initializers:
     with:
       dataSource: '${env:USER_DB}'
       directory: sql
-transports: {}
-filters: []
-preauth: {}
-authorization: {}
-postauth: {}
 interfaces:
   nanochat.io.user.v1.UserStore:
     me:
@@ -87,5 +80,3 @@ interfaces:
               SELECT * FROM "user"
               ORDER BY RAND()
               LIMIT 5
-providers: {}
-errors: {}

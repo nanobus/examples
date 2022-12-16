@@ -3,9 +3,7 @@ version: 0.0.1
 spec: apex.axdl
 resources:
   - messagedb
-includes: []
 resiliency:
-  timeouts: {}
   retries:
     database:
       constant:
@@ -18,11 +16,6 @@ initializers:
     with:
       dataSource: '${env:MESSAGE_DB}'
       directory: sql
-transports: {}
-filters: []
-preauth: {}
-authorization: {}
-postauth: {}
 interfaces:
   nanochat.io.message.v1.MessageStore:
     store:
@@ -119,5 +112,3 @@ interfaces:
               - input.userId
               - input.before
           returns: exists
-providers: {}
-errors: {}

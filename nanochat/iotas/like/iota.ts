@@ -1,4 +1,4 @@
-import { Handler } from "../../../../nanobus/config/ts/nanobus.ts";
+import { Handler, Iota } from "../../../../nanobus/config/ts/nanobus.ts";
 
 export const LikeStore = {
   like: "nanochat.io.like.v1.LikeStore::like" as Handler,
@@ -7,4 +7,13 @@ export const LikeStore = {
   delete: "nanochat.io.like.v1.LikeStore::delete" as Handler,
   getMultiple: "nanochat.io.like.v1.LikeStore::getMultiple" as Handler,
   getLikedBy: "nanochat.io.like.v1.LikeStore::getLikedBy" as Handler,
+};
+
+const Interfaces = {
+  LikeStore,
+}
+
+export const Like: Iota<typeof Interfaces> = {
+  $ref: "iotas/like",
+  interfaces: Interfaces,
 };

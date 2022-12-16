@@ -14,6 +14,10 @@ import {
   UserInfoV1,
 } from "../../nanobus/config/ts/mod.ts";
 import { Jots, Users } from "./iota.ts";
+import { Follow } from "./iotas/follow/iota.ts";
+import { Like } from "./iotas/like/iota.ts";
+import { Message } from "./iotas/message/iota.ts";
+import { User } from "./iotas/user/iota.ts";
 
 const app = new Application("nanochat", "0.0.1")
   .spec("apex.axdl")
@@ -37,27 +41,26 @@ const userdb = app.resource("userdb");
   );
 });
 
-app.include("iotas/follow", {
+const _follow = app.include("follow", Follow, {
   resourceLinks: {
     followdb: followdb,
   },
 });
-app.include("iotas/like", {
+const _like = app.include("like", Like, {
   resourceLinks: {
     likedb: likedb,
   },
 });
-app.include("iotas/message", {
+const _message = app.include("message", Message, {
   resourceLinks: {
     messagedb: messagedb,
   },
 });
-app.include("iotas/user", {
+const _user = app.include("user", User, {
   resourceLinks: {
     userdb: userdb,
   },
 });
-
 
 // A authorization rule to verify an authenticated user.
 // Make sure there is a "sub" (subject) claim.
