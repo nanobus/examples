@@ -6,6 +6,10 @@ GO_NAME := "jot"
 all: deps codegen tidy build
 
 deps:
+	just ui/install
+
+docker:
+	docker compose up -d	
 
 codegen:
 	apex generate
@@ -30,7 +34,7 @@ rust:
 ui:
   just ui/build
 
-dev:
+dev:docker
   #!/usr/bin/env bash
   APP_ROOT_URL=http://localhost:5173 nanobus run bus.yaml --developer-mode &
   FIRST=$!
