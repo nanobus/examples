@@ -1,18 +1,18 @@
-import { MigratePostgresV1 } from "../../../../nanobus/config/ts/components/migrate_postgres.ts";
 import {
   Application,
   constantBackoff,
   env,
   postgres,
   step,
-} from "../../../../nanobus/config/ts/mod.ts";
+  migrate,
+} from "https://deno.land/x/nanobus_config@v0.0.7/mod.ts";
 import { MessageStore } from "./iota.ts";
 
 const app = new Application("message", "0.0.1").spec("apex.axdl");
 
 app.initializer(
   "messagedb",
-  MigratePostgresV1({
+  migrate.MigratePostgresV1({
     dataSource: env("MESSAGE_DB"),
     directory: "sql",
   }),

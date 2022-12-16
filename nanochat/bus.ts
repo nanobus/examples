@@ -1,4 +1,3 @@
-import { MigratePostgresV1 } from "../../nanobus/config/ts/components/migrate_postgres.ts";
 import {
   Application,
   AuthStyle,
@@ -12,7 +11,8 @@ import {
   step,
   unauthenticated,
   UserInfoV1,
-} from "../../nanobus/config/ts/mod.ts";
+  migrate,
+} from "https://deno.land/x/nanobus_config@v0.0.7/mod.ts";
 import { Jots, Users } from "./iota.ts";
 import { Follow } from "./iotas/follow/iota.ts";
 import { Like } from "./iotas/like/iota.ts";
@@ -37,7 +37,7 @@ const userdb = app.resource("userdb");
 ].forEach((db) => {
   app.initializer(
     db.name,
-    MigratePostgresV1({ dataSource: env(db.env), directory: db.dir }),
+    migrate.MigratePostgresV1({ dataSource: env(db.env), directory: db.dir }),
   );
 });
 
