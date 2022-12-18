@@ -1,104 +1,98 @@
+#!/usr/bin/env -S deno run
 import {
   Application,
-  constantBackoff,
-  env,
-  postgres,
+  PostgresActions,
   step,
-  migrate,
-} from "https://deno.land/x/nanobus_config@v0.0.7/mod.ts";
+} from "https://deno.land/x/nanobus_config@v0.0.12/mod.ts";
 import { UserStore } from "./iota.ts";
 
 const app = new Application("like", "0.0.1").spec("apex.axdl");
 
-app.initializer(
-  "userdb",
-  migrate.MigratePostgresV1({
-    dataSource: env("USER_DB"),
-    directory: "sql",
-  }),
-);
+// app.initializer(
+//   "userdb",
+//   migrate.MigratePostgresV1({
+//     dataSource: env("USER_DB"),
+//     directory: "sql",
+//   }),
+// );
 
 const userdb = app.resource("userdb");
 
-const _retries = app.retries({
-  database: constantBackoff("3s"),
-});
+// const _retries = app.retries({
+//   database: constantBackoff("3s"),
+// });
 
-const _circuitBreakers = app.circuitBreakers({
-  database: {},
-});
+// const _circuitBreakers = app.circuitBreakers({
+//   database: {},
+// });
 
 const dbResiliency = {
   // retry: retries.database,
   // circuitBreaker: circuitBreakers.database,
 };
 
-app.implement({
-  [UserStore.me]: [
+const database = new PostgresActions(userdb);
+
+UserStore.register(app, {
+  me: ({ claims }) => [
     step(
       "Loads my profile",
-      postgres.Query({
-        resource: userdb,
-        single: true,
-        sql: `
+      database.queryOne(
+        `
 SELECT * FROM "user"
 WHERE id = $1`,
-        args: ["claims.sub"],
-      }),
+        claims.sub,
+      ),
       dbResiliency,
     ),
   ],
-  [UserStore.load]: [
+
+  load: ({ input }) => [
     step(
       "Load a single user",
-      postgres.Query({
-        resource: userdb,
-        single: true,
-        sql: `
+      database.queryOne(
+        `
 SELECT * FROM "user"
 WHERE id = $1`,
-        args: ["input.userId"],
-      }),
+        input.userId,
+      ),
       dbResiliency,
     ),
   ],
-  [UserStore.getMultiple]: [
+
+  getMultiple: ({ input }) => [
     step(
       "Lookup many users",
-      postgres.Query({
-        resource: userdb,
-        sql: `
+      database.query(
+        `
 SELECT * FROM "user"
 WHERE id = any($1)`,
-        args: ["input.userIds"],
-      }),
+        input.userIds,
+      ),
       dbResiliency,
     ),
   ],
-  [UserStore.findByHandle]: [
+
+  findByHandle: ({ input }) => [
     step(
       "Lookup user by handle",
-      postgres.Query({
-        resource: userdb,
-        single: true,
-        sql: `
+      database.queryOne(
+        `
 SELECT * FROM "user"
 WHERE handle = $1`,
-        args: ["input.handle"],
-      }),
+        input.handle,
+      ),
       dbResiliency,
     ),
   ],
-  [UserStore.getFive]: [
+
+  getFive: () => [
     step(
       "Find five random users",
-      postgres.Query({
-        resource: userdb,
-        sql: `
+      database.query(`
 SELECT * FROM "user"
 ORDER BY RAND()
-LIMIT 5`,
-      }),
+LIMIT 5`),
       dbResiliency,
     ),
   ],

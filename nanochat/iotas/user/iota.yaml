@@ -1,3 +1,4 @@
+id: like
 version: 0.0.1
 spec: apex.axdl
 resources:
@@ -12,7 +13,6 @@ interfaces:
             resource: userdb
             single: true
             sql: |-
-
               SELECT * FROM "user"
               WHERE id = $1
             args:
@@ -25,7 +25,6 @@ interfaces:
             resource: userdb
             single: true
             sql: |-
-
               SELECT * FROM "user"
               WHERE id = $1
             args:
@@ -37,7 +36,6 @@ interfaces:
           with:
             resource: userdb
             sql: |-
-
               SELECT * FROM "user"
               WHERE id = any($1)
             args:
@@ -50,7 +48,6 @@ interfaces:
             resource: userdb
             single: true
             sql: |-
-
               SELECT * FROM "user"
               WHERE handle = $1
             args:
@@ -62,7 +59,7 @@ interfaces:
           with:
             resource: userdb
             sql: |-
-
               SELECT * FROM "user"
               ORDER BY RAND()
               LIMIT 5
+            args: []

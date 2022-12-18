@@ -1,134 +1,131 @@
+#!/usr/bin/env -S deno run
 import {
   Application,
-  constantBackoff,
-  env,
-  postgres,
+  PostgresActions,
   step,
-  migrate,
-} from "https://deno.land/x/nanobus_config@v0.0.7/mod.ts";
+} from "https://deno.land/x/nanobus_config@v0.0.12/mod.ts";
 import { MessageStore } from "./iota.ts";
 
 const app = new Application("message", "0.0.1").spec("apex.axdl");
 
-app.initializer(
-  "messagedb",
-  migrate.MigratePostgresV1({
-    dataSource: env("MESSAGE_DB"),
-    directory: "sql",
-  }),
-);
+// app.initializer(
+//   "messagedb",
+//   migrate.MigratePostgresV1({
+//     dataSource: env("MESSAGE_DB"),
+//     directory: "sql",
+//   }),
+// );
 
 const messagedb = app.resource("messagedb");
 
-const _retries = app.retries({
-  database: constantBackoff("3s"),
-});
+// const _retries = app.retries({
+//   database: constantBackoff("3s"),
+// });
 
-const _circuitBreakers = app.circuitBreakers({
-  database: {},
-});
+// const _circuitBreakers = app.circuitBreakers({
+//   database: {},
+// });
 
 const dbResiliency = {
   // retry: retries.database,
   // circuitBreaker: circuitBreakers.database,
 };
 
-app.implement({
-  [MessageStore.store]: [
+const database = new PostgresActions(messagedb);
+
+MessageStore.register(app, {
+  store: ({ claims, input }) => [
     step(
       "Store a tweet",
-      postgres.Query({
-        resource: messagedb,
-        single: true,
-        sql: `
+      database.queryOne(
+        `
 INSERT INTO message (user_id, message, time)
 VALUES ($1, $2, now())
 RETURNING *`,
-        args: ["claims.sub", "input.message"],
-      }),
+        claims.sub,
+        input.message,
+      ),
       dbResiliency,
     ),
   ],
-  [MessageStore.load]: [
+
+  load: ({ input }) => [
     step(
       "Get a single message",
-      postgres.Query({
-        resource: messagedb,
-        single: true,
-        sql: `
+      database.queryOne(
+        `
 SELECT * FROM message
 WHERE id = $1`,
-        args: ["input.id"],
-      }),
+        input.id,
+      ),
       dbResiliency,
     ),
   ],
-  [MessageStore.delete]: [
+
+  delete: ({ claims, input }) => [
     step(
       "Remove a message",
-      postgres.Query({
-        resource: messagedb,
-        single: true,
-        sql: `
+      database.queryOne(
+        `
 DELETE FROM message
 WHERE id = $1
   AND user_id = $2
 RETURNING *`,
-        args: ["input.id", "claims.sub"],
-      }),
+        input.id,
+        claims.sub,
+      ),
       dbResiliency,
     ),
   ],
-  [MessageStore.myMessages]: [
+
+  myMessages: ({ claims, input }) => [
     step(
       "Get the tweet timeline",
-      postgres.Query({
-        resource: messagedb,
-        sql: `
+      database.query(
+        `
 SELECT t.* FROM message t
 JOIN follows f ON t.user_id = f.follows
 WHERE f.follower = $1
   AND (t.time < $2 OR $2 IS NULL)
 ORDER BY t.time DESC LIMIT $3`,
-        args: ["claims.sub", "input.before", "input.limit"],
-      }),
+        claims.sub,
+        input.before,
+        input.limit,
+      ),
       dbResiliency,
     ),
   ],
-  [MessageStore.getFeed]: [
+
+  getFeed: ({ claims, input }) => [
     step(
       "Get message timeline for multiple users",
-      postgres.Query({
-        resource: messagedb,
-        sql: `
+      database.query(
+        `
 SELECT * FROM message t
 WHERE (t.user_id = any($1) OR t.user_id = $2)
   AND (t.time < $3 OR $3 IS NULL)
 ORDER BY time DESC`,
-        args: ["input.userIds", "claims.sub", "input.before"],
-      }),
-      {
-        ...dbResiliency,
-        returns: "exists",
-      },
+        input.userIds,
+        claims.sub,
+        input.before,
+      ),
+      dbResiliency,
     ),
   ],
-  [MessageStore.getUserMessages]: [
+
+  getUserMessages: ({ input }) => [
     step(
       "Get message timeline for a single user",
-      postgres.Query({
-        resource: messagedb,
-        sql: `
+      database.query(
+        `
 SELECT * FROM message t
 WHERE t.user_id = $1
   AND (t.time < $2 OR $2 IS NULL)
 ORDER BY time DESC`,
-        args: ["input.userId", "input.before"],
-      }),
-      {
-        ...dbResiliency,
-        returns: "exists",
-      },
+        input.userId,
+        input.before,
+      ),
+      dbResiliency,
     ),
   ],
 });
