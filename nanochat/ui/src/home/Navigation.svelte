@@ -49,7 +49,7 @@
       </li>
     </ol>
   </nav>
-  <div class="user-card">
+  <div class="user-card w-5/6">
     <div class="user-info">
       <div class="profilePic">
         <ProfilePic handle={currentUser.handle()} />
@@ -59,7 +59,7 @@
         <h5>@{currentUser.handle()}</h5>
       </div>
     </div>
-    <div class="mr-5 mt-1">
+    <div class="mr-5  mt-1">
       <Button btnClass="btn-dropdown">
         <Fa icon={faEllipsis} />
       </Button>

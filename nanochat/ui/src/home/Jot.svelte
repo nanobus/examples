@@ -62,7 +62,7 @@
           <button><Fa icon={faComment} /></button>
         </div>
         <div class="likes">
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          
 
           {#if liked}
             <button

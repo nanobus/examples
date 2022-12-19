@@ -20,5 +20,27 @@
         "groups": [
             "Everyone"
         ]
+    },
+    {
+        "id": "5ef88b9f-fc34-4718-8ca8-dfaf48fb828z",
+        "email": "test@candle.dev",
+        "email_verified": true,
+        "name": "test user",
+        "nickname": "tuser",
+        "password": "test",
+        "groups": [
+            "Everyone"
+        ]
+    },
+    {
+        "id": "5ef88b9f-fc34-4718-8ca8-dfaf48fb414x",
+        "email": "test1@candle.dev",
+        "email_verified": true,
+        "name": "test user1",
+        "nickname": "tuser1",
+        "password": "test1",
+        "groups": [
+            "Everyone"
+        ]
     }
 ]

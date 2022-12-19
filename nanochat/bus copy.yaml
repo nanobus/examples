@@ -1,0 +1,245 @@
+application:
+  id: nanochat
+  version: 0.0.1
+  environment: local
+
+compute:
+  - uses: wasmrs
+    with:
+      filename: build/jot-go.wasm
+      # filename: build/jot-rust.wasm
+
+middleware:
+  http:
+    - uses: cors/v1
+      with:
+        allowedOrigins: ["localhost:5173"]
+        allowedMethods: ["HEAD", "GET", "POST", "PUT", "PATCH", "DELETE"]
+        allowCredentials: true
+        devMode: true
+        allowedHeaders: ["X-Requested-With", "X-Prototype-Version", "Content-Type", "Origin", "Allow", "Cookie", "Authorization"]
+specs:
+  - uses: apex
+    with:
+      filename: apex.aidl
+
+transports:
+  rest:
+    uses: rest
+    with:
+      address: :8080
+      static:
+        - path: /
+          dir: ui
+      routes:
+        - uses: oauth2
+          with:
+            clientId: ${env:OAUTH_CLIENT_ID}
+            clientSecret: ${env:OAUTH_CLIENT_SECRET}
+            endpoint:
+              authUrl: ${env:OAUTH_AUTH_URL}
+              tokenUrl: ${env:OAUTH_TOKEN_URL}
+              userInfoUrl: ${env:USERINFO_URL}
+              authStyle: inheader
+            redirectUrl: ${env:OAUTH_REDIRECT_URL}
+            pipeline: storeSession
+            scopes: ${env:OAUTH_SCOPES}
+            debug: true
+      documentation:
+        swaggerUI: true
+        postman: true
+        restClient: true
+  httprpc:
+    uses: httprpc
+    with:
+      address: :9090
+
+migrate:
+  followdb:
+    uses: postgres
+    with:
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_follow?${env:CANDLE_DB_PARAMS}
+      directory: iotas/follow/sql
+  likedb:
+    uses: postgres
+    with:
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_like?${env:CANDLE_DB_PARAMS}
+      directory: iotas/like/sql
+  messagedb:
+    uses: postgres
+    with:
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_message?${env:CANDLE_DB_PARAMS}
+      directory: iotas/message/sql
+  userdb:
+    uses: postgres
+    with:
+      dataSource: ${env:CANDLE_DB_TYPE}://${env:CANDLE_DB_USER}:${env:CANDLE_DB_PASSWORD}@${env:CANDLE_DB_HOSTNAME}:${env:CANDLE_DB_PORT}/iota_user?${env:CANDLE_DB_PARAMS}
+      directory: iotas/user/sql
+
+filters:
+  http:
+    - uses: session
+      with:
+        pipeline: getAccessToken
+        debug: true
+    - uses: userinfo
+      with:
+        userInfoUrl: ${env:USERINFO_URL}
+        debug: true
+    - uses: jwt
+      with:
+        jwksUrl: ${env:OAUTH_JWKS_URL}
+        debug: true
+
+services:
+  "nanochat.io.v1.jots.Jots":
+    postJot:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+    getFeed:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+    deleteJot:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+    like:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+    unlike:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+  "nanochat.io.v1.jots.Users":
+    me:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+    follow:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+    unfollow:
+      steps:
+        - name: Authorize
+          uses: authorize
+          with:
+            has: [sub]
+        - name: Invoke
+          uses: invoke
+
+pipelines:
+  getAccessToken:
+    steps:
+      - name: Select access token
+        uses: "@postgres/query"
+        with:
+          resource: userdb
+          single: true
+          sql: |
+            SELECT access_token, token_type
+            FROM "session"
+            WHERE sid = $1
+              AND expiry >= now()
+          args:
+            - sid
+
+  storeSession:
+    steps:
+      - name: Create user if none exists
+        uses: "@postgres/exec"
+        with:
+          resource: userdb
+          sql: |
+            INSERT INTO "user" (id, handle, email)
+            VALUES ($1, $2, $3)
+            ON CONFLICT DO NOTHING
+          args:
+            - claims.sub
+            - claims.${env:HANDLE_CLAIM}
+            - claims.email
+      - name: Create a session
+        uses: "@postgres/exec"
+        with:
+          resource: userdb
+          sql: |
+            INSERT INTO "session" (sid, uid, access_token, expiry, refresh_token, token_type)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (sid) DO UPDATE
+            SET uid = $2, access_token = $3, expiry = $4, refresh_token = $5, token_type = $6
+          args:
+            - claims.sid
+            - claims.sub
+            - access_token
+            - expiry
+            - refresh_token
+            - token_type
+
+# tracing:
+#   uses: jaeger
+#   with:
+#     collectorEndpoint: ${env:JAEGER_TRACE_ENDPOINT}
+
+# For example purposes, we are importing from the filesystem.
+# In a real-world scenario, these IOta dependencies
+# could be fetched from an OCI registry.
+import:
+  - iotas/follow/bus.yaml
+  - iotas/like/bus.yaml
+  - iotas/message/bus.yaml
+  - iotas/user/bus.yaml
+
+errors:
+  not_found:
+    type: NotFound
+    code: not_found
+    title: Not found
+    message: id {{ .key }} is not found
+  user_not_found:
+    type: NotFound
+    code: not_found
+    title: Not found
+    message: User with handle {{ .handle }} is not found
+  jot_not_found:
+    type: NotFound
+    code: not_found
+    title: Not found
+    message: Jot with id {{ .messageId }} is not found

@@ -7,8 +7,8 @@
   import { faEllipsis, faHeart } from "@fortawesome/free-solid-svg-icons";
 
   let users = [
-    { handle: "example" },
-    { handle: "example" },
+    { handle: "foo" },
+    { handle: "bar" },
     { handle: "example" },
     { handle: "example" },
     { handle: "example" },
