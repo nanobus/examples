@@ -1,0 +1,231 @@
+id: nanochat
+version: 0.0.1
+spec: apex.axdl
+main: build/jot-go.wasm
+resources:
+  - followdb
+  - likedb
+  - messagedb
+  - userdb
+includes:
+  follow:
+    ref: iotas/follow
+    resourceLinks:
+      followdb: followdb
+  like:
+    ref: iotas/like
+    resourceLinks:
+      likedb: likedb
+  message:
+    ref: iotas/message
+    resourceLinks:
+      messagedb: messagedb
+  user:
+    ref: iotas/user
+    resourceLinks:
+      userdb: userdb
+initializers:
+  followdb:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: '${env:FOLLOW_DB}'
+      directory: iotas/follow/sql
+  likedb:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: '${env:LIKE_DB}'
+      directory: iotas/like/sql
+  messagedb:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: '${env:MESSAGE_DB}'
+      directory: iotas/message/sql
+  user:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: '${env:USER_DB}'
+      directory: iotas/user/sql
+transports:
+  http:
+    uses: nanobus.transport.http.server/v1
+    with:
+      address: ':8080'
+      middleware:
+        - uses: nanobus.transport.http.cors/v0
+          with:
+            allowedMethods:
+              - HEAD
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+            allowCredentials: true
+            allowedOrigins:
+              - nanochat.io
+              - localhost
+      routes:
+        - uses: nanobus.transport.http.oauth2/v1
+          with:
+            clientId: '${env:OAUTH_CLIENT_ID}'
+            clientSecret: '${env:OAUTH_CLIENT_SECRET}'
+            endpoint:
+              authUrl: '${env:OAUTH_AUTH_URL}'
+              tokenUrl: '${env:OAUTH_TOKEN_URL}'
+              userInfoUrl: '${env:USERINFO_URL}'
+              authStyle: inheader
+            callbackUrl: '${env:OAUTH_REDIRECT_URL}'
+            handler: 'security::storeSession'
+            scopes:
+              - '${env:OAUTH_SCOPES}'
+        - uses: nanobus.transport.http.rest/v1
+          with:
+            documentation:
+              swaggerUI: true
+              postman: true
+              restClient: true
+        - uses: nanobus.transport.http.static/v1
+          with:
+            paths:
+              - dir: ui/dist/assets
+                path: /assets
+                strip: /assets
+              - dir: ui/dist/css
+                path: /css
+                strip: /css
+              - dir: ui/dist/images
+                path: /images
+                strip: /images
+              - file: ui/dist/index.html
+                path: /
+filters:
+  - uses: nanobus.filter.session/v1
+    with:
+      handler: 'security::getAccessToken'
+  - uses: nanobus.filter.userinfo/v1
+    with:
+      userInfoUrl: '${env:USERINFO_URL}'
+  - uses: nanobus.filter.jwt/v1
+    with:
+      jwksUrl: '${env:OAUTH_JWKS_URL}'
+authorization:
+  nanochat.io.v1.jots.Jots:
+    postJot:
+      has:
+        - sub
+    getFeed:
+      has:
+        - sub
+    getJot:
+      unauthenticated: true
+    deleteJot:
+      has:
+        - sub
+    like:
+      has:
+        - sub
+    unlike:
+      has:
+        - sub
+    likes:
+      unauthenticated: true
+  nanochat.io.v1.jots.Users:
+    me:
+      has:
+        - sub
+    getProfile:
+      unauthenticated: true
+    getJots:
+      unauthenticated: true
+    follow:
+      has:
+        - sub
+    unfollow:
+      has:
+        - sub
+    getFollows:
+      unauthenticated: true
+    getFollowers:
+      unauthenticated: true
+providers:
+  security:
+    getAccessToken:
+      steps:
+        - name: Select access token
+          uses: '@postgres/query'
+          with:
+            resource: userdb
+            single: true
+            sql: |-
+
+              SELECT access_token, token_type
+              FROM "session"
+              WHERE sid = $1
+                AND expiry >= now()
+            args:
+              - sid
+    storeSession:
+      steps:
+        - name: Create user if none exists
+          uses: '@postgres/exec'
+          with:
+            resource: userdb
+            sql: |-
+
+              INSERT INTO "user" (id, handle, email)
+              VALUES ($1, $2, $3)
+              ON CONFLICT DO NOTHING
+            args:
+              - claims.sub
+              - 'claims.${env:HANDLE_CLAIM}'
+              - claims.email
+        - name: Create a session
+          uses: '@postgres/exec'
+          with:
+            resource: userdb
+            sql: >-
+
+              INSERT INTO "session" (sid, uid, access_token, expiry,
+              refresh_token, token_type)
+
+              VALUES ($1, $2, $3, $4, $5, $6)
+
+              ON CONFLICT (sid) DO UPDATE
+
+              SET uid = $2, access_token = $3, expiry = $4, refresh_token = $5,
+              token_type = $6
+            args:
+              - claims.sid
+              - claims.sub
+              - access_token
+              - expiry
+              - refresh_token
+              - token_type
+errors:
+  not_found:
+    type: NotFound
+    code: not_found
+    title: Resource not found
+    message: 'Resource with id {{ .key }} was not found'
+  permission_denied:
+    type: PermissionDenied
+    code: permission_denied
+    title: Permission denied
+    message: >-
+      You don't have permission to access this resource or to perform the
+      operation.
+  unauthenticated:
+    type: Unauthenticated
+    code: unauthenticated
+    title: Unauthenticated
+    message: You must be logged in to perform the operation.
+  user_not_found:
+    type: UserNotFound
+    code: not_found
+    title: User not found
+    message: 'User with handle {{ .handle }} is not found'
+  jot_not_found:
+    type: JotNotFound
+    code: not_found
+    title: Jot not found
+    message: 'Jot with id {{ .messageId }} is not found'

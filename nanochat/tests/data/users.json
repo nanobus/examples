@@ -1,0 +1,46 @@
+[
+    {
+        "id": "ce92e651-4e7e-4a0c-a4e9-4796188cb6d6",
+        "email": "foo@candle.dev",
+        "email_verified": true,
+        "name": "foo bar",
+        "nickname": "foo",
+        "password": "bar",
+        "groups": [
+            "Everyone"
+        ]
+    },
+    {
+        "id": "5ef88b9f-fc43-4718-8ac8-dfaf48fb828c",
+        "email": "bar@candle.dev",
+        "email_verified": true,
+        "name": "foo bar",
+        "nickname": "bar",
+        "password": "foo",
+        "groups": [
+            "Everyone"
+        ]
+    },
+    {
+        "id": "5ef88b9f-fc34-4718-8ca8-dfaf48fb828z",
+        "email": "test@candle.dev",
+        "email_verified": true,
+        "name": "test user",
+        "nickname": "tuser",
+        "password": "test",
+        "groups": [
+            "Everyone"
+        ]
+    },
+    {
+        "id": "5ef88b9f-fc34-4718-8ca8-dfaf48fb414x",
+        "email": "test1@candle.dev",
+        "email_verified": true,
+        "name": "test user1",
+        "nickname": "tuser1",
+        "password": "test1",
+        "groups": [
+            "Everyone"
+        ]
+    }
+]

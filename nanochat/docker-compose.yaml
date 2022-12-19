@@ -1,0 +1,101 @@
+version: "3"
+
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:1.6
+    environment:
+      COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "9411:9411"
+
+  postgres:
+    image: postgres
+    environment:
+      PGUSER: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_MULTIPLE_DATABASES: iota_follow,iota_like,iota_message,iota_user
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready",
+          "-d",
+          "iota_user",
+          "&&",
+          "sleep",
+          "5",
+          "&&",
+          "pg_isready",
+          "-d",
+          "iota_user",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  oidc:
+    image: qlik/simple-oidc-provider
+    ports:
+      - 9000:9000
+    volumes:
+      - ./tests/data/app.js:/usr/src/app/app.js
+      - ./tests/data/users.json:/usr/src/app/server/users.json
+    environment:
+      REDIRECTS: http://localhost:8080/oauth/callback,https://oauth.pstmn.io/v1/callback
+      PORT: 9000
+      USERS_FILE: /usr/src/app/server/users.json
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:9000/.well-known/openid-configuration || exit 1
+      interval: 10s
+      retries: 5
+      timeout: 10s
+
+  nanobus:
+    profiles: ["app"]
+    image: nanobus/nanobus:v0.0.6
+    depends_on:
+      postgres:
+        condition: service_healthy
+      oidc:
+        condition: service_healthy
+    volumes:
+      - ./apex.axdl:/app/apex.axdl
+      - ./bus.yaml:/app/bus.yaml
+      - ./web/static:/app/static
+      - ./ui:/app/ui
+      - ./build:/app/build
+      - ./iotas/follow:/app/iotas/follow
+      - ./iotas/like:/app/iotas/like
+      - ./iotas/message:/app/iotas/message
+      - ./iotas/user:/app/iotas/user
+    environment:
+      CANDLE_DB_TYPE: postgres
+      CANDLE_DB_USER: postgres
+      CANDLE_DB_PASSWORD: postgres
+      CANDLE_DB_HOSTNAME: postgres
+      CANDLE_DB_PORT: 5432
+      CANDLE_DB_PARAMS: "sslmode=disable"
+      JAEGER_TRACE_ENDPOINT: http://jaeger:14268/api/traces
+      OAUTH_CLIENT_ID: foo
+      OAUTH_CLIENT_SECRET: bar
+      OAUTH_AUTH_URL: http://localhost:9000/auth
+      OAUTH_TOKEN_URL: http://oidc:9000/token
+      OAUTH_REDIRECT_URL: http://localhost:8080/oauth/callback
+      OAUTH_JWKS_URL: http://oidc:9000/certs
+      OAUTH_SCOPES: '["openid","offline_access","email","profile"]'
+      USERINFO_URL: http://oidc:9000/me
+      HANDLE_CLAIM: nickname
+    ports:
+      - "8080:8080"

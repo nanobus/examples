@@ -1,0 +1,98 @@
+id: like
+version: 0.0.1
+spec: apex.axdl
+resources:
+  - likedb
+resiliency:
+  retries:
+    database:
+      constant:
+        duration: 3s
+  circuitBreakers:
+    database: {}
+initializers:
+  likedb:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: '${env:LIKE_DB}'
+      directory: sql
+interfaces:
+  nanochat.io.like.v1.LikeStore:
+    like:
+      steps:
+        - name: Store like
+          uses: '@postgres/exec'
+          with:
+            resource: likedb
+            sql: 'SELECT fn_like($1, $2) as success;'
+            args:
+              - claims.sub
+              - input.likableId
+    unlike:
+      steps:
+        - name: Remove like
+          uses: '@postgres/exec'
+          with:
+            resource: likedb
+            sql: 'SELECT fn_unlike($1, $2) as success;'
+            args:
+              - claims.sub
+              - input.likableId
+    load:
+      steps:
+        - name: Lookup likable by id
+          uses: '@postgres/query'
+          with:
+            resource: likedb
+            single: true
+            sql: |-
+
+              SELECT t.id, t.likes
+              FROM likable t
+              WHERE t.id = $1
+            args:
+              - input.likableId
+    delete:
+      steps:
+        - name: Delete the likable by id
+          uses: '@postgres/exec'
+          with:
+            resource: likedb
+            sql: |-
+
+              DELETE FROM likable t
+              WHERE t.id = $1
+            args:
+              - input.likableId
+    getMultiple:
+      steps:
+        - name: Get multiple likables
+          uses: '@postgres/query'
+          with:
+            resource: likedb
+            sql: |-
+
+              SELECT t.id, t.likes
+              FROM likable t
+              WHERE t.id = any($1)
+            args:
+              - input.likableIds
+    getLikedBy:
+      steps:
+        - name: Fetch users likes
+          uses: '@postgres/query'
+          with:
+            resource: likedb
+            sql: |-
+
+              SELECT l.user_id as user_id, l.time
+              FROM likes l
+              WHERE l.likable_id = $1
+              ORDER BY l.time DESC
+              OFFSET $2
+              LIMIT $3
+            args:
+              - input.likableId
+              - input.offset
+              - input.limit
+          returns: exists

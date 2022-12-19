@@ -1,0 +1,187 @@
+spec: apex.axdl
+config:
+  name: nanochat
+  package: nanochat
+  module: github.com/nanobus/examples/nanochat
+  aliases:
+    UUID:
+      type: uuid.UUID
+      import: github.com/google/uuid
+      parse: uuid.Parse
+      format: String
+generates:
+  # ./src/generated.rs:
+  #   module: "../../iota-other/codegen/src/rust/rust-basic.ts"
+  #   config:
+  #     serde: true
+  #     derive:
+  #       _all:
+  #         - Debug
+  #     datetime: wasmrs_guest::Timestamp
+  #     visibility:
+  #       _all: pub
+  cmd/main.go:
+    ifNotExists: true
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: MainVisitor
+    config:
+      import: github.com/nanobus/examples/nanochat
+  pkg/nanochat/msgpack.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: MsgPackVisitor
+  pkg/nanochat/interfaces.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: InterfacesVisitor
+  pkg/nanochat/export.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: ExportVisitor
+  pkg/nanochat/providers.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: ProviderVisitor
+  pkg/nanochat/jots.go:
+    ifNotExists: true
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: ScaffoldVisitor
+    config:
+      names:
+        - Jots
+  pkg/nanochat/users.go:
+    ifNotExists: true
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: ScaffoldVisitor
+    config:
+      names:
+        - Users
+  bus.yaml:
+    ifNotExists: true
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: BusVisitor
+---
+spec: iotas/user/apex.axdl
+config:
+  name: user
+  package: user
+  module: github.com/nanobus/examples/nanochat/pkg/imports/iotas/user
+  aliases:
+    UUID:
+      type: uuid.UUID
+      import: github.com/google/uuid
+      parse: uuid.Parse
+      format: String
+generates:
+  # ./src/user/mod.rs:
+  #   module: "https://deno.land/x/iota_codegen/mod.ts"
+  #   config:
+  #     serde: true
+  #     derive:
+  #       _all:
+  #         - Debug
+  #     datetime: wasmrs_guest::Timestamp
+  #     visibility:
+  #       _all: pub
+  pkg/imports/user/msgpack.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: MsgPackVisitor
+  pkg/imports/user/interfaces.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: InterfacesVisitor
+  pkg/imports/user/import.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: ImportVisitor
+---
+spec: iotas/follow/apex.axdl
+config:
+  name: follow
+  package: follow
+  module: github.com/nanobus/examples/nanochat/pkg/imports/iotas/follow
+  aliases:
+    UUID:
+      type: uuid.UUID
+      import: github.com/google/uuid
+      parse: uuid.Parse
+      format: String
+generates:
+  # ./src/follow/mod.rs:
+  #   module: "https://deno.land/x/iota_codegen/mod.ts"
+  #   config:
+  #     serde: true
+  #     derive:
+  #       _all:
+  #         - Debug
+  #     datetime: wasmrs_guest::Timestamp
+  #     visibility:
+  #       _all: pub
+  pkg/imports/follow/msgpack.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: MsgPackVisitor
+  pkg/imports/follow/interfaces.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: InterfacesVisitor
+  pkg/imports/follow/import.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: ImportVisitor
+---
+spec: iotas/message/apex.axdl
+config:
+  name: message
+  package: message
+  module: github.com/nanobus/examples/nanochat/pkg/imports/iotas/message
+  aliases:
+    UUID:
+      type: uuid.UUID
+      import: github.com/google/uuid
+      parse: uuid.Parse
+      format: String
+generates:
+  # ./src/message/mod.rs:
+  #   module: "https://deno.land/x/iota_codegen/mod.ts"
+  #   config:
+  #     serde: true
+  #     derive:
+  #       _all:
+  #         - Debug
+  #     datetime: wasmrs_guest::Timestamp
+  #     visibility:
+  #       _all: pub
+  pkg/imports/message/msgpack.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: MsgPackVisitor
+  pkg/imports/message/interfaces.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: InterfacesVisitor
+  pkg/imports/message/import.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: ImportVisitor
+---
+spec: iotas/like/apex.axdl
+config:
+  name: like
+  package: like
+  module: github.com/nanobus/examples/nanochat/pkg/imports/iotas/like
+  aliases:
+    UUID:
+      type: uuid.UUID
+      import: github.com/google/uuid
+      parse: uuid.Parse
+      format: String
+generates:
+  # ./src/like/mod.rs:
+  #   module: "https://deno.land/x/iota_codegen/mod.ts"
+  #   visitorClass: MsgPackVisitor
+  #   config:
+  #     serde: true
+  #     derive:
+  #       _all:
+  #         - Debug
+  #     datetime: wasmrs_guest::Timestamp
+  #     visibility:
+  #       _all: pub
+  pkg/imports/like/msgpack.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: MsgPackVisitor
+  pkg/imports/like/interfaces.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: InterfacesVisitor
+  pkg/imports/like/import.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: ImportVisitor

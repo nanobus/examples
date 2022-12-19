@@ -1,0 +1,82 @@
+id: like
+version: 0.0.1
+spec: apex.axdl
+resources:
+  - userdb
+resiliency:
+  retries:
+    database:
+      constant:
+        duration: 3s
+  circuitBreakers:
+    database: {}
+initializers:
+  userdb:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: '${env:USER_DB}'
+      directory: sql
+interfaces:
+  nanochat.io.user.v1.UserStore:
+    me:
+      steps:
+        - name: Loads my profile
+          uses: '@postgres/query'
+          with:
+            resource: userdb
+            single: true
+            sql: |-
+
+              SELECT * FROM "user"
+              WHERE id = $1
+            args:
+              - claims.sub
+    load:
+      steps:
+        - name: Load a single user
+          uses: '@postgres/query'
+          with:
+            resource: userdb
+            single: true
+            sql: |-
+
+              SELECT * FROM "user"
+              WHERE id = $1
+            args:
+              - input.userId
+    getMultiple:
+      steps:
+        - name: Lookup many users
+          uses: '@postgres/query'
+          with:
+            resource: userdb
+            sql: |-
+
+              SELECT * FROM "user"
+              WHERE id = any($1)
+            args:
+              - input.userIds
+    findByHandle:
+      steps:
+        - name: Lookup user by handle
+          uses: '@postgres/query'
+          with:
+            resource: userdb
+            single: true
+            sql: |-
+
+              SELECT * FROM "user"
+              WHERE handle = $1
+            args:
+              - input.handle
+    getFive:
+      steps:
+        - name: Find five random users
+          uses: '@postgres/query'
+          with:
+            resource: userdb
+            sql: |-
+
+              SELECT * FROM "user"
+              ORDER BY RAND()
+              LIMIT 5

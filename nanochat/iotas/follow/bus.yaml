@@ -1,0 +1,146 @@
+id: follow
+version: 0.0.1
+spec: apex.axdl
+resources:
+  - followdb
+resiliency:
+  retries:
+    database:
+      constant:
+        duration: 3s
+  circuitBreakers:
+    database: {}
+initializers:
+  followdb:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: '${env:FOLLOW_DB}'
+      directory: sql
+interfaces:
+  nanochat.io.follows.v1.FollowStore:
+    load:
+      steps:
+        - name: Lookup user by ID
+          uses: '@postgres/query'
+          with:
+            single: true
+            resource: followdb
+            sql: |-
+
+              SELECT u.id, u.followers, u.follows
+              FROM follow_user u
+              WHERE id = $1
+            args:
+              - input.userId
+    getMultiple:
+      steps:
+        - name: Lookup multiple users by ID
+          uses: '@postgres/query'
+          with:
+            resource: followdb
+            sql: |-
+
+              SELECT u.id, u.followers, u.follows
+              FROM follow_user u
+              WHERE id = any($1)
+            args:
+              - input.userIds
+    isFollowing:
+      steps:
+        - name: Lookup user by ID
+          uses: '@postgres/query'
+          with:
+            single: true
+            resource: followdb
+            sql: |-
+
+              SELECT EXISTS (
+                SELECT *
+                FROM follow
+                WHERE follower = $1
+                  AND follows = $2
+              ) as following;
+            args:
+              - claims.sub
+              - input.userId
+          returns: exists
+        - name: Return boolean
+          uses: assign
+          with:
+            value: exists.following
+    follow:
+      steps:
+        - name: Store follower
+          uses: '@postgres/exec'
+          with:
+            resource: followdb
+            sql: |-
+
+              SELECT fn_follow($1, $2) as success;
+            args:
+              - claims.sub
+              - input.followedId
+    unfollow:
+      steps:
+        - name: Delete follower
+          uses: '@postgres/exec'
+          with:
+            resource: followdb
+            sql: |-
+
+              SELECT fn_unfollow($1, $2) as success;
+            args:
+              - claims.sub
+              - input.followedId
+    fetchFollowers:
+      steps:
+        - name: Fetch followers
+          uses: '@postgres/query'
+          with:
+            resource: followdb
+            sql: |-
+
+              SELECT u.id, f.time
+              FROM follow_user u
+              JOIN follow f ON u.id = f.follower
+              WHERE f.follows = $1
+              ORDER BY f.time DESC
+              OFFSET $2
+              LIMIT $3
+            args:
+              - input.userId
+              - input.offset
+              - input.limit
+    fetchFollows:
+      steps:
+        - name: Fetch follows
+          uses: '@postgres/query'
+          with:
+            resource: followdb
+            sql: |-
+
+              SELECT u.id, f.time
+              FROM follow_user u
+              JOIN follow f ON u.id = f.follows
+              WHERE f.follower = $1
+              ORDER BY f.time DESC
+              OFFSET $2
+              LIMIT $3
+            args:
+              - input.userId
+              - input.offset
+              - input.limit
+    myFollows:
+      steps:
+        - name: Fetch my follows
+          uses: '@postgres/query'
+          with:
+            resource: followdb
+            sql: |-
+
+              SELECT u.id, f.time
+              FROM follow_user u
+              JOIN follow f ON u.id = f.follows
+              WHERE f.follower = $1
+            args:
+              - claims.sub

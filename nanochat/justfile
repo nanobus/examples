@@ -1,0 +1,52 @@
+RUST_TARGET := "wasm32-wasi"
+RUST_NAME := "jot"
+GO_TARGET := "wasi"
+GO_NAME := "jot"
+
+all: deps codegen tidy build
+
+deps:
+	just ui/install
+
+docker:
+	docker compose up -d	
+
+codegen:
+	apex generate
+
+tidy:
+	go mod tidy
+
+build: codegen tinygo ui
+
+tinygo:
+	@mkdir -p build
+	tinygo build -o build/{{GO_NAME}}-go.wasm --scheduler=none --target={{GO_TARGET}} -no-debug cmd/main.go
+	wasm-opt -O build/{{GO_NAME}}-go.wasm -o build/{{GO_NAME}}-go.wasm
+	wasmrs-ops build/{{GO_NAME}}-go.wasm
+
+rust:
+	cargo build --target={{RUST_TARGET}} --target-dir=./target --release
+	wasmrs-ops ./target/{{RUST_TARGET}}/release/{{RUST_NAME}}.wasm
+	mkdir -p build
+	cp ./target/{{RUST_TARGET}}/release/{{RUST_NAME}}.wasm ./build/{{RUST_NAME}}-rust.wasm
+
+ui:
+  just ui/build
+
+dev:docker
+  #!/usr/bin/env bash
+  APP_ROOT_URL=http://localhost:5173 nanobus run bus.yaml --developer-mode &
+  FIRST=$!
+  AUTH_BASEURL=http://localhost:8080 just ui/dev &
+  SECOND=$!
+  trap "kill $FIRST $SECOND" SIGTERM SIGINT EXIT
+  wait $FIRST $SECOND
+
+clean:
+	rm -Rf build
+
+doc:
+
+test:
+	go test --count=1 ./pkg/...
