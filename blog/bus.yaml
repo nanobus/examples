@@ -1,0 +1,27 @@
+id: your-app
+version: 0.0.1
+spec: apex.axdl
+transports:
+  http:
+    uses: nanobus.transport.http.server/v1
+    with:
+      address: ":8080"
+      routes:
+        - uses: nanobus.transport.http.rest/v1
+          with:
+authorization:
+  greeter:
+    say-hello:
+      unauthenticated: true
+interfaces:
+  greeter:
+    say-hello:
+      steps:
+        - name: Say Hello!
+          uses: assign
+          with:
+            value: '"Hello, " + person.name'
+# providers:
+#   example:
+#     foo:
+#       steps:
