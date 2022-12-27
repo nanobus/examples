@@ -1,0 +1,15 @@
+id: nanoblog
+version: 0.0.1
+interfaces:
+  Blogs:
+    getFeed:
+      steps:
+       - name: Get blog timeline for multiple users
+         uses: "@postgres/query"
+         with:
+          resource: blogdb
+          sql: |-
+
+            SELECT * FROM blog
+            ORDER BY time DESC
+    

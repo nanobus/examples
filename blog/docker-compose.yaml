@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      PGUSER: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_MULTIPLE_DATABASES: blog
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready",
+          "-d",
+          "blog",
+          "&&",
+          "sleep",
+          "5",
+          "&&",
+          "pg_isready",
+          "-d",
+          "blog",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5

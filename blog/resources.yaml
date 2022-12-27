@@ -1,0 +1,5 @@
+resources:
+  blogdb:
+    uses: postgres
+    with:
+      url: ${env:BLOG_DB}
