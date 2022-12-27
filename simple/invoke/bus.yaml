@@ -1,0 +1,14 @@
+id: hello-world
+version: 0.0.1
+interfaces:
+  Greeter:
+    sayHello:
+      steps:
+        - name: Return greeting message
+          # assign will evaluate a value and assign it
+          # to output.
+          uses: assign
+          with:
+            value: '"Hello, " + input.name'
+# Run this command in terminal
+# echo '{"name": "World!"}' | nanobus invoke --interface Greeter --operation sayHello
