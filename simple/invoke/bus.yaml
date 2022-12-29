@@ -11,4 +11,4 @@ interfaces:
           with:
             value: '"Hello, " + input.name'
 # Run this command in terminal
-# echo '{"name": "World!"}' | nanobus invoke --interface Greeter --operation sayHello
+# echo '{"name": "World!"}' | nanobus invoke Greeter::sayHello
