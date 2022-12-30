@@ -48,7 +48,19 @@ Get Single Blog Post:
 
 * `nanobus`
 
-* Now you have a web service and can make rest calls.
+* Now you have a web service and can make rest calls. Below is an example of a curl command you can run to test out the API calls.
+
+```
+curl -X 'POST' \
+  'http://localhost:8080/v1/blogs/blog' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "body": "string",
+  "title": "string",
+  "userId": "string"
+}' 
+```
 ## More info
 
 For more info, visit here.
