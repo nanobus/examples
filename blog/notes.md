@@ -86,3 +86,21 @@ pre reqs.
 How to run it.
 How to interact with it
 Postman/Swagger
+
+## Getting Started
+
+It is simple to get started. Since there are no IOtas (business logic) in this app, you will only need one apex.axdl file and one bus.yaml file. 
+
+In the apex file, we define our interfaces and types.
+
+Our bus file contains our configurations + what actions will take place for each method in an interface.
+
+We can break our bus file into 4 sections:
+
+Interfaces: Define the actions taken in each method 
+
+Transport: Allows us to use http server + get swagger postman documentation 
+
+Authorization: Set access levels for each method
+
+Initializers: Setup our database.
