@@ -2,7 +2,7 @@ id: nanoblog
 version: 0.0.1
 spec: apex.axdl
 interfaces:
-  nanoblog.io.v1.blogs.Blogs:
+  blogs.v1:
     postBlog:
       steps:
         - name: Post a blog
@@ -11,7 +11,6 @@ interfaces:
             resource: blogdb
             single: true
             sql: |-
-
               INSERT INTO blog (user_id, title, body, time)
               VALUES ($1, $2, $3, now())
               RETURNING *
@@ -21,19 +20,19 @@ interfaces:
               - input.body
     getFeed:
       steps:
-       - name: Get blog timeline for multiple users
-         uses: "@postgres/query"
-         with:
-          resource: blogdb
-          single: true
-          sql: |-
+        - name: Get blog timeline for multiple users
+          uses: "@postgres/query"
+          with:
+            resource: blogdb
+            single: true
+            sql: |-
 
-            SELECT * FROM blog
-            ORDER BY time DESC
+              SELECT * FROM blog
+              ORDER BY time DESC
     getBlog:
       steps:
         - name: Get a single blog
-          uses: '@postgres/query'
+          uses: "@postgres/query"
           with:
             resource: blogdb
             single: true
@@ -46,7 +45,7 @@ interfaces:
     deleteBlog:
       steps:
         - name: Remove a blog post
-          uses: '@postgres/query'
+          uses: "@postgres/query"
           with:
             resource: blogdb
             single: true
@@ -62,7 +61,7 @@ interfaces:
     editBlog:
       steps:
         - name: Edit a blog post
-          uses: '@postgres/query'
+          uses: "@postgres/query"
           with:
             resource: blogdb
             single: true
@@ -79,7 +78,7 @@ transports:
   http:
     uses: nanobus.transport.http.server/v1
     with:
-      address: ':8080'
+      address: ":8080"
       middleware:
         - uses: nanobus.transport.http.cors/v0
           with:
@@ -91,7 +90,7 @@ transports:
               - PATCH
               - DELETE
             allowCredentials: true
-      routes:
+      routers:
         - uses: nanobus.transport.http.rest/v1
           with:
             documentation:
@@ -112,5 +111,5 @@ initializers:
   blogdb:
     uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: '${env:BLOG_DB}'
+      dataSource: "${env:BLOG_DB}"
       directory: iotas/message/sql

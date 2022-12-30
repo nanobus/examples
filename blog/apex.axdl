@@ -2,7 +2,7 @@ import * from "@apexlang/core"
 import * from "@apexlang/rest"
 import * from "@apexlang/openapi"
 
-namespace "v1"
+namespace "blogs.v1"
 @info(
     title: "Simple blog app"
     description: "Simple blog application created using NanoBus and IOtas."

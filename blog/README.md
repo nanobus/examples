@@ -25,22 +25,29 @@ The `nanobus invoke {interface} {method}` allows you to run nanobus actions in y
 
 Below is us echoing in a json with the necessary parameters to make a blog post.
 
-``` echo '{ "userId":"myuserid", "title":"My Blog Title ", "body": "This is my blog post" }' | nanobus invoke Blogs postBlog ```
+```sh
+$ echo '{ "userId":"myuserid", "title":"My Blog Title ", "body": "This is my blog post" }' | nanobus invoke blogs.v1::postBlog
+```
 
 Here are some other method commands you can run (Pass in the id you get from the `postblog` response) -
 
-Show Feed:
-
-``` echo '{}' | nanobus invoke Blogs getFeed ```
-
 Delete Blog Post:
 
-``` echo '{"id":"", "userId":"myuserid" }' | nanobus invoke Blogs deleteBlog ```
+```sh
+$ echo '{"id":"", "userId":"myuserid" }' | nanobus invoke blogs.v1::deleteBlog 
+ ```
 
 Get Single Blog Post:
 
-```echo '{"id":"" }' | nanobus invoke Blogs getBlog```
+```sh
+$ echo '{"id":"" }' | nanobus invoke blogs.v1::getBlog
+```
 
+Show Feed:
+
+```sh
+$ echo '{}' | nanobus invoke blogs.v1::getFeed
+```
 
 ### Invoking Nanoblog as a web service
 
@@ -50,8 +57,8 @@ Get Single Blog Post:
 
 * Now you have a web service and can make rest calls. Below is an example of a curl command you can run to test out the API calls.
 
-```
-curl -X 'POST' \
+```sh
+$ curl -X 'POST' \
   'http://localhost:8080/v1/blogs/blog' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
