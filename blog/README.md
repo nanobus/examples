@@ -63,6 +63,6 @@ curl -X 'POST' \
 ```
 ## More info
 
-For more info, visit here.
+For more info, visit [here](https://github.com/nanobus/nanobus).
 
 
