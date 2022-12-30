@@ -1,0 +1,3 @@
+version: 0.0.1
+main: ./build/test_project.wasm
+spec: ./apex.axdl

@@ -1,0 +1,14 @@
+id: test
+version: 0.0.1
+authorization:
+  suite.test:
+    op:
+      unauthenticated: true
+interfaces:
+  suite.test:
+    op:
+      steps:
+        - name: Return value
+          uses: assign
+          with:
+            value: '"test"'
