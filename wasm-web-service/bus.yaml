@@ -12,7 +12,7 @@ transports:
               - method: POST
                 uri: /hello
                 handler: my-module.v1.Greeter::sayHello
-includes:
+imports:
   greeter:
     ref: ./greeter
 authorization:
