@@ -1,21 +1,7 @@
-id: like
 version: 0.0.1
 spec: apex.axdl
 resources:
   - likedb
-resiliency:
-  retries:
-    database:
-      constant:
-        duration: 3s
-  circuitBreakers:
-    database: {}
-initializers:
-  likedb:
-    uses: nanobus.migrate.postgres/v1
-    with:
-      dataSource: '${env:LIKE_DB}'
-      directory: sql
 interfaces:
   nanochat.io.like.v1.LikeStore:
     like:

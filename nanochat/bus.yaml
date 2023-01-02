@@ -64,7 +64,7 @@ transports:
             allowedOrigins:
               - nanochat.io
               - localhost
-      routes:
+      routers:
         - uses: nanobus.transport.http.oauth2/v1
           with:
             clientId: '${env:OAUTH_CLIENT_ID}'
