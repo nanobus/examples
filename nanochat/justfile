@@ -3,13 +3,16 @@ RUST_NAME := "jot"
 GO_TARGET := "wasi"
 GO_NAME := "jot"
 
+run:
+  nanobus run --debug
+
 all: deps codegen tidy build
 
 deps:
 	just ui/install
 
 docker:
-	docker compose up -d	
+	docker compose up -d
 
 codegen:
 	apex generate

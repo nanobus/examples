@@ -1,0 +1,15 @@
+[package]
+name = "sample"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasmrs-guest = { path = "../../../../../iota/rust/crates/wasmrs-guest" }
+serde = { version = "1", default-features = false, features = ["derive"] }
+async-trait = "0.1"
+thiserror = "1.0"
+
+[dev-dependencies]

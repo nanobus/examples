@@ -1,0 +1,8 @@
+id: test
+version: 0.0.1
+apex: ./iotas/apex.axdl
+main: ./iotas/wasm/rust/build/sample.wasm
+authorization:
+  suite.test:
+    op:
+      unauthenticated: true

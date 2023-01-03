@@ -1,0 +1,2 @@
+test:
+  cram tests/*.t

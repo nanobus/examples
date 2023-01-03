@@ -1,0 +1,3 @@
+spec: apex.axdl
+plugins:
+  - "/Users/jsoverson/development/src/iota/codegen/src/rust/plugin.ts"

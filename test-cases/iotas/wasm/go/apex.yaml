@@ -1,0 +1,31 @@
+spec: ../../apex.axdl
+config:
+  name: sample
+  package: sample
+  module: github.com/nanobus/examples/test-suite/iotas/wasm/go/
+generates:
+  cmd/main.go:
+    ifNotExists: true
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: MainVisitor
+    config:
+      import: github.com/nanobus/examples/test-suite/iotas/wasm/go/pkg/sample
+  pkg/sample/msgpack.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: MsgPackVisitor
+  pkg/sample/interfaces.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: InterfacesVisitor
+  pkg/sample/export.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: ExportVisitor
+  pkg/sample/providers.go:
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: ProviderVisitor
+  pkg/sample/api.go:
+    ifNotExists: true
+    module: "https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts"
+    visitorClass: ScaffoldVisitor
+    config:
+      names:
+        - Sample
