@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import Jot from "./Jot.svelte";
   import { jots } from "../openapi";
 
-  const feed = jots.getFeed();
+  let feed = jots.getFeed();
 </script>
+
 
 <main>
   <div class="chats-wrapper" id="chatsWrapper">

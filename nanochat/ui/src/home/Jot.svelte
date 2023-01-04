@@ -137,6 +137,7 @@
     border-width: 0.5px;
     border-radius: 3px;
     padding-top: 10px;
+    padding-bottom: 10px;
   }
 
   .jot-container:hover {
