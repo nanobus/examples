@@ -14,7 +14,7 @@
       <p class="mb-0">@{user.handle}</p>
     </div>
   </div>
-  <Button btnClass="btn-action">Follow</Button>
+  <Button btnClass="btn-action-secondary h-8 text-sm mt-2">Follow</Button>
 </div>
 
 <!-- <div class="d-flex align-items-center justify-content-between">
