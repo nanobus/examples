@@ -11,69 +11,73 @@
   } from "@fortawesome/free-solid-svg-icons";
   import { jots } from "../openapi";
   import { Textarea } from "flowbite-svelte";
+  import { writable } from 'svelte/store';
+  import { count } from "../main";
 
   let defaultModal = false;
   let body: any;
 
+  function updateFeed(){
+    count.update(n => n + 1);
+  }
   async function onPost(evt: any) {
     const payload = { postJotRequest: { message: body } };
     const response = await jots.postJot(payload);
+    updateFeed();
+  }
+  function navToggle() {
+      var btn = document.getElementById('menuBtn');
+      var nav = document.getElementById('menu');
+      btn?.classList.toggle('open');
+      nav?.classList.toggle('flex');
+      nav?.classList.toggle('hidden');
   }
 </script>
 
 <main>
-  <header class="flex justify-between">
+  <header class="flex justify-between pb-3">
     <a href="/">
       <img src="/images/logo/candle-short.png" alt="Candle logo" />
     </a>
+    <button id="menuBtn" class="hamburger block sm:hidden focus:outline-none pr-10" type="button" on:click={navToggle}>
+      <span class="hamburger__top-bun"></span><span class="hamburger__bottom-bun"></span>
+    </button>
   </header>
-  <nav class="mt-5">
-    <ol>
-      <li>
-        <a href="/home"
-          ><Fa icon={faHouse} style="padding-right: 7px;" size="1.5x" />
-          <b>Home</b></a
+  <nav id="site-menu" class="flex flex-col sm:flex-col sm:w-full shadow-lg sm:shadow-none ml-4 sm:ml-0 mb-5 sm:mb-2 w-6/7 justify-between items-center px-4 sm:px-4 py-1 bg-white">
+    <div id="menu" class="w-full self-end sm:self-center md:block flex-col sm:flex-row items-center h-full py-1 pb-4 sm:py-0 sm:pb-0 hidden">
+      <a href="/home" class="text-black flex items-center justify-center sm:items-left sm:justify-start font-bold hover:text-red text-lg w-full no-underline sm:w-auto sm:pr-4 py-2 sm:py-4 sm:pt-2">
+        <Fa icon={faHouse} style="padding-right: 15px;" class="hidden sm:block" size="1.5x" /> Home </a>
+      <a href="/" class="text-black flex items-center justify-center  sm:items-left sm:justify-start font-bold hover:text-red text-lg w-full no-underline sm:w-auto sm:pr-4 py-2 sm:py-4 sm:pt-2">
+        <Fa icon={faBell} style="padding-right: 20px;" class="hidden sm:block" size="1.5x" />Notifications</a>
+      <a href="/profile"  class="text-black flex items-center justify-center sm:items-left sm:justify-start font-bold hover:text-red text-lg w-full no-underline sm:w-auto sm:pr-4 py-2 sm:py-4 sm:pt-2">
+        <Fa icon={faUser} style="padding-right: 20px;" class="hidden sm:block" size="1.5x" />Profile</a>
+      <div class="user-card w-3/6 sm:w-5/6 my-2">
+        <div class="user-info">
+          <div class="profilePic">
+            <ProfilePic handle={currentUser.handle()} />
+          </div>
+          <div class="user-handles">
+            <b><h2>{currentUser.handle()}</h2></b>
+            <h5>@{currentUser.handle()}</h5>
+          </div>
+        </div>
+        <div class="mr-3 mt-1">
+          <Button btnClass="btn-dropdown mt-4">
+            <Fa icon={faEllipsis} />
+          </Button>
+          <Dropdown>
+            <DropdownItem><a href="/logout">Log Out</a></DropdownItem>
+          </Dropdown>
+        </div>
+      </div>
+      <div class="text-center sm:text-left w-full">
+        <Button
+          btnClass="btn-action w-3/6 sm:w-5/6 mt-5"
+          on:click={() => (defaultModal = true)}>Chat</Button
         >
-      </li>
-      <li>
-        <a href="/"
-          ><Fa icon={faBell} style="padding-right: 12px;" size="1.5x" />
-          <b>Notifications</b></a
-        >
-      </li>
-      <li>
-        <a href="/profile"
-          ><Fa icon={faUser} style="padding-right: 12px;" size="1.5x" />
-          <b>Profile</b></a
-        >
-      </li>
-    </ol>
+      </div>
+    </div>
   </nav>
-  <div class="user-card w-5/6">
-    <div class="user-info">
-      <div class="profilePic">
-        <ProfilePic handle={currentUser.handle()} />
-      </div>
-      <div class="user-handles">
-        <b><h2>{currentUser.handle()}</h2></b>
-        <h5>@{currentUser.handle()}</h5>
-      </div>
-    </div>
-    <div class="mr-5  mt-1">
-      <Button btnClass="btn-dropdown">
-        <Fa icon={faEllipsis} />
-      </Button>
-      <Dropdown>
-        <DropdownItem><a href="/logout">Log Out</a></DropdownItem>
-      </Dropdown>
-    </div>
-  </div>
-  <div>
-    <Button
-      btnClass="btn-action w-5/6 mt-5"
-      on:click={() => (defaultModal = true)}>Chat</Button
-    >
-  </div>
   <Modal bind:open={defaultModal} autoclose>
     <div class="modal pr-5">
       <div class="profilePic mr-5">
@@ -123,7 +127,40 @@
     display: flex;
     flex-direction: column;
   }
-  .profilePic {
+  /* custom non-Tailwind CSS */
+
+@media (max-width: 576px) {
+    .content {
+        padding-top: 51px;
+    }
+}
+
+@media (min-width: 577px) {
+  .pt-scroll {
+    padding-top: 51px;
+  }
+}
+
+/* HAMBURGER MENU */
+
+.open {
+  transform: rotate(90deg);
+  transform: translateY(-1px);
+}
+
+.open .hamburger__top-bun {
+  transform:
+    rotate(45deg)
+    translateY(0px);
+}
+
+.open .hamburger__bottom-bun {
+  transform:
+    rotate(-45deg)
+    translateY(0px);
+}
+
+.profilePic {
     width: 48px !important;
     height: 48px !important;
   }
@@ -144,4 +181,35 @@
   .user-handles {
     padding-left: 10px;
   }
+.hamburger {
+  cursor: pointer;
+  width: 48px;
+  height: 48px;
+  transition: all 0.25s;
+}
+
+.hamburger__top-bun,
+.hamburger__bottom-bun {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 2px;
+  background: #000;
+  transform: rotate(0);
+  transition: all 0.5s;
+}
+
+.hamburger:hover [class*="-bun"] {
+  background: #333;
+}
+
+.hamburger__top-bun {
+  transform: translateY(-5px);
+}
+
+.hamburger__bottom-bun {
+  transform: translateY(3px);
+}
+
+
 </style>

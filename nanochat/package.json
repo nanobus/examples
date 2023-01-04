@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "use-svelte-store": "^1.3.3"
+  }
+}
