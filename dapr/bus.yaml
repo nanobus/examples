@@ -1,0 +1,91 @@
+id: dapr-example
+version: 0.0.1
+
+transports:
+  http:
+    uses: nanobus.transport.http.server/v1
+    with:
+      address: ':8080'
+      routers:
+        - uses: nanobus.transport.http.router/v1
+          with:
+            routes:
+              - method: POST
+                uri: /people
+                handler: People::create
+              - method: GET
+                uri: /people/{id}
+                handler: People::get
+
+  dapr:
+    uses: nanobus.transport.dapr/v1
+    with:
+      subscriptions:
+        - pubsub: pubsub
+          topic: welcome
+          codec: cloudevents+json
+          handler: Events::onWelcome
+
+authorization:
+  People:
+    get:
+      unauthenticated: true
+    create:
+      unauthenticated: true
+
+interfaces:
+  People:
+    get:
+      steps:
+        - name: Get state
+          uses: '@dapr/get_state'
+          with:
+            store: statestore
+            key: input.id
+            notFoundError: person_not_found
+
+    create:
+      steps:
+        - name: Save state
+          uses: '@dapr/set_state'
+          with:
+            store: statestore
+            items:
+              - key: input.id
+                value: input
+        - name: Publish greeting message
+          uses: '@dapr/publish'
+          with:
+            pubsub: pubsub
+            topic: welcome
+            data: |-
+              {
+                "type": "welcome.v1",
+                "data": "Welcome, " + input.firstName + " " + input.lastName + "!",
+              }
+            codec: cloudevents+json
+        - name: 201 Created
+          uses: http_response
+          with:
+            status: 201
+            headers:
+              - name: Location
+                value: '"{{host}}/people/" + input.id'
+
+  Events:
+    onWelcome:
+      steps:
+        - name: Log the welcome message
+          # assign will evaluate a value and assign it
+          # to output.
+          uses: log
+          with:
+            format: 'Event received: [%s] %q'
+            args: [input.type, input.data]
+
+errors:
+  person_not_found:
+    type: PersonNotFound
+    code: not_found
+    title: Person not found
+    message: Person for id {{ .key }} is not found
