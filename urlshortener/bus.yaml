@@ -56,26 +56,18 @@ interfaces:
           uses: call_provider
           with:
             handler: 'urlshortener.v1.Repository::loadById'
-          returns: location
-          retry: database
-          circuitBreaker: database
+            input: |-
+              {
+                "id": pipe.id,
+              }
+          returns: target
         - name: Redirect
           uses: http_response
           with:
             status: 301
             headers:
               - name: Location
-                value: location.url
-  events:
-    onReceiveURL:
-      steps:
-        - name: Log
-          uses: log
-          with:
-            format: 'Received URL: id=%q; url=%q'
-            args:
-              - input.data.id
-              - input.data.url
+                value: target.url
 providers:
   urlshortener.v1.Repository:
     loadById:
@@ -86,7 +78,7 @@ providers:
             resource: db
             namespace: urlshortener.v1
             type: URL
-            key: input.id
+            key: $.id
           retry: database
           circuitBreaker: database
     loadByURL:
@@ -99,7 +91,7 @@ providers:
             type: URL
             where:
               - query: url = ?
-                value: input.url
+                value: $.url
             notFoundError: not_found
           retry: database
           circuitBreaker: database
@@ -111,8 +103,8 @@ providers:
             resource: db
             sql: 'INSERT INTO url (id, url) VALUES ($1, $2)'
             args:
-              - input.id
-              - input.url
+              - $.id
+              - $.url
           retry: database
           circuitBreaker: database
 errors:

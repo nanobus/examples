@@ -1,18 +1,22 @@
+#!/usr/bin/env -S deno run
 import {
   Application,
-  CallProvider,
   constantBackoff,
   duration,
   env,
   HTTPResponse,
-  Log,
   migrate,
-  postgres,
+  PostgresActions,
   RestModule,
-  step,
+  returns,
   unauthenticated,
-} from "https://deno.land/x/nanobus_config@v0.0.9/mod.ts";
-import { Shortener } from "./iota.ts";
+} from "https://deno.land/x/nanobus_config@v0.0.10/mod.ts";
+import {
+  Repository,
+  repositoryClient,
+  Shortener,
+  URL,
+} from "./iota.ts";
 
 const app = new Application("url-shortener", "0.0.1")
   .spec("apex.axdl")
@@ -44,6 +48,11 @@ const circuitBreakers = app.circuitBreakers({
   },
 });
 
+const dbResiliency = {
+  retry: retries.database,
+  circuitBreaker: circuitBreakers.database,
+};
+
 app.initializer(
   "db",
   migrate.MigratePostgresV1({
@@ -52,103 +61,83 @@ app.initializer(
   }),
 );
 
-const repository = app.provider("urlshortener.v1.Repository", {
-  loadById: [
-    step(
+const database = new PostgresActions(db);
+
+// Allow unauthenticated access to shortener.
+Shortener.authorize(app, {
+  shorten: unauthenticated,
+  lookup: unauthenticated,
+});
+
+Shortener.register(app, {
+  lookup: (
+    // Input and flow builder
+    { flow },
+    // Variables
+    { target }: { target: URL },
+  ) =>
+    flow
+      .then(
+        // Call provider to load the URL.
+        "Load URL",
+        ($) => repositoryClient.loadById($.id),
+        returns(target),
+      )
+      .then(
+        // Set the HTTP response to redirect
+        // the browser to the real location.
+        "Redirect",
+        (_) =>
+          HTTPResponse({
+            status: 301,
+            headers: [
+              {
+                name: "Location",
+                value: target.url,
+              },
+            ],
+          }),
+      ),
+});
+
+Repository.register(app, {
+  loadById: ({ flow }) =>
+    flow.then(
       "Load by ID",
-      postgres.Load({
-        resource: db,
-        namespace: "urlshortener.v1",
-        type: "URL",
-        key: "input.id",
-      }),
-      {
-        retry: retries.database,
-        circuitBreaker: circuitBreakers.database,
-      },
+      ($) =>
+        database.load({
+          namespace: "urlshortener.v1",
+          type: "URL",
+          key: $.id,
+        }),
+      dbResiliency,
     ),
-  ],
-  loadByURL: [
-    step(
+
+  loadByURL: ({ flow }) =>
+    flow.then(
       "Load by URL",
-      postgres.FindOne({
-        resource: db,
-        namespace: "urlshortener.v1",
-        type: "URL",
-        where: [
-          {
-            query: "url = ?",
-            value: "input.url",
-          },
-        ],
-        notFoundError: "not_found",
-      }),
-      {
-        retry: retries.database,
-        circuitBreaker: circuitBreakers.database,
-      },
+      ($) =>
+        database.findOne({
+          namespace: "urlshortener.v1",
+          type: "URL",
+          where: [
+            {
+              query: "url = ?",
+              value: $.url,
+            },
+          ],
+          notFoundError: "not_found",
+        }),
+      dbResiliency,
     ),
-  ],
-  storeURL: [
-    step(
+
+  storeURL: ({ flow }) =>
+    flow.then(
       "Store the URL",
-      postgres.Exec({
-        resource: db,
-        sql: "INSERT INTO url (id, url) VALUES ($1, $2)",
-        args: ["input.id", "input.url"],
-      }),
-      {
-        retry: retries.database,
-        circuitBreaker: circuitBreakers.database,
-      },
+      ($) =>
+        database.exec("INSERT INTO url (id, url) VALUES ($1, $2)", $.id, $.url),
+      dbResiliency,
     ),
-  ],
-});
-
-app.implement({
-  [Shortener.lookup]: [
-    step(
-      "Load URL",
-      CallProvider({
-        handler: repository.loadById,
-      }),
-      {
-        returns: "location",
-        retry: retries.database,
-        circuitBreaker: circuitBreakers.database,
-      },
-    ),
-    step(
-      "Redirect",
-      HTTPResponse({
-        status: 301,
-        headers: [
-          {
-            name: "Location",
-            value: "location.url",
-          },
-        ],
-      }),
-    ),
-  ],
-});
-
-app.interface("events", {
-  onReceiveURL: [
-    step(
-      "Log",
-      Log({
-        format: "Received URL: id=%q; url=%q",
-        args: ["input.data.id", "input.data.url"],
-      }),
-    ),
-  ],
-});
-
-// Allow unauthenticated to shortener.
-app.authorizations({
-  [Shortener.shorten]: unauthenticated,
-  [Shortener.lookup]: unauthenticated,
 });
 
 app.errors({
