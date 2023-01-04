@@ -20,10 +20,6 @@ type Shortener interface {
 	Shorten(ctx context.Context, url string) mono.Mono[URL]
 }
 
-type Events interface {
-	OnReceiveURL(ctx context.Context, url *URL) mono.Void
-}
-
 // Repository handles loading and storing shortened URLs.
 type Repository interface {
 	// Load the URL by its identifier.

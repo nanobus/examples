@@ -68,16 +68,6 @@ interfaces:
             headers:
               - name: Location
                 value: target.url
-  urlshortener.v1.Events:
-    onReceiveURL:
-      steps:
-        - name: Log
-          uses: log
-          with:
-            format: 'Received URL: id=%q; url=%q'
-            args:
-              - $.data.id
-              - $.data.url
 providers:
   urlshortener.v1.Repository:
     loadById:

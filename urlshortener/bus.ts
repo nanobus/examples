@@ -5,15 +5,13 @@ import {
   duration,
   env,
   HTTPResponse,
-  log,
   migrate,
   PostgresActions,
   RestModule,
   returns,
   unauthenticated,
-} from "../../nanobus/config/ts/mod.ts";
+} from "https://deno.land/x/nanobus_config@v0.0.10/mod.ts";
 import {
-  Events,
   Repository,
   repositoryClient,
   Shortener,
@@ -100,14 +98,6 @@ Shortener.register(app, {
             ],
           }),
       ),
-});
-
-Events.register(app, {
-  onReceiveURL: ({ flow }) =>
-    flow.then(
-      "Log",
-      ($) => log("Received URL: id=%q; url=%q", $.data.id, $.data.url),
-    ),
 });
 
 Repository.register(app, {

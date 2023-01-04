@@ -93,48 +93,6 @@ func (o *ShortenerLookupArgs) Encode(encoder msgpack.Writer) error {
 	return nil
 }
 
-type EventsOnReceiveURLArgs struct {
-	URL URL `json:"url" yaml:"url" msgpack:"url"`
-}
-
-func (o *EventsOnReceiveURLArgs) Decode(decoder msgpack.Reader) error {
-	numFields, err := decoder.ReadMapSize()
-	if err != nil {
-		return err
-	}
-
-	for numFields > 0 {
-		numFields--
-		field, err := decoder.ReadString()
-		if err != nil {
-			return err
-		}
-		switch field {
-		case "url":
-			err = o.URL.Decode(decoder)
-		default:
-			err = decoder.Skip()
-		}
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (o *EventsOnReceiveURLArgs) Encode(encoder msgpack.Writer) error {
-	if o == nil {
-		encoder.WriteNil()
-		return nil
-	}
-	encoder.WriteMapSize(1)
-	encoder.WriteString("url")
-	o.URL.Encode(encoder)
-
-	return nil
-}
-
 type RepositoryLoadByIdArgs struct {
 	ID string `json:"id" yaml:"id" msgpack:"id"`
 }

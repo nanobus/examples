@@ -32,10 +32,6 @@ interface Shortener @service @uses([Repository]) {
     @GET @path("/{id}") @nocode
 }
 
-interface Events @events {
-  onReceiveURL(url: URL @cloudevent)
-}
-
 "Repository handles loading and storing shortened URLs."
 interface Repository @provider {
   "Load the URL by its identifier."

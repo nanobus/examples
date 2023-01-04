@@ -3,18 +3,3 @@ resources:
     uses: postgres
     with:
       url: ${env:URLSHORTENER_DB}
-
-  # dapr:
-  #   uses: dapr/connection
-  #   with:
-  #     address: :19090
-
-  # kafka:
-  #   uses: dapr/pubsub.pluggable.v1
-  #   with:
-  #     socketPath: kafka.socket
-  #     properties:
-  #       brokers: localhost:9092
-  #       consumerGroup: pubsubgroup1
-  #       authType: none
-  #       initialOffset: oldest
