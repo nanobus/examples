@@ -26,7 +26,7 @@ The `nanobus invoke <operation>` allows you to run nanobus actions in your termi
 Below is us echoing in a json with the necessary parameters to make a blog post.
 
 ```sh
-$ echo '{ "userId":"myuserid", "title":"My Blog Title ", "body": "This is my blog post" }' | nanobus invoke blogs.v1::postBlog
+$ echo '{ "userId":"myuserid", "title":"My Blog Title ", "body": "This is my blog post" }' | nanobus invoke blogs.v1.Blogs::postBlog
 ```
 
 Here are some other method commands you can run (Pass in the id you get from the `postblog` response) -
