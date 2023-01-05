@@ -7,12 +7,12 @@ A simple blog implementation on Nanobus.
 Before you begin, make sure you have the following installed:
 
 * [Apex](https://apexlang.io)
-* [Nanobus](https://github.com/nanobus)
+* [Nanobus](https://github.com/nanobus/nanobus)
 * [Just](https://just.systems)
 * [Docker](https://docs.docker.com/get-docker/)
-* [Postgres](https://www.postgresql.org)
+* [Postgres](https://www.postgresql.org) (optional)
 
-1) Clone the nanobus/examples directory - ``` git clone ```
+1) Clone the nanobus/examples directory - ``` git clone https://github.com/nanobus/examples.git ```
 
 2) `cd examples/blog`
 
@@ -21,7 +21,7 @@ Before you begin, make sure you have the following installed:
 
 ### Invoking Nanoblog on the command line
 
-The `nanobus invoke {interface} {method}` allows you to run nanobus actions in your terminal without having nanobus running 
+The `nanobus invoke <operation>` allows you to run nanobus actions in your terminal without having nanobus running 
 
 Below is us echoing in a json with the necessary parameters to make a blog post.
 
@@ -34,19 +34,19 @@ Here are some other method commands you can run (Pass in the id you get from the
 Delete Blog Post:
 
 ```sh
-$ echo '{"id":"", "userId":"myuserid" }' | nanobus invoke blogs.v1::deleteBlog 
+$ echo '{"id":"", "userId":"myuserid" }' | nanobus invoke blogs.v1.Blogs::deleteBlog 
  ```
 
 Get Single Blog Post:
 
 ```sh
-$ echo '{"id":"" }' | nanobus invoke blogs.v1::getBlog
+$ echo '{"id":"" }' | nanobus invoke blogs.v1.Blogs::getBlog
 ```
 
 Show Feed:
 
 ```sh
-$ echo '{}' | nanobus invoke blogs.v1::getFeed
+$ echo '{}' | nanobus invoke blogs.v1.Blogs::getFeed
 ```
 
 ### Invoking Nanoblog as a web service
@@ -59,7 +59,7 @@ $ echo '{}' | nanobus invoke blogs.v1::getFeed
 
 ```sh
 $ curl -X 'POST' \
-  'http://localhost:8080/v1/blogs/blog' \
+  'http://localhost:8080/v1/blogs' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{

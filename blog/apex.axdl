@@ -28,7 +28,7 @@ interface Blogs @service @path("/blogs") {
     userId: string,
     title: string,
     body: string 
-  ): Blog @POST @nocode @path("/blog")
+  ): Blog @POST @nocode
 
   "Get the Blog feed"
   getFeed(

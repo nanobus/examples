@@ -2,7 +2,7 @@ id: nanoblog
 version: 0.0.1
 spec: apex.axdl
 interfaces:
-  blogs.v1:
+  blogs.v1.Blogs:
     postBlog:
       steps:
         - name: Post a blog
