@@ -10,7 +10,7 @@ import {
   RestModule,
   returns,
   unauthenticated,
-} from "https://deno.land/x/nanobus_config@v0.0.10/mod.ts";
+} from "https://deno.land/x/nanobus_config@v0.0.12/mod.ts";
 import {
   Repository,
   repositoryClient,

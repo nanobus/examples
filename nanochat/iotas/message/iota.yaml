@@ -1,3 +1,4 @@
+id: message
 version: 0.0.1
 spec: apex.axdl
 resources:
@@ -12,7 +13,6 @@ interfaces:
             resource: messagedb
             single: true
             sql: |-
-
               INSERT INTO message (user_id, message, time)
               VALUES ($1, $2, now())
               RETURNING *
@@ -27,7 +27,6 @@ interfaces:
             resource: messagedb
             single: true
             sql: |-
-
               SELECT * FROM message
               WHERE id = $1
             args:
@@ -40,7 +39,6 @@ interfaces:
             resource: messagedb
             single: true
             sql: |-
-
               DELETE FROM message
               WHERE id = $1
                 AND user_id = $2
@@ -55,7 +53,6 @@ interfaces:
           with:
             resource: messagedb
             sql: |-
-
               SELECT t.* FROM message t
               JOIN follows f ON t.user_id = f.follows
               WHERE f.follower = $1
@@ -72,7 +69,6 @@ interfaces:
           with:
             resource: messagedb
             sql: |-
-
               SELECT * FROM message t
               WHERE (t.user_id = any($1) OR t.user_id = $2)
                 AND (t.time < $3 OR $3 IS NULL)
@@ -81,7 +77,6 @@ interfaces:
               - input.userIds
               - claims.sub
               - input.before
-          returns: exists
     getUserMessages:
       steps:
         - name: Get message timeline for a single user
@@ -89,7 +84,6 @@ interfaces:
           with:
             resource: messagedb
             sql: |-
-
               SELECT * FROM message t
               WHERE t.user_id = $1
                 AND (t.time < $2 OR $2 IS NULL)
@@ -97,4 +91,3 @@ interfaces:
             args:
               - input.userId
               - input.before
-          returns: exists
