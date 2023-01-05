@@ -1,0 +1,3 @@
+resources:
+  dapr:
+    uses: 'nanobus.resource.dapr/v1'
