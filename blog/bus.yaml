@@ -1,0 +1,110 @@
+id: nanoblog
+version: 0.0.1
+spec: apex.axdl
+interfaces:
+  blogs.v1.Blogs:
+    postBlog:
+      steps:
+        - name: Post a blog
+          uses: "@postgres/query_one"
+          with:
+            resource: blogdb
+            sql: |-
+              INSERT INTO blog (user_id, title, body, time)
+              VALUES ($1, $2, $3, now())
+              RETURNING *
+            args:
+              - input.userId
+              - input.title
+              - input.body
+    getFeed:
+      steps:
+        - name: Get blog timeline for multiple users
+          uses: "@postgres/query"
+          with:
+            resource: blogdb
+            sql: |-
+              SELECT * FROM blog
+              WHERE (time < $1 OR $1 IS NULL)
+              ORDER BY time DESC LIMIT $2
+            args:
+              - input.before
+              - input.limit
+    getBlog:
+      steps:
+        - name: Get a single blog
+          uses: "@postgres/query_one"
+          with:
+            resource: blogdb
+            sql: |-
+              SELECT * FROM blog
+              WHERE id = $1
+            args:
+              - input.id
+    deleteBlog:
+      steps:
+        - name: Remove a blog post
+          uses: "@postgres/query_one"
+          with:
+            resource: blogdb
+            sql: |-
+              DELETE FROM blog
+              WHERE id = $1
+                AND user_id = $2
+              RETURNING *
+            args:
+              - input.id
+              - input.userId
+    editBlog:
+      steps:
+        - name: Edit a blog post
+          uses: "@postgres/query_one"
+          with:
+            resource: blogdb
+            sql: |-
+              UPDATE blog
+              SET body = $2
+              WHERE id = $1
+              RETURNING *
+            args:
+              - input.id
+              - input.body
+transports:
+  http:
+    uses: nanobus.transport.http.server/v1
+    with:
+      address: ":8080"
+      middleware:
+        - uses: nanobus.transport.http.cors/v0
+          with:
+            allowedMethods:
+              - HEAD
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+            allowCredentials: true
+      routers:
+        - uses: nanobus.transport.http.rest/v1
+          with:
+            documentation:
+              swaggerUI: true
+              postman: true
+              restClient: true
+authorization:
+  blogs.v1.Blogs:
+    postBlog:
+      unauthenticated: true
+    getFeed:
+      unauthenticated: true
+    getBlog:
+      unauthenticated: true
+    deleteBlog:
+      unauthenticated: true
+initializers:
+  blogdb:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: "${env:BLOG_DB}"
+      directory: iotas/message/sql
