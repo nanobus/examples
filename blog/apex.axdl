@@ -34,14 +34,15 @@ interface Blogs @service @path("/blogs") {
   getFeed(
     before: datetime? @query
     limit: u32 = 100 @query @range(min: 1, max: 1000)
-  ): stream Blog @GET @nocode @path("/feed")
+  ): [Blog] @GET @nocode
 
   "Get a tweet by id."
   getBlog(id: string): Blog @GET @path("/{id}") @nocode
 
   "Delete a tweet (only creator has access)"
-  deleteBlog(id: string): Blog @DELETE @path("/{id}") @nocode
-
+  # To keep this example, simple userId is passed in instead
+  # of obtained through authentication/authorization.
+  deleteBlog(id: string, userId: string): Blog @DELETE @path("/{id}") @nocode
 }
 
 "Blog entity"
@@ -66,4 +67,3 @@ type BlogPage {
   "The tweets returned"
   items: [Blog]
 }
-

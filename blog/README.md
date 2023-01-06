@@ -1,13 +1,13 @@
 # NanoBlog 
 
-A simple blog implementation on Nanobus.
+A simple blog implementation on NanoBus.
 
 ### Prerequisites
 
 Before you begin, make sure you have the following installed:
 
 * [Apex](https://apexlang.io)
-* [Nanobus](https://github.com/nanobus/nanobus)
+* [NanoBus](https://github.com/nanobus)
 * [Just](https://just.systems)
 * [Docker](https://docs.docker.com/get-docker/)
 * [Postgres](https://www.postgresql.org) (optional)
@@ -17,7 +17,6 @@ Before you begin, make sure you have the following installed:
 2) `cd examples/blog`
 
 3) Run `docker compose up -d`.
-
 
 ### Invoking Nanoblog on the command line
 
@@ -34,8 +33,10 @@ Here are some other method commands you can run (Pass in the id you get from the
 Delete Blog Post:
 
 ```sh
-$ echo '{"id":"", "userId":"myuserid" }' | nanobus invoke blogs.v1.Blogs::deleteBlog 
+$ echo '{"id":"", "userId":"myuserid" }' | nanobus invoke blogs.v1.Blogs::deleteBlog
  ```
+
+> Note: `userId` has to be passed because this example does not use authentication/authorization.
 
 Get Single Blog Post:
 
@@ -71,5 +72,3 @@ $ curl -X 'POST' \
 ## More info
 
 For more info, visit [here](https://github.com/nanobus/nanobus).
-
-
