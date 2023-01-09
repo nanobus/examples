@@ -76,8 +76,6 @@ interfaces:
     onWelcome:
       steps:
         - name: Log the welcome message
-          # assign will evaluate a value and assign it
-          # to output.
           uses: log
           with:
             format: 'Event received: [%s] %q'
