@@ -1,0 +1,4 @@
+github.com/nanobus/iota/go v0.0.0-20221208153944-721e2807f75d h1:n7kEorW5ZtDOvz++DdB4Xw2InI6771J1g3cjanJQ4ng=
+github.com/nanobus/iota/go v0.0.0-20221208153944-721e2807f75d/go.mod h1:HVq3g1+5XRxNi/43j5D69Ga0NHiesmSFXmnnKamZX+c=
+golang.org/x/exp v0.0.0-20221025133541-111beb427cde h1:21I041MHkLEAgTE3ziMHbCknpoSjQKUmXhIDgfpGiUo=
+golang.org/x/exp v0.0.0-20221025133541-111beb427cde/go.mod h1:cyybsKvd6eL0RnXn6p/Grxp8F5bW7iYuBgsNCOHpMYE=

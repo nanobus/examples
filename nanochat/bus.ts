@@ -1,8 +1,10 @@
+#!/usr/bin/env -S deno run
 import {
   Application,
   AuthStyle,
   env,
   JWTV1,
+  migrate,
   postgres,
   RestModule,
   SessionV1,
@@ -11,8 +13,7 @@ import {
   step,
   unauthenticated,
   UserInfoV1,
-  migrate,
-} from "https://deno.land/x/nanobus_config@v0.0.7/mod.ts";
+} from "https://deno.land/x/nanobus_config@v0.0.12/mod.ts";
 import { Jots, Users } from "./iota.ts";
 import { Follow } from "./iotas/follow/iota.ts";
 import { Like } from "./iotas/like/iota.ts";
@@ -41,22 +42,22 @@ const userdb = app.resource("userdb");
   );
 });
 
-const _follow = app.include("follow", Follow, {
+const _follow = app.import("follow", Follow, {
   resourceLinks: {
     followdb: followdb,
   },
 });
-const _like = app.include("like", Like, {
+const _like = app.import("like", Like, {
   resourceLinks: {
     likedb: likedb,
   },
 });
-const _message = app.include("message", Message, {
+const _message = app.import("message", Message, {
   resourceLinks: {
     messagedb: messagedb,
   },
 });
-const _user = app.include("user", User, {
+const _user = app.import("user", User, {
   resourceLinks: {
     userdb: userdb,
   },
@@ -66,23 +67,24 @@ const _user = app.include("user", User, {
 // Make sure there is a "sub" (subject) claim.
 const secured = { has: ["sub"] };
 
-app.authorizations({
-  // Jots
-  [Jots.postJot]: secured,
-  [Jots.getFeed]: secured,
-  [Jots.getJot]: unauthenticated,
-  [Jots.deleteJot]: secured,
-  [Jots.like]: secured,
-  [Jots.unlike]: secured,
-  [Jots.likes]: unauthenticated,
-  // Users
-  [Users.me]: secured,
-  [Users.getProfile]: unauthenticated,
-  [Users.getJots]: unauthenticated,
-  [Users.follow]: secured,
-  [Users.unfollow]: secured,
-  [Users.getFollows]: unauthenticated,
-  [Users.getFollowers]: unauthenticated,
+Jots.authorize(app, {
+  postJot: secured,
+  getFeed: secured,
+  getJot: unauthenticated,
+  deleteJot: secured,
+  like: secured,
+  unlike: secured,
+  likes: unauthenticated,
+});
+
+Users.authorize(app, {
+  me: secured,
+  getProfile: unauthenticated,
+  getJots: unauthenticated,
+  follow: secured,
+  unfollow: secured,
+  getFollows: unauthenticated,
+  getFollowers: unauthenticated,
 });
 
 const security = app.provider("security", {

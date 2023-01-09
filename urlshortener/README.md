@@ -6,10 +6,11 @@ A simple URL shortener API that stores them in a swappable database (e.g. [Postg
 
 Dependencies:
 
+* Install [Deno](https://github.com/denoland/deno_install)
+* Install [Apex](https://apexlang.io)
+* Install [NanoBus](https://github.com/nanobus/nanobus/blob/main/README.md#getting-started)
 * Install [Go 1.19+](https://go.dev/doc/install)
 * Install [TinyGo 0.26+](https://tinygo.org/getting-started/install/)
-* Install [Binaryen](https://github.com/WebAssembly/binaryen) (Homebrew `brew install binaryen`)
-* Install [Apex and NanoBus](https://github.com/nanobus/nanobus/blob/main/README.md#getting-started).
 
 ## Running
 

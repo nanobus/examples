@@ -1,0 +1,12 @@
+
+namespace "my-module.v1"
+
+interface Greeter @service {
+  sayHello(target:string): string
+}
+
+
+interface Other @service {
+  action(this:string): string
+}
+

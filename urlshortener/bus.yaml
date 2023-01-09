@@ -1,210 +1,75 @@
-application:
-  id: url-shortener
-  version: 0.0.1
-  environment: local
-
-transports:
-  rest:
-    uses: rest
-    with:
-      address: :8080
-      documentation:
-        swaggerUI: true
-        postman: true
-        restClient: true
-  httprpc:
-    uses: httprpc
-    with:
-      address: :9090
-
-# Commented out for a simpler demo
-# See oauth-setup for instructions for setting up an OAuth/OIDC provider.
-# filters:
-#   http:
-#     - uses: jwt
-#       with:
-#         jwksUrl: ${env:JWKS_URL}
-
-tracing:
-  uses: jaeger
-  with:
-    collectorEndpoint: ${env:JAEGER_TRACES_ENDPOINT}
-
-specs:
-  - uses: apex
-    with:
-      filename: apex.aidl
-
-compute:
-  - uses: wasmrs
-    with:
-      filename: build/urlshortener.wasm
-
-#######################
-# Connections / Infra
-#######################
-
-migrate:
-  db:
-    uses: postgres
-    with:
-      dataSource: ${env:URLSHORTENER_DB}
-      sourceUrl: ${env:URLSHORTENER_SQL}
-
+id: url-shortener
+version: 0.0.1
+spec: apex.axdl
+main: build/urlshortener.wasm
+package:
+  registry: reg.candle.run
+  org: examples
 resources:
-  db:
-    uses: postgres
-    with:
-      url: ${env:URLSHORTENER_DB}
-
-  # redis:
-  #   uses: dapr/statestore.pluggable.v1
-  #   with:
-  #     socketPath: redis.socket
-  #     properties:
-  #       redisHost: localhost:6379
-  #       redisPassword: ""
-  #       consumerID: testConsumer
-  #       initTimeout: 5s
-  #       timeout: 1s
-
-  kafka:
-    uses: dapr/pubsub.pluggable.v1
-    with:
-      socketPath: kafka.socket
-      properties:
-        brokers: localhost:9092
-        consumerGroup: pubsubgroup1
-        authType: none
-        initialOffset: oldest
-
+  - db
 resiliency:
+  timeouts:
+    events: 30s
   retries:
     events:
-      policy: constant
-      duration: 3s
-
+      constant:
+        duration: 3s
     database:
-      policy: constant
-      duration: 3s
-
-    publish:
-      policy: constant
-      duration: 3s
-
+      constant:
+        duration: 3s
   circuitBreakers:
     database:
-      policy: constant
-      duration: 3s
-    
+      timeout: 1m
     publish:
       maxRequests: 2
       timeout: 30s
-
-#######################
-# Entry Points
-#######################
-
-services:
-  'urlshortener.v1.Shortener':
-    # Uncomment for claims authorization
-    # shorten:
-    #   steps:
-    #     - name: Authorize user
-    #       uses: authorize
-    #       with:
-    #         has: [sub] # ensure an authenticated user
-    #     - name: Invoke the shorten code
-    #       uses: invoke
-
+initializers:
+  db:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: '${env:URLSHORTENER_DB}'
+      sourceUrl: '${env:URLSHORTENER_SQL}'
+transports:
+  http:
+    uses: nanobus.transport.http.server/v1
+    with:
+      address: ':8080'
+      middleware: []
+      routers:
+        - uses: nanobus.transport.http.rest/v1
+          with:
+            documentation:
+              swaggerUI: true
+              postman: true
+              restClient: true
+authorization:
+  urlshortener.v1.Shortener:
+    shorten:
+      unauthenticated: true
+    lookup:
+      unauthenticated: true
+interfaces:
+  urlshortener.v1.Shortener:
     lookup:
       steps:
         - name: Load URL
           uses: call_provider
           with:
-            namespace: urlshortener.v1.Repository
-            operation: loadById
-          returns: location
+            handler: 'urlshortener.v1.Repository::loadById'
+            input: |-
+              {
+                "id": pipe.id,
+              }
+          returns: target
         - name: Redirect
           uses: http_response
           with:
             status: 301
             headers:
               - name: Location
-                value: location.url
-
-subscriptions:
-  - resource: kafka
-    topic: urls
-    codec: cloudevents+json
-    function: onReceiveURL
-
-events:
-  onReceiveURL:
-    steps:
-      - name: Log
-        uses: log
-        with:
-          format: 'Received URL: id=%q; url=%q'
-          args:
-            - input.data.id
-            - input.data.url
-
-#######################
-# Data Providers
-#######################
-
+                value: target.url
 providers:
-  'urlshortener.v1.Repository':
-
-  #####################################
-  # State store configuration
-  #####################################
-    # loadById:
-    #   steps:
-    #     - name: Load by ID
-    #       uses: '@dapr/get_state'
-    #       with:
-    #         resource: redis
-    #         key: '"by-id:" + input.id'
-    #       retry: database
-    #       circuitBreaker: database
-
-    # loadByURL:
-    #   steps:
-    #     - name: Load by URL
-    #       uses: '@dapr/get_state'
-    #       with:
-    #         resource: redis
-    #         key: '"by-url:" + input.url'
-    #       retry: database
-    #       circuitBreaker: database
-
-    # storeURL:
-    #   steps:
-    #     - name: Store the URL
-    #       uses: '@dapr/set_state'
-    #       with:
-    #         resource: redis
-    #         items:
-    #           - key: '"by-url:" + input.url'
-    #           - key: '"by-id:" + input.id'
-    #       retry: database
-    #       circuitBreaker: database
-
-    #     - name: Publish URL
-    #       uses: '@dapr/publish'
-    #       with:
-    #         resource: kafka
-    #         topic: urls
-    #         key: input.id
-    #         codec: json
-    #       retry: publish
-    #       circuitBreaker: publish
-
-  #####################################
-  # Database configuration
-  #####################################
+  urlshortener.v1.Repository:
     loadById:
       steps:
         - name: Load by ID
@@ -213,10 +78,9 @@ providers:
             resource: db
             namespace: urlshortener.v1
             type: URL
-            key: input.id
+            key: $.id
           retry: database
           circuitBreaker: database
-
     loadByURL:
       steps:
         - name: Load by URL
@@ -227,45 +91,37 @@ providers:
             type: URL
             where:
               - query: url = ?
-                value: input.url
+                value: $.url
             notFoundError: not_found
           retry: database
           circuitBreaker: database
-    
     storeURL:
       steps:
         - name: Store the URL
           uses: '@postgres/exec'
           with:
             resource: db
-            sql: INSERT INTO url (id, url) VALUES ($1, $2)
+            sql: 'INSERT INTO url (id, url) VALUES ($1, $2)'
             args:
-              - input.id
-              - input.url
+              - $.id
+              - $.url
           retry: database
           circuitBreaker: database
-
-        - name: Publish URL
-          uses: '@dapr/publish'
-          with:
-            resource: kafka
-            topic: urls
-            key: input.id
-            data: |
-              {
-                "type": "url.created.v1",
-                "source": "urlshortener",
-                "data": input
-              }
-            codec: cloudevents+json
-
-#######################
-# Error templates
-#######################
-
 errors:
   not_found:
     type: URLNotFound
     code: not_found
     title: URL not found
-    message: URL for id {{ .key }} is not found
+    message: 'URL with id {{ .key }} was not found'
+  permission_denied:
+    type: PermissionDenied
+    code: permission_denied
+    title: Permission denied
+    message: >-
+      You don't have permission to access this resource or to perform the
+      operation.
+  unauthenticated:
+    type: Unauthenticated
+    code: unauthenticated
+    title: Unauthenticated
+    message: You must be logged in to perform the operation.

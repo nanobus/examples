@@ -1,0 +1,9 @@
+import * from "@apexlang/core"
+import * from "@apexlang/rest"
+import * from "@apexlang/openapi"
+
+namespace "test"
+
+interface Service @service {
+  op(): string @nocode
+}

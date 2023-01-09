@@ -11,5 +11,10 @@
             }
         ],
         "scanLimit": 200
+    },
+    "deno.enable": true,
+    "deno.unstable": true,
+    "[typescript]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
     }
 }

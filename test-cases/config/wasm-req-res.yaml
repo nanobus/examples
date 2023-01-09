@@ -1,0 +1,17 @@
+id: test
+version: 0.0.1
+spec: ${env:TESTDIR}/../iotas/apex.axdl
+main: ${env:TESTDIR}/../iotas/wasm/${env:TESTLANG}/build/sample.wasm
+authorization:
+  suite.test:
+    op:
+      unauthenticated: true
+providers:
+  suite.external:
+    uppercase:
+      steps:
+        - uses: log
+          with:
+            format: '%s'
+            args:
+              - input.input

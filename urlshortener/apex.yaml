@@ -1,34 +1,34 @@
-spec: apex.aidl
+spec: apex.axdl
 config:
   module: github.com/nanobus/examples/urlshortener
   package: urlshortener
 generates:
   cmd/main.go:
     ifNotExists: false
-    module: '@nanobus/tinygo'
+    module: https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts
     visitorClass: MainVisitor
     config:
       import: github.com/nanobus/examples/urlshortener/pkg/urlshortener
   pkg/urlshortener/msgpack.go:
-    module: '@nanobus/tinygo'
+    module: https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts
     visitorClass: MsgPackVisitor
   pkg/urlshortener/interfaces.go:
-    module: '@nanobus/tinygo'
+    module: https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts
     visitorClass: InterfacesVisitor
   pkg/urlshortener/export.go:
-    module: '@nanobus/tinygo'
+    module: https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts
     visitorClass: ExportVisitor
   pkg/urlshortener/provider.go:
-    module: '@nanobus/tinygo'
+    module: https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts
     visitorClass: ProviderVisitor
   pkg/urlshortener/service.go:
     ifNotExists: true
-    module: '@nanobus/tinygo'
+    module: https://deno.land/x/iota_codegen@v0.0.1/tinygo/mod.ts
     visitorClass: ScaffoldVisitor
     config:
       types:
         - service
   bus.yaml:
     ifNotExists: true
-    module: '@nanobus/bus'
+    module: https://deno.land/x/iota_codegen@v0.0.1/bus/mod.ts
     visitorClass: BusVisitor

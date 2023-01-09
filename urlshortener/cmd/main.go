@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/nanobus/iota/go/wasmrs/guest"
+	"github.com/nanobus/iota/go/transport/wasmrs/guest"
 
 	"github.com/nanobus/examples/urlshortener/pkg/urlshortener"
 )

@@ -3,19 +3,6 @@ version: 0.0.1
 spec: apex.axdl
 resources:
   - followdb
-resiliency:
-  retries:
-    database:
-      constant:
-        duration: 3s
-  circuitBreakers:
-    database: {}
-initializers:
-  followdb:
-    uses: nanobus.migrate.postgres/v1
-    with:
-      dataSource: '${env:FOLLOW_DB}'
-      directory: sql
 interfaces:
   nanochat.io.follows.v1.FollowStore:
     load:
@@ -23,10 +10,9 @@ interfaces:
         - name: Lookup user by ID
           uses: '@postgres/query'
           with:
-            single: true
             resource: followdb
+            single: true
             sql: |-
-
               SELECT u.id, u.followers, u.follows
               FROM follow_user u
               WHERE id = $1
@@ -39,7 +25,6 @@ interfaces:
           with:
             resource: followdb
             sql: |-
-
               SELECT u.id, u.followers, u.follows
               FROM follow_user u
               WHERE id = any($1)
@@ -50,10 +35,9 @@ interfaces:
         - name: Lookup user by ID
           uses: '@postgres/query'
           with:
-            single: true
             resource: followdb
+            single: true
             sql: |-
-
               SELECT EXISTS (
                 SELECT *
                 FROM follow
@@ -65,7 +49,7 @@ interfaces:
               - input.userId
           returns: exists
         - name: Return boolean
-          uses: assign
+          uses: expr
           with:
             value: exists.following
     follow:
@@ -74,9 +58,7 @@ interfaces:
           uses: '@postgres/exec'
           with:
             resource: followdb
-            sql: |-
-
-              SELECT fn_follow($1, $2) as success;
+            sql: 'SELECT fn_follow($1, $2) as success;'
             args:
               - claims.sub
               - input.followedId
@@ -86,9 +68,7 @@ interfaces:
           uses: '@postgres/exec'
           with:
             resource: followdb
-            sql: |-
-
-              SELECT fn_unfollow($1, $2) as success;
+            sql: 'SELECT fn_unfollow($1, $2) as success;'
             args:
               - claims.sub
               - input.followedId
@@ -99,7 +79,6 @@ interfaces:
           with:
             resource: followdb
             sql: |-
-
               SELECT u.id, f.time
               FROM follow_user u
               JOIN follow f ON u.id = f.follower
@@ -118,7 +97,6 @@ interfaces:
           with:
             resource: followdb
             sql: |-
-
               SELECT u.id, f.time
               FROM follow_user u
               JOIN follow f ON u.id = f.follows
@@ -137,7 +115,6 @@ interfaces:
           with:
             resource: followdb
             sql: |-
-
               SELECT u.id, f.time
               FROM follow_user u
               JOIN follow f ON u.id = f.follows

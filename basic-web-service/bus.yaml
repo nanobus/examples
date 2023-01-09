@@ -1,0 +1,26 @@
+id: your-app
+version: 0.0.1
+transports:
+  http:
+    uses: nanobus.transport.http.server/v1
+    with:
+      address: ':8080'
+      routers:
+        - uses: nanobus.transport.http.router/v1
+          with:
+            routes:
+              - method: POST
+                uri: /hello
+                handler: greeter::say-hello
+authorization:
+  greeter:
+    say-hello:
+      unauthenticated: true
+interfaces:
+  greeter:
+    say-hello:
+      steps:
+        - name: Say Hello!
+          uses: assign
+          with:
+            value: '"Hello, " + input.name'

@@ -1,0 +1,5 @@
+resources:
+  db:
+    uses: postgres
+    with:
+      url: ${env:URLSHORTENER_DB}

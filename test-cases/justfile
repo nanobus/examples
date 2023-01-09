@@ -1,0 +1,8 @@
+
+build:
+  just iotas/wasm/go/build
+  just iotas/wasm/rust/build
+
+test:
+    cram tests/*.t
+
