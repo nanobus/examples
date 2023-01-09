@@ -37,10 +37,6 @@
             <div class="user-profile--image">
               <img src="/images/profile.jpg" alt="Profile pic" />
             </div>
-            <div class="user-profile--info">
-              <p class="mb-0"><strong>{user.handle}</strong></p>
-              <p class="mb-0">@{user.handle}</p>
-            </div>
           </div>
 
           {#if user.isFollowing}
@@ -52,17 +48,21 @@
         >
           {:else}
           <Button
-          btnClass="btn-action"
+          btnClass="btn-action btn-action-secondary h-8 text-sm mt-2"
           on:click={(evt) => {
             follow();
           }}>Follow</Button
         >
           {/if}
         </div>
+        <div class="user-profile--info">
+          <p class="mb-0 capitalize text-2xl"><strong>{user.handle}</strong></p>
+          <p class="mb-0 pt-1 text-sm">@{user.handle}</p>
+        </div>
         <hr />
         <div class="follow-info">
-          <div class="followers">{user.followers} Followers</div>
-          <div class="following">{user.follows} Following</div>
+          <div class="followers text-lg pl-2"><b>{user.followers}</b> Followers</div>
+          <div class="following text-lg pl-3"><b>{user.follows}</b> Following</div>
         </div>
       </div>
     </div>
@@ -95,8 +95,9 @@
     padding-right: 10px;
   }
   .page-header {
-    background-color: rgba(153, 144, 144, 0.683);
+    background-color: #fff;
     padding: 10px;
+    border-width: 1px;
   }
 
   hr {
@@ -104,15 +105,19 @@
   }
   .user-profile--image {
     margin-right: 1rem;
+    position: absolute;
+    top: -65px;
+    left: 6px;
   }
 
   .user-profile--image img {
-    width: 40px;
-    height: 40px;
+    width: 110px;
+    height: 110px;
     object-fit: cover;
-    border-radius: 25px;
+    border-radius: 55px;
   }
   .follow-user {
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -122,5 +127,9 @@
   .user-details {
     display: flex;
     flex-direction: row;
+  }
+  .user-profile--info{
+    text-align: left;
+    padding:  15px 18px;
   }
 </style>

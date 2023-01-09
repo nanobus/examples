@@ -28,7 +28,16 @@
     await jots.deleteJot({ id: jot.id! });
     deleted = !deleted;
     console.log(jot.id);
+    setTimeout(function () {
+      deleteElement();
+    }, 1000);
   }
+  function deleteElement(){
+    var chatContainer = document.querySelector('#chatsWrapper');
+    var fourChildNode = chatContainer.querySelector('.deleted');
+    fourChildNode?.remove();
+  }
+  deleteElement();
 </script>
 
 <div class="jot-container" class:deleted>
@@ -130,14 +139,14 @@
   .jot-container {
     display: flex;
     flex-direction: row;
-    padding-left: 50px;
-    padding-right: 50px;
+    padding-left: 35px;
+    padding-right: 35px;
     min-width: 300px;
     border-style: solid;
     border-width: 0.5px;
     border-radius: 3px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
 
   .jot-container:hover {

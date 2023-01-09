@@ -32,6 +32,12 @@
       nav?.classList.toggle('flex');
       nav?.classList.toggle('hidden');
   }
+  let name = 'sid';
+  function removeCookieValue() {
+    document.cookie = name+'="";-1; path=/';
+    location.reload();
+  }
+
 </script>
 
 <main>
@@ -46,11 +52,9 @@
   <nav id="site-menu" class="flex flex-col sm:flex-col sm:w-full shadow-lg sm:shadow-none ml-4 sm:ml-0 mb-5 sm:mb-2 w-6/7 justify-between items-center px-4 sm:px-4 py-1 bg-white">
     <div id="menu" class="w-full self-end sm:self-center md:block flex-col sm:flex-row items-center h-full py-1 pb-4 sm:py-0 sm:pb-0 hidden">
       <a href="/home" class="text-black flex items-center justify-center sm:items-left sm:justify-start font-bold hover:text-red text-lg w-full no-underline sm:w-auto sm:pr-4 py-2 sm:py-4 sm:pt-2">
-        <Fa icon={faHouse} style="padding-right: 15px;" class="hidden sm:block" size="1.5x" /> Home </a>
-      <a href="/" class="text-black flex items-center justify-center  sm:items-left sm:justify-start font-bold hover:text-red text-lg w-full no-underline sm:w-auto sm:pr-4 py-2 sm:py-4 sm:pt-2">
-        <Fa icon={faBell} style="padding-right: 20px;" class="hidden sm:block" size="1.5x" />Notifications</a>
+        <Fa icon={faHouse} style="padding-right: 15px;" class="hidden sm:block" size="1.3x" /> Home </a>
       <a href="/profile"  class="text-black flex items-center justify-center sm:items-left sm:justify-start font-bold hover:text-red text-lg w-full no-underline sm:w-auto sm:pr-4 py-2 sm:py-4 sm:pt-2">
-        <Fa icon={faUser} style="padding-right: 20px;" class="hidden sm:block" size="1.5x" />Profile</a>
+        <Fa icon={faUser} style="padding-right: 20px;" class="hidden sm:block" size="1.3x" />Profile</a>
       <div class="user-card w-3/6 sm:w-5/6 my-2">
         <div class="user-info">
           <div class="profilePic">
@@ -66,7 +70,7 @@
             <Fa icon={faEllipsis} />
           </Button>
           <Dropdown>
-            <DropdownItem><a href="/logout">Log Out</a></DropdownItem>
+            <DropdownItem on:click={removeCookieValue}>Log Out</DropdownItem>
           </Dropdown>
         </div>
       </div>
@@ -96,7 +100,6 @@
     width: 48px !important;
     height: 48px !important;
   }
-
   nav li {
     @apply mb-3;
   }
@@ -128,7 +131,6 @@
     flex-direction: column;
   }
   /* custom non-Tailwind CSS */
-
 @media (max-width: 576px) {
     .content {
         padding-top: 51px;
