@@ -8,4 +8,4 @@ build: codegen
     tinygo build -o build/urlshortener.wasm -scheduler=none -target wasi -no-debug cmd/main.go
 
 run:
-    nanobus
+    nanobus run --debug

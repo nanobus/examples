@@ -21,18 +21,6 @@ cd docker
 docker-compose -f docker-compose.all.yml up
 ```
 
-Run the Dapr Kakfa pluggable component (new terminal)
-
-```cli
-just kafka
-```
-
-Run the Dapr Redis pluggable component (new terminal)
-
-```cli
-just redis
-```
-
 Build the application
 
 ```cli
