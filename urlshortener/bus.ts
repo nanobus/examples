@@ -5,12 +5,13 @@ import {
   duration,
   env,
   HTTPResponse,
+  JWTV1,
   migrate,
   PostgresActions,
   RestModule,
   returns,
   unauthenticated,
-} from "https://deno.land/x/nanobusconfig@v0.0.14/mod.ts";
+} from "https://deno.land/x/nanobusconfig@v0.0.15/mod.ts";
 import { Repository, repositoryClient, Shortener, URL } from "./iota.ts";
 
 const app = new Application("url-shortener", "0.0.1")
@@ -22,9 +23,12 @@ const app = new Application("url-shortener", "0.0.1")
   })
   .use(new RestModule(":8080"));
 
-// TODO: Update tracing config snippet after
-// https://github.com/nanobus/nanobus/issues/87
-// is fixed.
+app.setTracing({
+  uses: "jaeger",
+  with: {
+    collectorEndpoint: env("JAEGER_TRACES_ENDPOINT"),
+  },
+});
 
 // Commented out for a simpler demo
 // See oauth-setup for instructions for setting up an OAuth/OIDC provider.

@@ -4,7 +4,7 @@ import {
   Expr,
   PostgresActions,
   step,
-} from "https://deno.land/x/nanobusconfig@v0.0.14/mod.ts";
+} from "https://deno.land/x/nanobusconfig@v0.0.15/mod.ts";
 import { FollowStore } from "./iota.ts";
 
 const app = new Application("follow", "0.0.1").spec("apex.axdl");
