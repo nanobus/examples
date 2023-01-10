@@ -1,6 +1,6 @@
 # URL Shortener
 
-A simple URL shortener API that stores them in a swappable database (e.g. [Postgres](https://www.postgresql.org) or [Redis](https://redis.com)) and publishes new URLs to [Kafka](https://kafka.apache.org) as [CloudEvents](https://cloudevents.io) and writes traces to [Jaeger](https://www.jaegertracing.io). Optionally, [OAuth](https://oauth.net)/[ODIC](https://openid.net/connect/)/[JWT](https://jwt.io) authorization can be enabled via configuration.
+A simple URL shortener API that stores shortened URLs in [Postgres](https://www.postgresql.org) and writes traces to [Jaeger](https://www.jaegertracing.io). Optionally, [OAuth](https://oauth.net)/[ODIC](https://openid.net/connect/)/[JWT](https://jwt.io) authorization can be enabled via configuration.
 
 ## Setup
 
@@ -14,7 +14,7 @@ Dependencies:
 
 ## Running
 
-Run Postgres, Redis and Kafka inside Docker
+Run Postgres and Jaeger inside Docker
 
 ```cli
 cd docker

@@ -34,10 +34,10 @@ services:
       - "16686:16686"
       - "14268:14268"
       - "9411:9411"
-  redis-server:
-    image: redis:6
-    ports:
-      - "6379:6379"
+  # redis-server:
+  #   image: redis:6
+  #   ports:
+  #     - "6379:6379"
   # nats:
   #   image: nats
   #   ports:
@@ -54,15 +54,15 @@ services:
       - "5432:5432"
     volumes:
       - ~/postgresql/data:/var/lib/postgresql/data
-  zookeeper:
-    image: wurstmeister/zookeeper:latest
-    ports:
-      - "2181:2181"
-  kafka:
-    image: wurstmeister/kafka:latest
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
-      KAFKA_CREATE_TOPICS: "binding-topic:1:1"
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  # zookeeper:
+  #   image: wurstmeister/zookeeper:latest
+  #   ports:
+  #     - "2181:2181"
+  # kafka:
+  #   image: wurstmeister/kafka:latest
+  #   ports:
+  #     - "9092:9092"
+  #   environment:
+  #     KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+  #     KAFKA_CREATE_TOPICS: "binding-topic:1:1"
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
