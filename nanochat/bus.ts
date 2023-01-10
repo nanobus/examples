@@ -13,7 +13,7 @@ import {
   step,
   unauthenticated,
   UserInfoV1,
-} from "https://deno.land/x/nanobusconfig@v0.0.14/mod.ts";
+} from "https://deno.land/x/nanobusconfig@v0.0.15/mod.ts";
 import { Jots, Users } from "./iota.ts";
 import { Follow } from "./iotas/follow/iota.ts";
 import { Like } from "./iotas/like/iota.ts";

@@ -4,7 +4,7 @@ import {
   Flow,
   Handler,
   Iota,
-} from "https://deno.land/x/nanobusconfig@v0.0.14/mod.ts";
+} from "https://deno.land/x/nanobusconfig@v0.0.15/mod.ts";
 
 export interface UserIdArgs {
   userId: string;

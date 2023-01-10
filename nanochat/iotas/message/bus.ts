@@ -3,7 +3,7 @@ import {
   Application,
   PostgresActions,
   step,
-} from "https://deno.land/x/nanobusconfig@v0.0.14/mod.ts";
+} from "https://deno.land/x/nanobusconfig@v0.0.15/mod.ts";
 import { MessageStore } from "./iota.ts";
 
 const app = new Application("message", "0.0.1").spec("apex.axdl");

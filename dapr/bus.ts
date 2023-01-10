@@ -9,7 +9,7 @@ import {
   RouterV1,
   step,
   unauthenticated,
-} from "https://deno.land/x/nanobusconfig@v0.0.14/mod.ts";
+} from "https://deno.land/x/nanobusconfig@v0.0.15/mod.ts";
 
 const app = new Application("dapr-example", "0.0.1");
 
