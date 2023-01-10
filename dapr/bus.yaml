@@ -1,6 +1,5 @@
 id: dapr-example
 version: 0.0.1
-
 transports:
   http:
     uses: nanobus.transport.http.server/v1
@@ -12,27 +11,25 @@ transports:
             routes:
               - method: POST
                 uri: /people
-                handler: People::create
+                handler: 'People::create'
               - method: GET
-                uri: /people/{id}
-                handler: People::get
-
+                uri: '/people/{id}'
+                handler: 'People::get'
   dapr:
     uses: nanobus.transport.dapr/v1
     with:
+      address: ':19090'
       subscriptions:
         - pubsub: pubsub
           topic: welcome
           codec: cloudevents+json
-          handler: Events::onWelcome
-
+          handler: 'Events::onWelcome'
 authorization:
   People:
     get:
       unauthenticated: true
     create:
       unauthenticated: true
-
 interfaces:
   People:
     get:
@@ -43,7 +40,6 @@ interfaces:
             store: statestore
             key: input.id
             notFoundError: person_not_found
-
     create:
       steps:
         - name: Save state
@@ -59,6 +55,7 @@ interfaces:
             pubsub: pubsub
             topic: welcome
             data: |-
+
               {
                 "type": "welcome.v1",
                 "data": "Welcome, " + input.firstName + " " + input.lastName + "!",
@@ -71,7 +68,6 @@ interfaces:
             headers:
               - name: Location
                 value: '"{{host}}/people/" + input.id'
-
   Events:
     onWelcome:
       steps:
@@ -79,11 +75,12 @@ interfaces:
           uses: log
           with:
             format: 'Event received: [%s] %q'
-            args: [input.type, input.data]
-
+            args:
+              - input.type
+              - input.data
 errors:
   person_not_found:
     type: PersonNotFound
     code: not_found
     title: Person not found
-    message: Person for id {{ .key }} is not found
+    message: 'Person for id {{ .key }} is not found'

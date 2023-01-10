@@ -9,17 +9,19 @@ import {
   RouterV1,
   step,
   unauthenticated,
-} from "https://deno.land/x/nanobus_config@v0.0.10/mod.ts";
+} from "https://deno.land/x/nanobusconfig@v0.0.14/mod.ts";
 
 const app = new Application("dapr-example", "0.0.1");
+
+const statestore = "statestore";
+const pubsub = "pubsub";
 
 const people = app.interface("People", {
   get: [
     step(
       "Get state",
       dapr.GetState({
-        resource: "dapr",
-        store: "statestore",
+        store: statestore,
         key: "input.id",
         notFoundError: "person_not_found",
       }),
@@ -30,8 +32,7 @@ const people = app.interface("People", {
     step(
       "Save state",
       dapr.SetState({
-        resource: "dapr",
-        store: "statestore",
+        store: statestore,
         items: [{
           key: "input.id",
           value: "input",
@@ -41,8 +42,7 @@ const people = app.interface("People", {
     step(
       "Publish greeting message",
       dapr.Publish({
-        resource: "dapr",
-        pubsub: "pubsub",
+        pubsub: pubsub,
         topic: "welcome",
         data: `
 {
@@ -114,7 +114,6 @@ app.transport(
         topic: "welcome",
         codec: "cloudevents+json",
         handler: events.onWelcome,
-        metadata: {},
       },
     ],
   }),
