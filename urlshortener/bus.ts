@@ -11,12 +11,7 @@ import {
   returns,
   unauthenticated,
 } from "https://deno.land/x/nanobusconfig@v0.0.14/mod.ts";
-import {
-  Repository,
-  repositoryClient,
-  Shortener,
-  URL,
-} from "./iota.ts";
+import { Repository, repositoryClient, Shortener, URL } from "./iota.ts";
 
 const app = new Application("url-shortener", "0.0.1")
   .spec("apex.axdl")
@@ -26,6 +21,16 @@ const app = new Application("url-shortener", "0.0.1")
     org: "examples",
   })
   .use(new RestModule(":8080"));
+
+// TODO: Update tracing config snippet after
+// https://github.com/nanobus/nanobus/issues/87
+// is fixed.
+
+// Commented out for a simpler demo
+// See oauth-setup for instructions for setting up an OAuth/OIDC provider.
+// app.filters(JWTV1({
+//   jwksUrl: env("JWKS_URL"),
+// }));
 
 const db = app.resource("db");
 

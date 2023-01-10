@@ -7,6 +7,10 @@ package:
   org: examples
 resources:
   - db
+# tracing:
+#   uses: jaeger
+#   with:
+#     collectorEndpoint: ${env:JAEGER_TRACES_ENDPOINT}
 resiliency:
   timeouts:
     events: 30s
@@ -42,6 +46,14 @@ transports:
               swaggerUI: true
               postman: true
               restClient: true
+
+# Commented out for a simpler demo
+# See oauth-setup for instructions for setting up an OAuth/OIDC provider.
+# filters:
+#   - uses: nanobus.filter.jwt/v1
+#     with:
+#       jwksUrl: ${env:JWKS_URL}
+
 authorization:
   urlshortener.v1.Shortener:
     shorten:
