@@ -19,6 +19,6 @@ jobs:
       - name: Package and push
         uses: nanobus/push-action@v1
         with:
-          path: "nanochat"
+          path: "nanochat/bus.yaml"
           username: ${{ secrets.CANDLE_REG_EXAMPLES_USERNAME }}
           password: ${{ secrets.CANDLE_REG_EXAMPLES_PASSWORD }}
