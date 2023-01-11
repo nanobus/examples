@@ -73,6 +73,7 @@ services:
     volumes:
       - ./apex.axdl:/app/apex.axdl
       - ./bus.yaml:/app/bus.yaml
+      - ./resources.yaml:/app/resources.yaml
       - ./web/static:/app/static
       - ./ui:/app/ui
       - ./build:/app/build
@@ -81,10 +82,10 @@ services:
       - ./iotas/message:/app/iotas/message
       - ./iotas/user:/app/iotas/user
     environment:
-      FOLLOW_DB: postgres://postgres:postgres@localhost:5432/iota_follow?sslmode=disable
-      LIKE_DB: postgres://postgres:postgres@localhost:5432/iota_like?sslmode=disable
-      MESSAGE_DB: postgres://postgres:postgres@localhost:5432/iota_message?sslmode=disable
-      USER_DB: postgres://postgres:postgres@localhost:5432/iota_user?sslmode=disable
+      FOLLOW_DB: postgres://postgres:postgres@postgres:5432/iota_follow?sslmode=disable
+      LIKE_DB: postgres://postgres:postgres@postgres:5432/iota_like?sslmode=disable
+      MESSAGE_DB: postgres://postgres:postgres@postgres:5432/iota_message?sslmode=disable
+      USER_DB: postgres://postgres:postgres@postgres:5432/iota_user?sslmode=disable
       JAEGER_TRACE_ENDPOINT: http://jaeger:14268/api/traces
       OAUTH_CLIENT_ID: foo
       OAUTH_CLIENT_SECRET: bar
@@ -92,7 +93,7 @@ services:
       OAUTH_TOKEN_URL: http://oidc:9000/token
       OAUTH_REDIRECT_URL: http://localhost:8080/oauth/callback
       OAUTH_JWKS_URL: http://oidc:9000/certs
-      OAUTH_SCOPES: '["openid","offline_access","email","profile"]'
+      OAUTH_SCOPES: 'openid,offline_access,email,profile'
       USERINFO_URL: http://oidc:9000/me
       HANDLE_CLAIM: nickname
     ports:
