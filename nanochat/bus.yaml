@@ -77,7 +77,7 @@ transports:
             callbackUrl: "${env:OAUTH_REDIRECT_URL}"
             handler: "security::storeSession"
             scopes:
-              - "${env:OAUTH_SCOPES}"
+              - ${env:OAUTH_SCOPES}
         - uses: nanobus.transport.http.rest/v1
           with:
             documentation:
