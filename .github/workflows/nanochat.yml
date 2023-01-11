@@ -14,7 +14,7 @@ jobs:
     env:
       REGISTRY_USERNAME: ${{ secrets.CANDLE_REG_EXAMPLES_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.CANDLE_REG_EXAMPLES_PASSWORD }}
-      BUS_PATH: "/home/runner/work/examples/examples/nanochat"
+      BUS_PATH: "/github/workspace/nanochat"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -25,4 +25,4 @@ jobs:
         with:
           username: ${{ secrets.CANDLE_REG_EXAMPLES_USERNAME }}
           password: ${{ secrets.CANDLE_REG_EXAMPLES_PASSWORD }}
-          path: "/home/runner/work/examples/examples/nanochat"
+          path: "/github/workspace/nanochat"
