@@ -5,7 +5,7 @@ Simple NanoBus example showing how to set up a minimal interface and invoke it f
 ## Running
 
 ```sh
-$ echo '{"name": "World!"}' | nanobus invoke Greeter::sayHello
+$ echo '{"name": "World!"}' | nanobus invoke bus.yaml Greeter::sayHello
 ```
 
 ## Run tests
