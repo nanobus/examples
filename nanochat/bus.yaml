@@ -234,7 +234,6 @@ package:
   org: examples
   add:
     - ui/dist/
-    - apex.axdl
     - resources.yaml
 
   #Credentials.  Add these to your environment.  replace regcandlerun with your registry host name.
