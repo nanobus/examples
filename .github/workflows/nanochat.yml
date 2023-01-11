@@ -1,0 +1,23 @@
+name: Package and Push Nanochat
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "docsite/**"
+
+jobs:
+  build-and-push-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Package and push
+        uses: nanobus/push-action@v1
+        with:
+          username: ${{ secrets.CANDLE_REG_EXAMPLES_USERNAME }}
+          password: ${{ secrets.CANDLE_REG_EXAMPLES_PASSWORD }}
+          path: "/home/runner/work/nanobus/examples/nanochat"

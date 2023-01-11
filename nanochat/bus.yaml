@@ -231,7 +231,7 @@ errors:
     message: "Jot with id {{ .messageId }} is not found"
 package:
   registry: reg.candle.run
-  org: candle
+  org: examples
   add:
     - ui/dist/
     - apex.axdl
