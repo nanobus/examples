@@ -5,6 +5,9 @@ main: build/urlshortener.wasm
 package:
   registry: reg.candle.run
   org: examples
+  add:
+    - resources.yaml
+    - sql
 tracing:
   uses: jaeger
   with:

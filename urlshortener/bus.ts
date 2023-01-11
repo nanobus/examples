@@ -20,6 +20,10 @@ const app = new Application("url-shortener", "0.0.1")
   .package({
     registry: "reg.candle.run",
     org: "examples",
+    add: [
+      "resources.yaml",
+      "sql",
+    ],
   })
   .use(new RestModule(":8080"));
 

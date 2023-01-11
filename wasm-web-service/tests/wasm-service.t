@@ -9,5 +9,5 @@ Test web service via curl
 
 Test web service via invoke
 
-  $ echo '{"name":"World"}' | nanobus invoke --bus $TESTDIR/../bus.yaml "my-module.v1.Greeter::sayHello"
+  $ echo '{"name":"World"}' | nanobus invoke $TESTDIR/../bus.yaml "my-module.v1.Greeter::sayHello"
   "Hello, World!"
