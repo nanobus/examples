@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - main
+      - nanochat-ci
     paths:
-      - "docsite/**"
+      - "nanochat/**"
 
 jobs:
   build-and-push-docs:
