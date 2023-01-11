@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - main
-      - nanochat-ci
-    # paths:
-    #   - "nanochat/**"
+    paths:
+      - "nanochat/**"
 jobs:
   build-and-push-docs:
     runs-on: ubuntu-latest
