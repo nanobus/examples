@@ -1,9 +1,11 @@
 
 pub(crate) mod greeter {
+    pub(crate) use super::*;
     pub(crate) mod say_hello;
 }
 
 pub(crate) mod other {
+    pub(crate) use super::*;
     pub(crate) mod action;
 }
 /************************************************
@@ -26,6 +28,20 @@ extern "C" fn __wasmrs_init(
     wasmrs_guest::init(guest_buffer_size, host_buffer_size, max_host_frame_len);
 }
 
+fn deserialize_helper<T: serde::de::DeserializeOwned + 'static>(
+    i: Mono<ParsedPayload, PayloadError>,
+) -> Mono<T, PayloadError> {
+    Mono::from_future(async move {
+        match i.await {
+            Ok(bytes) => match deserialize(&bytes.data) {
+                Ok(v) => Ok(v),
+                Err(e) => Err(PayloadError::application_error(e.to_string())),
+            },
+            Err(e) => Err(PayloadError::application_error(e.to_string())),
+        }
+    })
+}
+
 pub(crate) struct GreeterComponent();
 
 impl GreeterComponent {
@@ -36,8 +52,7 @@ impl GreeterComponent {
         let task = GreeterComponent::say_hello(input)
             .map(|result| {
                 let output = result?;
-                Ok(serialize(&output)
-                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+                Ok(serialize(&output).map(|bytes| Payload::new_data(None, Some(bytes.into())))?)
             })
             .map(|output| tx.send(output).unwrap());
 
@@ -65,14 +80,16 @@ impl GreeterService for GreeterComponent {
 }
 
 pub mod greeter_service {
-    use super::*;
+    #[allow(unused_imports)]
+    pub(crate) use super::*;
 
     pub mod say_hello {
-        use super::*;
-        #[derive(serde::Deserialize, Debug)]
+        #[allow(unused_imports)]
+        pub(crate) use super::*;
+        #[derive(serde::Deserialize)]
         pub(crate) struct Inputs {
-            #[serde(rename = "target")]
-            pub(crate) target: String,
+            #[serde(rename = "name")]
+            pub(crate) name: String,
         }
 
         pub(crate) type Outputs = String;
@@ -89,8 +106,7 @@ impl OtherComponent {
         let task = OtherComponent::action(input)
             .map(|result| {
                 let output = result?;
-                Ok(serialize(&output)
-                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+                Ok(serialize(&output).map(|bytes| Payload::new_data(None, Some(bytes.into())))?)
             })
             .map(|output| tx.send(output).unwrap());
 
@@ -118,11 +134,13 @@ impl OtherService for OtherComponent {
 }
 
 pub mod other_service {
-    use super::*;
+    #[allow(unused_imports)]
+    pub(crate) use super::*;
 
     pub mod action {
-        use super::*;
-        #[derive(serde::Deserialize, Debug)]
+        #[allow(unused_imports)]
+        pub(crate) use super::*;
+        #[derive(serde::Deserialize)]
         pub(crate) struct Inputs {
             #[serde(rename = "this")]
             pub(crate) this: String,

@@ -14,6 +14,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "atomic-polyfill"
+version = "0.1.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3ff7eb3f316534d83a8a2c3d1674ace8a5a71198eba31e2e2b597833f699b28"
+dependencies = [
+ "critical-section",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -42,6 +51,12 @@ name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
+
+[[package]]
+name = "critical-section"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6548a0ad5d2549e111e1f6a11a6c2e2d00ce6a3dafe22948d67c2b443f775e52"
 
 [[package]]
 name = "crossbeam-channel"
@@ -165,10 +180,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "hash32"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b0c35f58762feb77d74ebe43bdbc3210f09be9fe6742234d573bacc26ed92b67"
+dependencies = [
+ "byteorder",
+]
+
+[[package]]
 name = "hashbrown"
 version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
+
+[[package]]
+name = "heapless"
+version = "0.7.16"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "db04bc24a18b9ea980628ecf00e6c0264f3c1426dac36c00cb49b6fbad8b0743"
+dependencies = [
+ "atomic-polyfill",
+ "hash32",
+ "rustc_version",
+ "spin",
+ "stable_deref_trait",
+]
 
 [[package]]
 name = "libc"
@@ -285,10 +322,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustc_version"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bfa0f585226d2e68097d4f95d113b15b83a82e819ab25717ec0590d9584ef366"
+dependencies = [
+ "semver",
+]
+
+[[package]]
 name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
+
+[[package]]
+name = "semver"
+version = "1.0.16"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58bc9567378fc7690d6b2addae4e60ac2eeea07becb2c64b9f218b53865cba2a"
 
 [[package]]
 name = "serde"
@@ -333,6 +385,21 @@ name = "smallvec"
 version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a507befe795404456341dfab10cef66ead4c041f62b8b11bbb92bffe5d0953e0"
+
+[[package]]
+name = "spin"
+version = "0.9.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f6002a767bff9e83f8eeecf883ecb8011875a21ae8da43bffb817a57e78cc09"
+dependencies = [
+ "lock_api",
+]
+
+[[package]]
+name = "stable_deref_trait"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
 
 [[package]]
 name = "syn"
@@ -427,11 +494,12 @@ checksum = "84a22b9f218b40614adcb3f4ff08b703773ad44fa9423e4e0d346d5db86e4ebc"
 
 [[package]]
 name = "wasm-msgpack"
-version = "0.2.2"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c512c78dc8b2133c24c7d7fa97c280d38ebfbccab9636289e3242f00f6b72286"
+checksum = "3938ac49f9d1a1f4d936b20276f4d2a5297ba726865f35f55cddb4c85072d067"
 dependencies = [
  "byteorder",
+ "heapless",
  "num-traits",
  "paste",
  "serde",
@@ -441,11 +509,10 @@ dependencies = [
 
 [[package]]
 name = "wasmrs"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "528828398a50834ae2f15e1aed6b7ce2b126c56660981759698280ed7edd19aa"
+checksum = "9268b99523b0205c7e8973de317510454c4646583872d2bda766cd55561f5b60"
 dependencies = [
- "async-trait",
  "bytes",
  "crossbeam-channel",
  "dashmap",
@@ -457,13 +524,15 @@ dependencies = [
  "tokio",
  "tracing",
  "wasmrs-codec",
+ "wasmrs-runtime",
+ "wasmrs-rx",
 ]
 
 [[package]]
 name = "wasmrs-codec"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37c3829a5e58d9057ab6ef6f5dc162af52bfc9e91e909c933b5d114635e9f1e0"
+checksum = "fca40bb9adb0cec5f8c8c0a84e7770e992134c3fec8d7142296c007486d6d518"
 dependencies = [
  "serde",
  "wasm-msgpack",
@@ -471,9 +540,9 @@ dependencies = [
 
 [[package]]
 name = "wasmrs-guest"
-version = "0.1.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9445946a91193119c78959b676e8be8a56135c47cf3d1c225ec65db9d52d14ec"
+checksum = "7a2367862f0f8b629aa79ead7bd89bf3ea02e89757192cd9d9ea2d997679bda7"
 dependencies = [
  "bytes",
  "futures-executor",
@@ -482,6 +551,43 @@ dependencies = [
  "tracing",
  "wasmrs",
  "wasmrs-codec",
+ "wasmrs-runtime",
+ "wasmrs-rx",
+]
+
+[[package]]
+name = "wasmrs-runtime"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c31c41dc66c9ac05f539f13a727a6f2e91e6dab5bfb0141d7ac59979cbf09a2d"
+dependencies = [
+ "bytes",
+ "crossbeam-channel",
+ "dashmap",
+ "futures",
+ "futures-executor",
+ "futures-util",
+ "parking_lot",
+ "pin-project-lite",
+ "tokio",
+]
+
+[[package]]
+name = "wasmrs-rx"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "16afa19d0e63763a0ae822c57f2d77d7593ab0ad0c8430dcc328c3788b031bb0"
+dependencies = [
+ "bytes",
+ "crossbeam-channel",
+ "dashmap",
+ "futures",
+ "futures-executor",
+ "futures-util",
+ "parking_lot",
+ "pin-project-lite",
+ "tracing",
+ "wasmrs-runtime",
 ]
 
 [[package]]
