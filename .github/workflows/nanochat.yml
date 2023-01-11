@@ -7,7 +7,6 @@ on:
       - nanochat-ci
     # paths:
     #   - "nanochat/**"
-
 jobs:
   build-and-push-docs:
     runs-on: ubuntu-latest
