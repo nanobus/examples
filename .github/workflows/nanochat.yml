@@ -5,12 +5,16 @@ on:
     branches:
       - main
       - nanochat-ci
-    paths:
-      - "nanochat/**"
+    # paths:
+    #   - "nanochat/**"
 
 jobs:
   build-and-push-docs:
     runs-on: ubuntu-latest
+    env:
+      REGISTRY_USERNAME: ${{ secrets.CANDLE_REG_EXAMPLES_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.CANDLE_REG_EXAMPLES_PASSWORD }}
+      BUS_PATH: "/home/runner/work/nanobus/examples/nanochat"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
