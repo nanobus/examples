@@ -49,10 +49,6 @@ Provides all the running parts;
 - qlik/simple-oidc-provider - Simple OIDC provider for User authentication and local develment
 
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md)
-
 [apex]: https://apexlang.io/docs/getting-started
 [apexlang.io]: https://apexlang.io
 [docker]: https://docs.docker.com/engine/install/
