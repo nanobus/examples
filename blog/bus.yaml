@@ -1,6 +1,35 @@
 id: nanoblog
 version: 0.0.1
 spec: apex.axdl
+initializers:
+  blogdb:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: "${env:BLOG_DB}"
+      directory: migrations/
+transports:
+  http:
+    uses: nanobus.transport.http.server/v1
+    with:
+      address: ":8080"
+      middleware:
+        - uses: nanobus.transport.http.cors/v0
+          with:
+            allowedMethods:
+              - HEAD
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+            allowCredentials: true
+      routers:
+        - uses: nanobus.transport.http.rest/v1
+          with:
+            documentation:
+              swaggerUI: true
+              postman: true
+              restClient: true
 interfaces:
   blogs.v1.Blogs:
     postBlog:
@@ -69,29 +98,6 @@ interfaces:
             args:
               - input.id
               - input.body
-transports:
-  http:
-    uses: nanobus.transport.http.server/v1
-    with:
-      address: ":8080"
-      middleware:
-        - uses: nanobus.transport.http.cors/v0
-          with:
-            allowedMethods:
-              - HEAD
-              - GET
-              - POST
-              - PUT
-              - PATCH
-              - DELETE
-            allowCredentials: true
-      routers:
-        - uses: nanobus.transport.http.rest/v1
-          with:
-            documentation:
-              swaggerUI: true
-              postman: true
-              restClient: true
 authorization:
   blogs.v1.Blogs:
     postBlog:
@@ -102,9 +108,3 @@ authorization:
       unauthenticated: true
     deleteBlog:
       unauthenticated: true
-initializers:
-  blogdb:
-    uses: nanobus.migrate.postgres/v1
-    with:
-      dataSource: "${env:BLOG_DB}"
-      directory: iotas/message/sql

@@ -4,15 +4,13 @@ services:
   postgres:
     image: postgres
     environment:
-      PGUSER: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_MULTIPLE_DATABASES: blog
+      POSTGRES_DB: blog
     ports:
       - "5432:5432"
     volumes:
       - ./data:/var/lib/postgresql/data
-      - ./postgres-init:/docker-entrypoint-initdb.d
     healthcheck:
       test:
         [
@@ -26,7 +24,7 @@ services:
           "&&",
           "pg_isready",
           "-d",
-          "blog",
+          "blog"
         ]
       interval: 10s
       timeout: 5s
