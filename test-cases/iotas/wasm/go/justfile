@@ -6,4 +6,3 @@ build:
 	@mkdir -p build
 	tinygo build -o build/{{NAME}}.wasm --scheduler=none --target={{TARGET}} -no-debug cmd/main.go
 	wasm-opt -O build/{{NAME}}.wasm -o build/{{NAME}}.wasm
-	wasmrs-ops build/{{NAME}}.wasm

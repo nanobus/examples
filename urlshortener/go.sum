@@ -1,8 +1,8 @@
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
-github.com/nanobus/iota/go v0.0.0-20221207021123-d2b7ba2975df h1:XPz8bfiMgzWdAwPW6ChvpINfo0TVGC13XZCEEtL0RiM=
-github.com/nanobus/iota/go v0.0.0-20221207021123-d2b7ba2975df/go.mod h1:HVq3g1+5XRxNi/43j5D69Ga0NHiesmSFXmnnKamZX+c=
+github.com/nanobus/iota/go v0.0.0-20230116224750-7d9fb56e8751 h1:74HSOePbVogVJq4L0Ps0sIO3wQzL+n0Z6vkvp6NYuY8=
+github.com/nanobus/iota/go v0.0.0-20230116224750-7d9fb56e8751/go.mod h1:z4uVAsLNyU358WEn93VLK5I1VpqtrHP9lVOO+vMeyVY=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKsk=
-golang.org/x/exp v0.0.0-20221025133541-111beb427cde h1:21I041MHkLEAgTE3ziMHbCknpoSjQKUmXhIDgfpGiUo=
-golang.org/x/exp v0.0.0-20221025133541-111beb427cde/go.mod h1:cyybsKvd6eL0RnXn6p/Grxp8F5bW7iYuBgsNCOHpMYE=
+golang.org/x/exp v0.0.0-20221230185412-738e83a70c30 h1:m9O6OTJ627iFnN2JIWfdqlZCzneRO6EEBsHXI25P8ws=
+golang.org/x/exp v0.0.0-20221230185412-738e83a70c30/go.mod h1:CxIveKay+FTh1D0yPZemJVgC/95VzuuOLq5Qi4xnoYc=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
