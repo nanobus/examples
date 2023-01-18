@@ -1,5 +1,5 @@
 id: nanochat
-version: 0.0.2
+version: 0.0.3
 spec: apex.axdl
 main: build/jot-go.wasm
 resources:
