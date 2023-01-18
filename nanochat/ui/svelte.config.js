@@ -1,4 +1,4 @@
-import sveltePreprocess from "svelte-preprocess";
+import sveltePreprocess from 'svelte-preprocess';
 
 export default {
   // Consult https://github.com/sveltejs/svelte-preprocess
@@ -8,7 +8,9 @@ export default {
       replace: [
         [
           /process\.env\.AUTH_BASEURL/g,
-          JSON.stringify(process.env.AUTH_BASEURL || ""),
+          JSON.stringify(process.env.AUTH_BASEURL || ''),
+          /process\.env\.API_BASEURL/g,
+          JSON.stringify(process.env.API_BASEURL || ''),
         ],
       ],
       postcss: true,
