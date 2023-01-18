@@ -9,6 +9,9 @@ on:
 jobs:
   build-and-push-docs:
     runs-on: ubuntu-latest
+    env:
+      AUTH_BASEURL: https://nanochat.io/
+      APP_ROOT_URL: https://nanochat.io/
     steps:
       - name: Checkout
         uses: actions/checkout@v3
