@@ -20,7 +20,7 @@ import { Like } from "./iotas/like/iota.ts";
 import { Message } from "./iotas/message/iota.ts";
 import { User } from "./iotas/user/iota.ts";
 
-const app = new Application("nanochat", "0.0.1")
+const app = new Application("nanochat", "0.0.4")
   .spec("apex.axdl")
   .main("build/jot-go.wasm");
 
