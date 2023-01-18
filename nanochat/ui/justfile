@@ -1,8 +1,11 @@
-install: 
+install:
 	npm install
 
-dev: 
+dev:
 	npm run dev
 
-build: 
+build:
 	npm run build
+
+codegen:
+  npx openapi-generator-cli generate -g typescript -i http://localhost:8080/swagger/swagger_spec -o src/generated-sources/openapi

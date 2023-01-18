@@ -16,6 +16,7 @@ docker:
 
 codegen:
 	apex generate
+	just ui/codegen
 
 tidy:
 	go mod tidy
@@ -41,7 +42,7 @@ dev:docker
   #!/usr/bin/env bash
   APP_ROOT_URL=http://localhost:5173 nanobus run bus.yaml --developer-mode &
   FIRST=$!
-  AUTH_BASEURL=http://localhost:8080 just ui/dev &
+  VITE_API_BASEURL=http://localhost:8080 AUTH_BASEURL=http://localhost:8080 just ui/dev &
   SECOND=$!
   trap "kill $FIRST $SECOND" SIGTERM SIGINT EXIT
   wait $FIRST $SECOND

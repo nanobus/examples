@@ -1,4 +1,3 @@
-.openapi-generator-ignore
 apis/JotsApi.ts
 apis/UsersApi.ts
 apis/index.ts

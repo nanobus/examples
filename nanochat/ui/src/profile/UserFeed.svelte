@@ -1,10 +1,9 @@
 <script lang="ts">
-  import Jot from "../home/Jot.svelte";
-  import { api } from "../api";
-  import { currentUser } from "../user";
-  import { jots, users } from "../openapi";
-  import type { User } from "../generated-sources/openapi";
-  import { Button } from "flowbite-svelte";
+  import Jot from '../home/Jot.svelte';
+  import { currentUser } from '../user';
+  import { jots, users } from '../openapi';
+  import type { User } from '../generated-sources/openapi';
+  import { Button } from 'flowbite-svelte';
 
   export let user: User;
 
@@ -13,11 +12,11 @@
   let followers;
 
   async function follow() {
-    users.follow({handle:user.handle!})
+    users.follow({ handle: user.handle! });
   }
 
   async function unfollow() {
-    users.unfollow({handle:user.handle!})
+    users.unfollow({ handle: user.handle! });
   }
 </script>
 
@@ -40,19 +39,19 @@
           </div>
 
           {#if user.isFollowing}
-          <Button
-          btnClass="btn-action"
-          on:click={(evt) => {
-            unfollow();
-          }}>Unfollow</Button
-        >
+            <Button
+              btnClass="btn-action"
+              on:click={(evt) => {
+                unfollow();
+              }}>Unfollow</Button
+            >
           {:else}
-          <Button
-          btnClass="btn-action btn-action-secondary h-8 text-sm mt-2"
-          on:click={(evt) => {
-            follow();
-          }}>Follow</Button
-        >
+            <Button
+              btnClass="btn-action btn-action-secondary h-8 text-sm mt-2"
+              on:click={(evt) => {
+                follow();
+              }}>Follow</Button
+            >
           {/if}
         </div>
         <div class="user-profile--info">
@@ -61,8 +60,12 @@
         </div>
         <hr />
         <div class="follow-info">
-          <div class="followers text-lg pl-2"><b>{user.followers}</b> Followers</div>
-          <div class="following text-lg pl-3"><b>{user.follows}</b> Following</div>
+          <div class="followers text-lg pl-2">
+            <b>{user.followers}</b> Followers
+          </div>
+          <div class="following text-lg pl-3">
+            <b>{user.follows}</b> Following
+          </div>
         </div>
       </div>
     </div>
@@ -128,8 +131,8 @@
     display: flex;
     flex-direction: row;
   }
-  .user-profile--info{
+  .user-profile--info {
     text-align: left;
-    padding:  15px 18px;
+    padding: 15px 18px;
   }
 </style>

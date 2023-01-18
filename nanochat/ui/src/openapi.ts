@@ -1,10 +1,9 @@
-
-import { Configuration, JotsApi, UsersApi } from './generated-sources/openapi/'
-export * from './generated-sources/openapi';
+import { Configuration, JotsApi, UsersApi } from "./generated-sources/openapi/";
+export * from "./generated-sources/openapi";
 
 const configuration = new Configuration({
-    basePath: "http://localhost:8080",
-    credentials: "include"
+  basePath: import.meta.env.VITE_API_BASEURL || "",
+  credentials: "include",
 });
 
 export const jots = new JotsApi(configuration);
