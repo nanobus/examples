@@ -8,11 +8,15 @@ import {
   JWTV1,
   migrate,
   PostgresActions,
+  Repository,
+  repositoryClient,
   RestModule,
   returns,
+  Shortener,
+  types,
   unauthenticated,
-} from "https://deno.land/x/nanobusconfig@v0.0.15/mod.ts";
-import { Repository, repositoryClient, Shortener, URL } from "./iota.ts";
+  URL,
+} from "./iota.ts";
 
 const app = new Application("url-shortener", "0.0.1")
   .spec("apex.axdl")
@@ -117,12 +121,7 @@ Repository.register(app, {
   loadById: ({ flow }) =>
     flow.then(
       "Load by ID",
-      ($) =>
-        database.load({
-          namespace: "urlshortener.v1",
-          type: "URL",
-          key: $.id,
-        }),
+      ($) => database.load(types.URL, $.id),
       dbResiliency,
     ),
 
@@ -130,9 +129,7 @@ Repository.register(app, {
     flow.then(
       "Load by URL",
       ($) =>
-        database.findOne({
-          namespace: "urlshortener.v1",
-          type: "URL",
+        database.findOne(types.URL, {
           where: [
             {
               query: "url = ?",

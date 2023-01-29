@@ -1,0 +1,8 @@
+spec: apex.axdl
+config:
+  name: streamer
+  package: streamer
+  module: github.com/nanobus/examples/streamer
+plugins:
+  - "https://deno.land/x/iota_codegen@v0.0.2/tinygo/plugin.ts"
+  - "https://raw.githubusercontent.com/nanobus/nanobus/dx_iteration/config/ts/plugin.ts"

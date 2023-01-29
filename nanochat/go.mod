@@ -6,7 +6,7 @@ replace github.com/google/uuid v1.3.0 => github.com/nanobus/iota/go/types/uuid v
 
 require (
 	github.com/google/uuid v1.3.0
-	github.com/nanobus/iota/go v0.0.0-20221208153944-721e2807f75d
+	github.com/nanobus/iota/go v0.0.0-20230116224750-7d9fb56e8751
 )
 
-require golang.org/x/exp v0.0.0-20221025133541-111beb427cde // indirect
+require golang.org/x/exp v0.0.0-20221230185412-738e83a70c30 // indirect

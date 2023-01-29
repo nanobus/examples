@@ -1,52 +1,66 @@
+// deno-lint-ignore-file no-unused-vars ban-unused-ignore
+export * from "https://deno.land/x/nanobusconfig@v0.0.22/mod.ts";
 import {
   Application,
   Authorization,
+  callInterface,
+  callProvider,
+  CloudEvent,
+  Entity,
   Flow,
   Handler,
-  Iota,
-} from "https://deno.land/x/nanobusconfig@v0.0.15/mod.ts";
+  Handlers,
+  Operations,
+  Response,
+  Step,
+  toDataExpr
+} from "https://deno.land/x/nanobusconfig@v0.0.22/mod.ts";
 
-type UUID = string;
+export const types = {
+  Message: "nanochat.io.message.v1::Message" as Entity
+};
 
-interface MessageStoreStoreArgs {
+export type UUID = string;
+
+export interface MessageStoreStoreArgs {
   message: string;
 }
 
-interface MessageStoreLoadArgs {
+export interface MessageStoreLoadArgs {
   id: UUID;
 }
 
-interface MessageStoreDeleteArgs {
+export interface MessageStoreDeleteArgs {
   id: UUID;
 }
 
-interface MessageStoreMyMessagesArgs {
-  before: Date;
+export interface MessageStoreMyMessagesArgs {
+  before?: Date;
   limit: number;
 }
 
-interface MessageStoreGetFeedArgs {
-  userIds: UUID[];
-  before: Date;
+export interface MessageStoreGetFeedArgs {
+  userIds: Array<UUID>;
+  before?: Date;
   limit: number;
 }
 
-interface MessageStoreGetUserMessagesArgs {
+export interface MessageStoreGetUserMessagesArgs {
   userId: UUID;
-  before: Date;
+  before?: Date;
   limit: number;
 }
 
-interface MessageStoreOper {
-  store?: Flow<MessageStoreStoreArgs>;
-  load?: Flow<MessageStoreLoadArgs>;
-  delete?: Flow<MessageStoreDeleteArgs>;
-  myMessages?: Flow<MessageStoreMyMessagesArgs>;
-  getFeed?: Flow<MessageStoreGetFeedArgs>;
-  getUserMessages?: Flow<MessageStoreGetUserMessagesArgs>;
+export interface MessageStoreOper {
+  store?: Flow<MessageStoreStoreArgs> | Step[];
+  load?: Flow<MessageStoreLoadArgs> | Step[];
+  delete?: Flow<MessageStoreDeleteArgs> | Step[];
+  myMessages?: Flow<MessageStoreMyMessagesArgs> | Step[];
+  getFeed?: Flow<MessageStoreGetFeedArgs> | Step[];
+  getUserMessages?: Flow<MessageStoreGetUserMessagesArgs> | Step[];
 }
 
-interface MessageStoreAuth {
+export interface MessageStoreAuth {
   store?: Authorization;
   load?: Authorization;
   delete?: Authorization;
@@ -56,34 +70,99 @@ interface MessageStoreAuth {
 }
 
 export const MessageStore = {
+  $interface: "nanochat.io.message.v1.MessageStore",
   store: "nanochat.io.message.v1.MessageStore::store" as Handler,
   load: "nanochat.io.message.v1.MessageStore::load" as Handler,
   delete: "nanochat.io.message.v1.MessageStore::delete" as Handler,
   myMessages: "nanochat.io.message.v1.MessageStore::myMessages" as Handler,
   getFeed: "nanochat.io.message.v1.MessageStore::getFeed" as Handler,
-  getUserMessages:
-    "nanochat.io.message.v1.MessageStore::getUserMessages" as Handler,
+  getUserMessages: "nanochat.io.message.v1.MessageStore::getUserMessages" as Handler,
 
   register(app: Application, iface: MessageStoreOper): void {
-    app.register(
-      MessageStore as unknown as Record<string, Handler>,
-      iface as Record<string, Flow<unknown>>,
-    );
+    app.interface(MessageStore.$interface, (iface as unknown) as Operations);
   },
 
   authorize(app: Application, auths: MessageStoreAuth): void {
     app.authorize(
-      MessageStore as unknown as Record<string, Handler>,
-      auths as Record<string, Authorization>,
+      MessageStore.$interface,
+      auths as Record<string, Authorization>
     );
+  }
+};
+
+export const messageStoreClient = {
+  store(message: string): Response<Message> {
+    const dataExpr = `{
+ "message": ${toDataExpr(message)}
+}`;
+    return callInterface(MessageStore.store, dataExpr) as Response<Message>;
   },
+
+  load(id: UUID): Response<Message> {
+    const dataExpr = `{
+ "id": ${toDataExpr(id)}
+}`;
+    return callInterface(MessageStore.load, dataExpr) as Response<Message>;
+  },
+
+  delete(id: UUID): Response<Message> {
+    const dataExpr = `{
+ "id": ${toDataExpr(id)}
+}`;
+    return callInterface(MessageStore.delete, dataExpr) as Response<Message>;
+  },
+
+  myMessages(before: Date | undefined, limit: number): Response<unknown> {
+    const dataExpr = `{
+ "before": ${toDataExpr(before)}
+ "limit": ${toDataExpr(limit)}
+}`;
+    return callInterface(MessageStore.myMessages, dataExpr) as Response<
+      unknown
+    >;
+  },
+
+  getFeed(
+    userIds: Array<UUID>,
+    before: Date | undefined,
+    limit: number
+  ): Response<unknown> {
+    const dataExpr = `{
+ "userIds": ${toDataExpr(userIds)}
+ "before": ${toDataExpr(before)}
+ "limit": ${toDataExpr(limit)}
+}`;
+    return callInterface(MessageStore.getFeed, dataExpr) as Response<unknown>;
+  },
+
+  getUserMessages(
+    userId: UUID,
+    before: Date | undefined,
+    limit: number
+  ): Response<unknown> {
+    const dataExpr = `{
+ "userId": ${toDataExpr(userId)}
+ "before": ${toDataExpr(before)}
+ "limit": ${toDataExpr(limit)}
+}`;
+    return callInterface(MessageStore.getUserMessages, dataExpr) as Response<
+      unknown
+    >;
+  }
 };
 
-const Interfaces = {
-  MessageStore,
-};
+// Message record.
+export interface Message {
+  // The dynamically generated Tweet ID.
+  id: UUID;
+  // The tweet owner.
+  userId: UUID;
+  // The message body.
+  message: string;
+  // The time the tweet was entered.
+  time: Date;
+}
 
-export const Message: Iota<typeof Interfaces> = {
-  $ref: "iotas/message",
-  interfaces: Interfaces,
+export const interfaces = {
+  MessageStore
 };

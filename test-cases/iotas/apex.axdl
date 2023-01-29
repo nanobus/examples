@@ -1,20 +1,15 @@
-import * from "@apexlang/core"
-import * from "@apexlang/rest"
-import * from "@apexlang/openapi"
-
 namespace "suite"
 
 "Test interface"
-interface test @service @uses([external]) {
+interface Test @service @uses([External]) {
   "Returns 'test'"
   op(): string
 
   "Returns the input string reversed"
   reverse(input: string): string
-
 }
 
-interface external @provider {
+interface External @provider {
   "Uppercases a string"
   uppercase(input: string): string
 }

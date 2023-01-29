@@ -1,7 +1,7 @@
 id: nanochat
 version: 0.0.4
 spec: apex.axdl
-main: build/jot-go.wasm
+main: build/nanochat-go.wasm
 resources:
   - followdb
   - likedb
@@ -28,28 +28,28 @@ initializers:
   followdb:
     uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: "${env:FOLLOW_DB}"
+      dataSource: '${env:FOLLOW_DB}'
       directory: iotas/follow/sql
   likedb:
     uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: "${env:LIKE_DB}"
+      dataSource: '${env:LIKE_DB}'
       directory: iotas/like/sql
   messagedb:
     uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: "${env:MESSAGE_DB}"
+      dataSource: '${env:MESSAGE_DB}'
       directory: iotas/message/sql
   user:
     uses: nanobus.migrate.postgres/v1
     with:
-      dataSource: "${env:USER_DB}"
+      dataSource: '${env:USER_DB}'
       directory: iotas/user/sql
 transports:
   http:
     uses: nanobus.transport.http.server/v1
     with:
-      address: ":8080"
+      address: ':8080'
       middleware:
         - uses: nanobus.transport.http.cors/v0
           with:
@@ -67,17 +67,17 @@ transports:
       routers:
         - uses: nanobus.transport.http.oauth2/v1
           with:
-            clientId: "${env:OAUTH_CLIENT_ID}"
-            clientSecret: "${env:OAUTH_CLIENT_SECRET}"
+            clientId: '${env:OAUTH_CLIENT_ID}'
+            clientSecret: '${env:OAUTH_CLIENT_SECRET}'
             endpoint:
-              authUrl: "${env:OAUTH_AUTH_URL}"
-              tokenUrl: "${env:OAUTH_TOKEN_URL}"
-              userInfoUrl: "${env:USERINFO_URL}"
+              authUrl: '${env:OAUTH_AUTH_URL}'
+              tokenUrl: '${env:OAUTH_TOKEN_URL}'
+              userInfoUrl: '${env:USERINFO_URL}'
               authStyle: inheader
-            callbackUrl: "${env:OAUTH_REDIRECT_URL}"
-            handler: "security::storeSession"
+            callbackUrl: '${env:OAUTH_REDIRECT_URL}'
+            handler: 'security::storeSession'
             scopes:
-              - ${env:OAUTH_SCOPES}
+              - '${env:OAUTH_SCOPES}'
         - uses: nanobus.transport.http.rest/v1
           with:
             documentation:
@@ -101,13 +101,13 @@ transports:
 filters:
   - uses: nanobus.filter.session/v1
     with:
-      handler: "security::getAccessToken"
+      handler: 'security::getAccessToken'
   - uses: nanobus.filter.userinfo/v1
     with:
-      userInfoUrl: "${env:USERINFO_URL}"
+      userInfoUrl: '${env:USERINFO_URL}'
   - uses: nanobus.filter.jwt/v1
     with:
-      jwksUrl: "${env:OAUTH_JWKS_URL}"
+      jwksUrl: '${env:OAUTH_JWKS_URL}'
 authorization:
   nanochat.io.v1.jots.Jots:
     postJot:
@@ -152,12 +152,11 @@ providers:
     getAccessToken:
       steps:
         - name: Select access token
-          uses: "@postgres/query"
+          uses: '@postgres/query'
           with:
             resource: userdb
             single: true
             sql: |-
-
               SELECT access_token, token_type
               FROM "session"
               WHERE sid = $1
@@ -167,24 +166,22 @@ providers:
     storeSession:
       steps:
         - name: Create user if none exists
-          uses: "@postgres/exec"
+          uses: '@postgres/exec'
           with:
             resource: userdb
             sql: |-
-
               INSERT INTO "user" (id, handle, email)
               VALUES ($1, $2, $3)
               ON CONFLICT DO NOTHING
             args:
               - claims.sub
-              - "claims.${env:HANDLE_CLAIM}"
+              - 'claims.${env:HANDLE_CLAIM}'
               - claims.email
         - name: Create a session
-          uses: "@postgres/exec"
+          uses: '@postgres/exec'
           with:
             resource: userdb
             sql: >-
-
               INSERT INTO "session" (sid, uid, access_token, expiry,
               refresh_token, token_type)
 
@@ -206,7 +203,7 @@ errors:
     type: NotFound
     code: not_found
     title: Resource not found
-    message: "Resource with id {{ .key }} was not found"
+    message: 'Resource with id {{ .key }} was not found'
   permission_denied:
     type: PermissionDenied
     code: permission_denied
@@ -223,27 +220,9 @@ errors:
     type: UserNotFound
     code: not_found
     title: User not found
-    message: "User with handle {{ .handle }} is not found"
+    message: 'User with handle {{ .handle }} is not found'
   jot_not_found:
     type: JotNotFound
     code: not_found
     title: Jot not found
-    message: "Jot with id {{ .messageId }} is not found"
-package:
-  registry: reg.candle.run
-  org: examples
-  add:
-    - ui/dist/
-    - resources.yaml
-    - iotas/follow/
-    - iotas/like/
-    - iotas/message/
-    - iotas/user/
-
-  #Credentials.  Add these to your environment.  replace regcandlerun with your registry host name.
-  #If you are going to use candle registry, make a free account at https://reg.candle.run
-  #you can only push to orgs that you own and already exist so feel free to make an org ("Project") for yourself.
-  #export OCI_REGISTRIES=CANDLE
-  #export CANDLE_HOSTNAME=reg.candle.run
-  #export CANDLE_USERNAME=<your registry username>
-  #export CANDLE_PASSWORD=<your registry password>
+    message: 'Jot with id {{ .messageId }} is not found'

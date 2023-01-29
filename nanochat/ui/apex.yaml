@@ -1,0 +1,20 @@
+tasks:
+  deps:
+    description: Install dependencies
+    cmds:
+      - npm install
+
+  dev:
+    description: Run server in dev mode
+    cmds:
+      - npm run dev
+
+  build:
+    description: Build the UI assets
+    cmds:
+      - npm run build
+
+  codegen:
+    description: Build the OpenAPI client code
+    cmds:
+      - npx openapi-generator-cli generate -g typescript -i http://localhost:8080/swagger/swagger_spec -o src/generated-sources/openapi

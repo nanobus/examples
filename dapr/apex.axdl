@@ -1,0 +1,26 @@
+namespace "dapr-example"
+
+interface People @service @path("/people") {
+  create[person: Person] @POST
+  get(id: string): Person @GET @path("/{id}")
+}
+
+interface Events @events {
+  onWelcome[event: WelcomeEvent]
+}
+
+type WelcomeEvent {
+  type: string
+  time: datetime
+  data: Message
+}
+
+type Message {
+  message: string
+}
+
+type Person {
+  id: string
+  firstName: string
+  lastName: string
+}

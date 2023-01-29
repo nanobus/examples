@@ -1,0 +1,10 @@
+github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
+github.com/nanobus/iota/go v0.0.0-20230126175127-29d1ee070db0 h1:nYzChmfX2LyHrBnoUHLXl99L48Q6j62Jpk+/HZcMD78=
+github.com/nanobus/iota/go v0.0.0-20230126175127-29d1ee070db0/go.mod h1:z4uVAsLNyU358WEn93VLK5I1VpqtrHP9lVOO+vMeyVY=
+github.com/nanobus/iota/go/types/uuid v0.0.0-20230126175127-29d1ee070db0 h1:AKYW1g38SYt/S0CKvJ1y2VyfRTUzZvK/+bU5IdRnMfs=
+github.com/nanobus/iota/go/types/uuid v0.0.0-20230126175127-29d1ee070db0/go.mod h1:VXWdFL5QVJnv/ny9l2EYDDqr0xisb2pCWtXI/jL1BiI=
+github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKsk=
+golang.org/x/exp v0.0.0-20221230185412-738e83a70c30 h1:m9O6OTJ627iFnN2JIWfdqlZCzneRO6EEBsHXI25P8ws=
+golang.org/x/exp v0.0.0-20221230185412-738e83a70c30/go.mod h1:CxIveKay+FTh1D0yPZemJVgC/95VzuuOLq5Qi4xnoYc=
+gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=

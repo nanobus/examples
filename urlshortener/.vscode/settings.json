@@ -1,20 +1,9 @@
 {
-    "task.allowAutomaticTasks": "on",
-    "redisXplorer.config": {
-        "profiles": [
-            {
-                "name": "Local",
-                "host": "localhost",
-                "accessKey": "",
-                "filter": "*",
-                "port": "6379"
-            }
-        ],
-        "scanLimit": 200
-    },
-    "deno.enable": true,
-    "deno.unstable": true,
-    "[typescript]": {
-        "editor.defaultFormatter": "denoland.vscode-deno"
-    }
+  "task.allowAutomaticTasks": "on",
+  "editor.formatOnSave": true,
+  "deno.enable": true,
+  "deno.unstable": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  }
 }

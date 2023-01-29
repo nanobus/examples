@@ -1,34 +1,48 @@
+// deno-lint-ignore-file no-unused-vars ban-unused-ignore
+export * from "https://deno.land/x/nanobusconfig@v0.0.22/mod.ts";
 import {
   Application,
   Authorization,
+  callInterface,
+  callProvider,
+  CloudEvent,
+  Entity,
   Flow,
   Handler,
-  Iota,
-} from "https://deno.land/x/nanobusconfig@v0.0.15/mod.ts";
+  Handlers,
+  Operations,
+  Response,
+  Step,
+  toDataExpr
+} from "https://deno.land/x/nanobusconfig@v0.0.22/mod.ts";
 
-type UUID = string;
+export const types = {
+  User: "nanochat.io.user.v1::User" as Entity
+};
 
-interface UserStoreLoadArgs {
+export type UUID = string;
+
+export interface UserStoreLoadArgs {
   userId: UUID;
 }
 
-interface UserStoreGetMultipleArgs {
-  userIds: UUID[];
+export interface UserStoreGetMultipleArgs {
+  userIds: Array<UUID>;
 }
 
-interface UserStoreFindByHandleArgs {
+export interface UserStoreFindByHandleArgs {
   handle: string;
 }
 
-interface UserStoreOper {
-  me?: Flow<void>;
-  load?: Flow<UserStoreLoadArgs>;
-  getMultiple?: Flow<UserStoreGetMultipleArgs>;
-  findByHandle?: Flow<UserStoreFindByHandleArgs>;
-  getFive?: Flow<void>;
+export interface UserStoreOper {
+  me?: Flow<void> | Step[];
+  load?: Flow<UserStoreLoadArgs> | Step[];
+  getMultiple?: Flow<UserStoreGetMultipleArgs> | Step[];
+  findByHandle?: Flow<UserStoreFindByHandleArgs> | Step[];
+  getFive?: Flow<void> | Step[];
 }
 
-interface UserStoreAuth {
+export interface UserStoreAuth {
   me?: Authorization;
   load?: Authorization;
   getMultiple?: Authorization;
@@ -37,6 +51,7 @@ interface UserStoreAuth {
 }
 
 export const UserStore = {
+  $interface: "nanochat.io.user.v1.UserStore",
   me: "nanochat.io.user.v1.UserStore::me" as Handler,
   load: "nanochat.io.user.v1.UserStore::load" as Handler,
   getMultiple: "nanochat.io.user.v1.UserStore::getMultiple" as Handler,
@@ -44,25 +59,57 @@ export const UserStore = {
   getFive: "nanochat.io.user.v1.UserStore::getFive" as Handler,
 
   register(app: Application, iface: UserStoreOper): void {
-    app.register(
-      UserStore as unknown as Record<string, Handler>,
-      iface as Record<string, Flow<unknown>>,
-    );
+    app.interface(UserStore.$interface, (iface as unknown) as Operations);
   },
 
   authorize(app: Application, auths: UserStoreAuth): void {
-    app.authorize(
-      UserStore as unknown as Record<string, Handler>,
-      auths as Record<string, Authorization>,
-    );
+    app.authorize(UserStore.$interface, auths as Record<string, Authorization>);
+  }
+};
+
+export const userStoreClient = {
+  me(): Response<User> {
+    const dataExpr = `{
+}`;
+    return callInterface(UserStore.me, dataExpr) as Response<User>;
   },
+
+  load(userId: UUID): Response<User> {
+    const dataExpr = `{
+ "userId": ${toDataExpr(userId)}
+}`;
+    return callInterface(UserStore.load, dataExpr) as Response<User>;
+  },
+
+  getMultiple(userIds: Array<UUID>): Response<unknown> {
+    const dataExpr = `{
+ "userIds": ${toDataExpr(userIds)}
+}`;
+    return callInterface(UserStore.getMultiple, dataExpr) as Response<unknown>;
+  },
+
+  findByHandle(handle: string): Response<User> {
+    const dataExpr = `{
+ "handle": ${toDataExpr(handle)}
+}`;
+    return callInterface(UserStore.findByHandle, dataExpr) as Response<User>;
+  },
+
+  getFive(): Response<unknown> {
+    const dataExpr = `{
+}`;
+    return callInterface(UserStore.getFive, dataExpr) as Response<unknown>;
+  }
 };
 
-const Interfaces = {
-  UserStore,
-};
+// User record
+export interface User {
+  // User ID.
+  id: UUID;
+  // Handle.
+  handle: string;
+}
 
-export const User: Iota<typeof Interfaces> = {
-  $ref: "iotas/user",
-  interfaces: Interfaces,
+export const interfaces = {
+  UserStore
 };

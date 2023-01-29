@@ -1,3 +1,5 @@
 spec: ../../apex.axdl
+config:
+  name: sample
 plugins:
-  - "../../../../../iota/codegen/src/rust/plugin.ts"
+  - https://deno.land/x/iota_codegen@v0.0.3/rust/plugin.ts

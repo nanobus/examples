@@ -15,14 +15,14 @@ func (n *ns) Namespace() string {
 }
 
 // Test interface
-type test interface {
+type Test interface {
 	// Returns 'test'
 	Op(ctx context.Context) mono.Mono[string]
 	// Returns the input string reversed
 	Reverse(ctx context.Context, input string) mono.Mono[string]
 }
 
-type external interface {
+type External interface {
 	// Uppercases a string
 	Uppercase(ctx context.Context, input string) mono.Mono[string]
 }

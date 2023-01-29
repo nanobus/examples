@@ -1,0 +1,13 @@
+tasks:
+  build:
+    description: Build Iotas
+    cmds:
+      - cd iotas/wasm/go && apex all
+      - cd iotas/wasm/rust && apex all
+
+  test:
+    description: Run tests
+    cmds:
+      - cram tests/go-wasm.t
+      - cram tests/rust-wasm.t
+      - cram tests/yaml.t

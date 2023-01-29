@@ -1,0 +1,5 @@
+tasks:
+  test:
+    description: Run tests
+    cmds:
+      - cram tests/web-service.t

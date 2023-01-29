@@ -1,0 +1,9 @@
+tasks:
+  run:
+    description: Run this example in NanoBus
+    cmds:
+      - nanobus run --debug --developer-mode
+  test:
+    description: Run tests
+    cmds:
+      - cram tests/invoke.t

@@ -1,20 +1,19 @@
 id: dapr-example
 version: 0.0.1
+spec: apex.axdl
 transports:
   http:
     uses: nanobus.transport.http.server/v1
     with:
       address: ':8080'
+      middleware: []
       routers:
-        - uses: nanobus.transport.http.router/v1
+        - uses: nanobus.transport.http.rest/v1
           with:
-            routes:
-              - method: POST
-                uri: /people
-                handler: 'People::create'
-              - method: GET
-                uri: '/people/{id}'
-                handler: 'People::get'
+            documentation:
+              swaggerUI: true
+              postman: true
+              restClient: true
   dapr:
     uses: nanobus.transport.dapr/v1
     with:
@@ -23,15 +22,15 @@ transports:
         - pubsub: pubsub
           topic: welcome
           codec: cloudevents+json
-          handler: 'Events::onWelcome'
+          handler: 'dapr-example.Events::onWelcome'
 authorization:
-  People:
+  dapr-example.People:
     get:
       unauthenticated: true
     create:
       unauthenticated: true
 interfaces:
-  People:
+  dapr-example.People:
     get:
       steps:
         - name: Get state
@@ -58,7 +57,9 @@ interfaces:
 
               {
                 "type": "welcome.v1",
-                "data": "Welcome, " + input.firstName + " " + input.lastName + "!",
+                "data": {
+                  "message": "Welcome, " + input.firstName + " " + input.lastName + "!",
+                },
               }
             codec: cloudevents+json
         - name: 201 Created
@@ -68,7 +69,7 @@ interfaces:
             headers:
               - name: Location
                 value: '"{{host}}/people/" + input.id'
-  Events:
+  dapr-example.Events:
     onWelcome:
       steps:
         - name: Log the welcome message
@@ -77,8 +78,25 @@ interfaces:
             format: 'Event received: [%s] %q'
             args:
               - input.type
-              - input.data
+              - input.data.message
 errors:
+  not_found:
+    type: NotFound
+    code: not_found
+    title: Resource not found
+    message: 'Resource with id {{ .key }} was not found'
+  permission_denied:
+    type: PermissionDenied
+    code: permission_denied
+    title: Permission denied
+    message: >-
+      You don't have permission to access this resource or to perform the
+      operation.
+  unauthenticated:
+    type: Unauthenticated
+    code: unauthenticated
+    title: Unauthenticated
+    message: You must be logged in to perform the operation.
   person_not_found:
     type: PersonNotFound
     code: not_found

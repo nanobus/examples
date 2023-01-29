@@ -8,19 +8,4 @@
 * [Scheduler](./scheduler/) - An example of using the scheduler transport for cron-like functionality.
 * [URL Shortener](./urlshortener/) - An API that shortens URLs and showcases practical use of [Postgres](https://www.postgresql.org), [Jaeger](https://www.jaegertracing.io) and [OAuth](https://oauth.net)/[ODIC](https://openid.net/connect/)/[JWT](https://jwt.io).
 * [NanoChat](./nanochat/) - A simple messaging platform that uses multiple Iotas to compose a larger application. The WasmRS protocol enables the application to stream data from the database and perform asynchronous tasks.
-
-## Building and running tests
-
-These examples are also used as tests for `nanobus` to ensure compatibility.
-
-To rebuild test artifacts run:
-
-```sh
-$ just build
-```
-
-To run tests use the command:
-
-```sh
-$ just test
-```
+* [Streamer](./streamer/) - An example of using the WasmRS streams to write directly to a Blob store as records are being read from a database.

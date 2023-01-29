@@ -3,8 +3,8 @@ import {
   Application,
   PostgresActions,
   step,
-} from "https://deno.land/x/nanobusconfig@v0.0.15/mod.ts";
-import { LikeStore } from "./iota.ts";
+  LikeStore
+} from "./iota.ts";
 
 const app = new Application("like", "0.0.1").spec("apex.axdl");
 
@@ -118,5 +118,3 @@ LIMIT $3`,
     ),
   ],
 });
-
-app.emit();

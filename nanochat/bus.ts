@@ -3,6 +3,7 @@ import {
   Application,
   AuthStyle,
   env,
+  Jots,
   JWTV1,
   migrate,
   postgres,
@@ -13,16 +14,12 @@ import {
   step,
   unauthenticated,
   UserInfoV1,
-} from "https://deno.land/x/nanobusconfig@v0.0.15/mod.ts";
-import { Jots, Users } from "./iota.ts";
-import { Follow } from "./iotas/follow/iota.ts";
-import { Like } from "./iotas/like/iota.ts";
-import { Message } from "./iotas/message/iota.ts";
-import { User } from "./iotas/user/iota.ts";
+  Users,
+} from "./iota.ts";
 
 const app = new Application("nanochat", "0.0.4")
   .spec("apex.axdl")
-  .main("build/jot-go.wasm");
+  .main("build/nanochat-go.wasm");
 
 const followdb = app.resource("followdb");
 const likedb = app.resource("likedb");
@@ -42,22 +39,29 @@ const userdb = app.resource("userdb");
   );
 });
 
-const _follow = app.import("follow", Follow, {
+import { interfaces as Follow } from "./iotas/follow/iota.ts";
+const _follow = app.import("follow", "iotas/follow", Follow, {
   resourceLinks: {
     followdb: followdb,
   },
 });
-const _like = app.import("like", Like, {
+
+import { interfaces as Like } from "./iotas/like/iota.ts";
+const _like = app.import("like", "iotas/like", Like, {
   resourceLinks: {
     likedb: likedb,
   },
 });
-const _message = app.import("message", Message, {
+
+import { interfaces as Message } from "./iotas/message/iota.ts";
+const _message = app.import("message", "iotas/message", Message, {
   resourceLinks: {
     messagedb: messagedb,
   },
 });
-const _user = app.import("user", User, {
+
+import { interfaces as User } from "./iotas/user/iota.ts";
+const _user = app.import("user", "iotas/user", User, {
   resourceLinks: {
     userdb: userdb,
   },
@@ -188,5 +192,3 @@ app.errors({
     message: "Jot with id {{ .messageId }} is not found",
   },
 });
-
-app.emit();

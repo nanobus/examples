@@ -6,6 +6,8 @@ Use NanoBus and Dapr together to simplify cloud application development.
 
 Before you begin, make sure you have the following installed:
 
+* [Deno](https://github.com/denoland/deno_install)
+* [Apex](https://apexlang.io)
 * [Docker](https://docs.docker.com/get-docker/) (required by Dapr)
 * [Dapr](https://dapr.io)
 * [NanoBus](https://github.com/nanobus/nanobus)
@@ -20,7 +22,7 @@ Before you begin, make sure you have the following installed:
 2) Run NanoBus and Dapr.
 
     ```shell
-    dapr run --app-id hello-world --app-port 19090 --app-protocol grpc -- nanobus run --debug
+    dapr run --app-id hello-world --app-port 19090 --app-protocol grpc -- nanobus run --debug --developer-mode bus.ts
     ```
 
 ### Invoking the service
