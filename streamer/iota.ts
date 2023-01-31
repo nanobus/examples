@@ -1,21 +1,23 @@
 // deno-lint-ignore-file no-unused-vars ban-unused-ignore
-export * from "https://raw.githubusercontent.com/nanobus/nanobus/dx_iteration/config/ts/mod.ts";
+export * from "https://deno.land/x/nanobusconfig@v0.0.22/mod.ts";
 import {
   Application,
   Authorization,
   callInterface,
   callProvider,
+  CloudEvent,
   Entity,
   Flow,
   Handler,
+  Handlers,
   Operations,
   Response,
   Step,
-  toDataExpr,
-} from "https://raw.githubusercontent.com/nanobus/nanobus/dx_iteration/config/ts/mod.ts";
+  toDataExpr
+} from "https://deno.land/x/nanobusconfig@v0.0.22/mod.ts";
 
 export const types = {
-  Customer: "streamer.v1::Customer" as Entity,
+  Customer: "streamer.v1::Customer" as Entity
 };
 
 export type UUID = string;
@@ -33,12 +35,12 @@ export const Streamer = {
   process: "streamer.v1.Streamer::process" as Handler,
 
   register(app: Application, iface: StreamerOper): void {
-    app.interface(Streamer.$interface, iface as Operations);
+    app.interface(Streamer.$interface, (iface as unknown) as Operations);
   },
 
   authorize(app: Application, auths: StreamerAuth): void {
     app.authorize(Streamer.$interface, auths as Record<string, Authorization>);
-  },
+  }
 };
 
 export const streamerClient = {
@@ -46,7 +48,7 @@ export const streamerClient = {
     const dataExpr = `{
 }`;
     return callInterface(Streamer.process, dataExpr) as Response<unknown>;
-  },
+  }
 };
 
 export interface SourceOper {
@@ -67,7 +69,7 @@ export const Source = {
 
   authorize(app: Application, auths: SourceAuth): void {
     app.authorize(Source.$interface, auths as Record<string, Authorization>);
-  },
+  }
 };
 
 export const sourceClient = {
@@ -75,7 +77,7 @@ export const sourceClient = {
     const dataExpr = `{
 }`;
     return callProvider(Source.read, dataExpr) as Response<unknown>;
-  },
+  }
 };
 
 export interface SinkOper {
@@ -96,7 +98,7 @@ export const Sink = {
 
   authorize(app: Application, auths: SinkAuth): void {
     app.authorize(Sink.$interface, auths as Record<string, Authorization>);
-  },
+  }
 };
 
 export const sinkClient = {
@@ -105,7 +107,7 @@ export const sinkClient = {
  "out": ${toDataExpr(out)}
 }`;
     return callProvider(Sink.write, dataExpr) as Response<unknown>;
-  },
+  }
 };
 
 export interface Customer {
@@ -113,3 +115,9 @@ export interface Customer {
   firstName: string;
   lastName: string;
 }
+
+export const interfaces = {
+  Streamer,
+  Source,
+  Sink
+};
