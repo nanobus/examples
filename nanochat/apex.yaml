@@ -8,7 +8,7 @@ config:
   iotaTypeScriptPath: iotas/follow/iota.ts
 plugins:
   - https://deno.land/x/iota_codegen@v0.0.3/tinygo/plugin.ts
-  - https://deno.land/x/nanobusconfig@v0.0.22/plugin.ts
+  - https://deno.land/x/nanobusconfig@v0.0.23/plugin.ts
 ---
 spec: iotas/like/apex.axdl
 config:
@@ -20,7 +20,7 @@ config:
   iotaTypeScriptPath: iotas/like/iota.ts
 plugins:
   - https://deno.land/x/iota_codegen@v0.0.3/tinygo/plugin.ts
-  - https://deno.land/x/nanobusconfig@v0.0.22/plugin.ts
+  - https://deno.land/x/nanobusconfig@v0.0.23/plugin.ts
 ---
 spec: iotas/message/apex.axdl
 config:
@@ -32,7 +32,7 @@ config:
   iotaTypeScriptPath: iotas/message/iota.ts
 plugins:
   - https://deno.land/x/iota_codegen@v0.0.3/tinygo/plugin.ts
-  - https://deno.land/x/nanobusconfig@v0.0.22/plugin.ts
+  - https://deno.land/x/nanobusconfig@v0.0.23/plugin.ts
 ---
 spec: iotas/user/apex.axdl
 config:
@@ -44,7 +44,7 @@ config:
   iotaTypeScriptPath: iotas/user/iota.ts
 plugins:
   - https://deno.land/x/iota_codegen@v0.0.3/tinygo/plugin.ts
-  - https://deno.land/x/nanobusconfig@v0.0.22/plugin.ts
+  - https://deno.land/x/nanobusconfig@v0.0.23/plugin.ts
 ---
 spec: apex.axdl
 config:
@@ -54,7 +54,7 @@ config:
   mainRegenerate: false
 plugins:
   - https://deno.land/x/iota_codegen@v0.0.3/tinygo/plugin.ts
-  - https://deno.land/x/nanobusconfig@v0.0.22/plugin.ts
+  - https://deno.land/x/nanobusconfig@v0.0.23/plugin.ts
 tasks:
   deps:
     description: Install dependencies

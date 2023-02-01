@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-unused-vars ban-unused-ignore
-export * from "https://deno.land/x/nanobusconfig@v0.0.22/mod.ts";
+export * from "https://deno.land/x/nanobusconfig@v0.0.23/mod.ts";
 import {
   Application,
   Authorization,
@@ -14,7 +14,7 @@ import {
   Response,
   Step,
   toDataExpr
-} from "https://deno.land/x/nanobusconfig@v0.0.22/mod.ts";
+} from "https://deno.land/x/nanobusconfig@v0.0.23/mod.ts";
 
 export const types = {
   Customer: "streamer.v1::Customer" as Entity

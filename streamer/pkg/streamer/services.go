@@ -22,7 +22,12 @@ func NewStreamer(source Source, sink Sink) *StreamerImpl {
 func (s *StreamerImpl) Process(ctx context.Context) mono.Void {
 	return mono.Create(func(sink mono.Sink[struct{}]) {
 		p := flux.NewProcessor[Customer]()
-		s.sink.Write(ctx, p).Subscribe(mono.Subscribe[struct{}]{})
+		s.sink.Write(ctx, p).Subscribe(mono.Subscribe[struct{}]{
+			OnError: func(err error) {
+				p.Error(err)
+				sink.Error(err)
+			},
+		})
 
 		s.source.Read(ctx).Subscribe(flux.Subscribe[Customer]{
 			OnNext: func(c Customer) {
