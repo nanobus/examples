@@ -1,0 +1,6 @@
+resources:
+  discord:
+    uses: nanobus.resource.discord/v1
+    with:
+      token: "${env:DISCORD_BOT_TOKEN}"
+      open: true

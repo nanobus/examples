@@ -1,0 +1,282 @@
+namespace "github.webhooks.v1"
+
+interface Webhooks @service {
+  star[event: StarEvent] @POST @path("/star")
+}
+
+type StarEvent {
+  action: Action
+  enterprise: Enterprise?
+  installation: GitHubApp?
+  organization: Organization?
+  repository: Repository
+  sender: User
+  starred_at: datetime?
+}
+
+enum Action {
+  Created = 1 as "created"
+  Deleted = 2 as "deleted"
+}
+
+type Enterprise {
+  id: i64
+  slug: string
+  name: string
+  node_id: string
+  avatar_url: string?
+  description: string?
+  website_url: string?
+  html_url: string
+  created_at: datetime
+  updated_at: datetime
+}
+
+type GitHubApp {
+  "Unique identifier of the GitHub app"
+  id: i64
+  "The slug name of the GitHub app"
+  slug: string?
+  node_id: string
+  owner: User?
+  "The name of the GitHub app"
+  name: string
+  description: string?
+  external_url: string @uri
+  html_url: string @uri
+  created_at: datetime
+  updated_at: datetime
+  permissions: { string: string }
+  "The list of events for the GitHub app"
+  events: [string]
+  installations_count: i64?
+  client_id: string?
+  client_secret: string?
+  webhook_secret: string?
+  pem: string?
+}
+
+type Organization {
+  login: string
+  id: i64
+  node_id: string
+  url: string @uri
+  repos_url: string @uri
+  events_url: string @uri
+  hooks_url: string
+  issues_url: string
+  members_url: string
+  public_members_url: string
+  avatar_url: string
+  description: string?
+}
+
+type Repository {
+  id: i64
+  node_id: string
+  name: string
+  full_name: string
+  license: License?
+  forks: i64
+  permissions: Permissions
+  owner: User
+  private: bool = false
+  html_url: string @uri
+  description: string?
+  fork: bool
+  url: string @uri
+  archive_url: string
+  assignees_url: string
+  blobs_url: string
+  branches_url: string
+  collaborators_url: string
+  comments_url: string
+  commits_url: string
+  compare_url: string
+  contents_url: string
+  contributors_url: string
+  deployments_url: string
+  downloads_url: string
+  events_url: string
+  forks_url: string
+  git_commits_url: string
+  git_refs_url: string
+  git_tags_url: string
+  git_url: string
+  issue_comment_url: string
+  issue_events_url: string
+  issues_url: string
+  keys_url: string
+  labels_url: string
+  languages_url: string
+  merges_url: string
+  milestones_url: string
+  notifications_url: string
+  pulls_url: string
+  releases_url: string
+  ssh_url: string
+  stargazers_url: string
+  statuses_url: string
+  subscribers_url: string
+  subscription_url: string
+  tags_url: string
+  teams_url: string
+  trees_url: string
+  clone_url: string
+  mirror_url: string? @uri
+  hooks_url: string @uri
+  svn_url: string @uri
+  homepage: string? @uri
+  language: string?
+  forks_count: i64
+  stargazers_count: i64
+  watchers_count: i64
+  size: i64
+  default_branch: string
+  open_issues_count: i64
+  is_template: bool = false
+  topics: [string]
+  "Whether issues are enabled."
+  has_issues: bool = true
+  "Whether projects are enabled."
+  has_projects: bool = true
+  "Whether the wiki is enabled."
+  has_wiki: bool = true
+  has_pages: bool
+  "Whether downloads are enabled."
+  has_downloads: bool = true
+  "Whether discussions are enabled."
+  has_discussions: bool = false
+  "Whether the repository is archived."
+  archived: bool = false
+  "Returns whether or not this repository disabled."
+  disabled: bool
+  visibility: Visibility = Public
+  pushed_at: datetime?
+  created_at: datetime?
+  updated_at: datetime?
+  "Whether to allow rebase merges for pull requests."
+  allow_rebase_merge: bool = true
+  template_repository: Repository?
+  temp_clone_token: string
+  "Whether to allow squash merges for pull requests."
+  allow_squash_merge: bool = true
+  "Whether to allow Auto-merge to be used on pull requests."
+  allow_auto_merge: bool = false
+  "Whether to delete head branches when pull requests are merged."
+  delete_branch_on_merge: bool = false
+  "Whether or not a pull request head branch that is behind its base branch can always be updated even if it is not required to be up to date before merging."
+  allow_update_branch: bool = false
+  "Whether a squash merge commit can use the pull request title as default. **This property has been deprecated. Please use `squash_merge_commit_title` instead."
+  use_squash_pr_title_as_default: bool
+  """
+  The default value for a squash merge commit title:
+  
+  - `PR_TITLE` - default to the pull request's title.
+  - `COMMIT_OR_PR_TITLE` - default to the commit's title (if only one commit) or the pull request's title (when more than one commit).
+  """
+  squash_merge_commit_title: CommitTitle
+  """
+  The default value for a squash merge commit message:
+  
+  - `PR_BODY` - default to the pull request's body.
+  - `COMMIT_MESSAGES` - default to the branch's commit messages.
+  - `BLANK` - default to a blank commit message.
+  """
+  squash_merge_commit_message: CommitMessage
+  """
+  The default value for a merge commit title.
+  - `PR_TITLE` - default to the pull request's title.
+  - `MERGE_MESSAGE` - default to the classic title for a merge message (e.g., Merge pull request #123 from branch-name).
+  """
+  merge_commit_title: MergeCommitTitle
+  """
+  The default value for a merge commit message.
+  - `PR_TITLE` - default to the pull request's title.
+  - `PR_BODY` - default to the pull request's body.
+  - `BLANK` - default to a blank commit message.
+  """
+  merge_commit_message: MergeCommitMessage
+  "Whether to allow merge commits for pull requests."
+  allow_merge_commit: bool = true
+  allow_forking: bool
+  "Whether to require contributors to sign off on web-based commits"
+  web_commit_signoff_required: bool = false
+  subscribers_count: i64
+  network_count: i64
+  open_issues: i64
+  watchers: i64
+  master_branch: string
+  starred_at: datetime?
+  "Whether anonymous git access is enabled for this repository"
+  anonymous_access_enabled: bool
+}
+
+enum MergeCommitTitle {
+  PR = 1 as "PR_TITLE"
+  MergeMessage = 2 as "MERGE_MESSAGE"
+}
+
+enum MergeCommitMessage {
+  PRBody = 1 as "PR_BODY"
+  PRTitle = 2 as "PR_TITLE"
+  Blank = 3 as "BLANK"
+}
+
+enum CommitTitle {
+  PR = 1 as "PR_TITLE"
+  CommitOrPR = 2 as "COMMIT_OR_PR_TITLE"
+}
+
+enum CommitMessage {
+  PR = 1 as "PR_BODY"
+  CommitMessages = 2 as "COMMIT_MESSAGES"
+  Blank = 3 as "BLANK"
+}
+
+enum Visibility {
+  Public = 1 as "public"
+  Private = 2 as "private"
+  Internal = 3 as "internal"
+}
+
+type Permissions {
+  admin: bool
+  pull: bool
+  triage: bool
+  push: bool
+  maintain: bool
+}
+
+type License {
+  key: string
+  name: string
+  url: string? @uri
+  spdx_id: string?
+  node_id: string
+  html_url: string @uri
+}
+
+type User {
+  name: string?
+  email: string?
+  login: string?
+  id: i64
+  node_id: string
+  avatar_url: string
+  gravatar_id: string?
+  url: string @uri
+  html_url: string @uri
+  followers_url: string @uri
+  following_url: string @uri
+  gists_url: string @uri
+  starred_url: string @uri
+  subscriptions_url: string @uri
+  organizations_url: string @uri
+  repos_url: string @uri
+  events_url: string @uri
+  received_events_url: string @uri
+  type: string
+  site_admin: bool
+  starred_at: datetime
+}

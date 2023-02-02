@@ -1,0 +1,54 @@
+id: github-stars
+version: 0.0.1
+spec: apex.axdl
+transports:
+  http:
+    uses: nanobus.transport.http.server/v1
+    with:
+      address: ':8080'
+      routers:
+        - uses: nanobus.transport.http.router/v1
+          with:
+            routes:
+              - method: POST
+                uri: '${env:WEBHOOK_URI}'
+                handler: 'webhooks::star'
+authorization:
+  webhooks:
+    star:
+      unauthenticated: true
+interfaces:
+  webhooks:
+    star:
+      steps:
+        - name: Filter on create actions with a login
+          uses: filter
+          with:
+            condition: >-
+              input.action == "create" && input.sender.login != null &&
+              input.repository.full_name != null
+        - name: Send message to Discord channel
+          uses: '@discord/send_message'
+          with:
+            channelId: '"${env:DISCORD_CHANNEL_ID}"'
+            content: >-
+              "Thanks, " + input.sender.login + ", for starring " +
+              input.repository.full_name + "!"
+errors:
+  not_found:
+    type: NotFound
+    code: not_found
+    title: Resource not found
+    message: 'Resource with id {{ .key }} was not found'
+  permission_denied:
+    type: PermissionDenied
+    code: permission_denied
+    title: Permission denied
+    message: >-
+      You don't have permission to access this resource or to perform the
+      operation.
+  unauthenticated:
+    type: Unauthenticated
+    code: unauthenticated
+    title: Unauthenticated
+    message: You must be logged in to perform the operation.
