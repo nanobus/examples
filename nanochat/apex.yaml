@@ -56,6 +56,8 @@ plugins:
   - https://deno.land/x/iota_codegen@v0.0.3/tinygo/plugin.ts
   - https://deno.land/x/nanobusconfig@v0.0.23/plugin.ts
 tasks:
+  all:
+    deps: [clean, deps, codegen, build]
   deps:
     description: Install dependencies
     cmds:

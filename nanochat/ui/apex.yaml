@@ -17,4 +17,5 @@ tasks:
   codegen:
     description: Build the OpenAPI client code
     cmds:
-      - npx openapi-generator-cli generate -g typescript -i http://localhost:8080/swagger/swagger_spec -o src/generated-sources/openapi
+      - rm -Rf src/generated-sources/
+      - npx openapi-generator-cli generate -g typescript -i ../openapi.yaml -o src/generated-sources/openapi -g typescript-fetch --additional-properties=supportsES6=true,npmVersion=6.9.0,typescriptThreePlus=true
