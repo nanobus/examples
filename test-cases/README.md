@@ -7,5 +7,5 @@ This project directory includes any additional tests that don't fit as an indepe
 ## Run tests
 
 ```sh
-$ just test
+$ apex test
 ```

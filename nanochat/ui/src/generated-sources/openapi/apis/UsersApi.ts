@@ -93,6 +93,32 @@ export class UsersApi extends runtime.BaseAPI {
     }
 
     /**
+     * Get five random users to suggest
+     */
+    async getFiveRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserPage>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/v1/users/five`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserPageFromJSON(jsonValue));
+    }
+
+    /**
+     * Get five random users to suggest
+     */
+    async getFive(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserPage> {
+        const response = await this.getFiveRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Get followers of a user
      */
     async getFollowersRaw(requestParameters: GetFollowersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserPage>> {

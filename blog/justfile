@@ -1,5 +1,0 @@
-run: 
-  nanobus
-
-test: 
-  cram tests/*.t

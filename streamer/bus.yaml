@@ -1,0 +1,72 @@
+id: streamer
+version: 0.0.1
+spec: apex.axdl
+main: build/streamer.wasm
+tracing:
+  uses: jaeger
+  with:
+    collectorEndpoint: '${env:JAEGER_TRACES_ENDPOINT}'
+resources:
+  - db
+  - blob
+initializers:
+  db:
+    uses: nanobus.migrate.postgres/v1
+    with:
+      dataSource: '${env:STREAMER_DB}'
+      sourceUrl: '${env:STREAMER_SQL}'
+transports:
+  http:
+    uses: nanobus.transport.http.server/v1
+    with:
+      address: ':8080'
+      middleware: []
+      routers:
+        - uses: nanobus.transport.http.rest/v1
+          with:
+            documentation:
+              swaggerUI: true
+              postman: true
+              restClient: true
+authorization:
+  streamer.v1.Streamer:
+    process:
+      unauthenticated: true
+providers:
+  streamer.v1.Source:
+    read:
+      steps:
+        - name: read database
+          uses: '@postgres/find'
+          with:
+            resource: db
+            entity: 'streamer.v1::Customer'
+  streamer.v1.Sink:
+    write:
+      steps:
+        - name: write to blob
+          uses: '@blob/write'
+          with:
+            resource: blob
+            key: '"customers.json"'
+            codec: json
+            delimiterString: |+
+
+errors:
+  not_found:
+    type: NotFound
+    code: not_found
+    title: Resource not found
+    message: 'Resource with id {{ .key }} was not found'
+  permission_denied:
+    type: PermissionDenied
+    code: permission_denied
+    title: Permission denied
+    message: >-
+      You don't have permission to access this resource or to perform the
+      operation.
+  unauthenticated:
+    type: Unauthenticated
+    code: unauthenticated
+    title: Unauthenticated
+    message: You must be logged in to perform the operation.

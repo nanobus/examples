@@ -1,0 +1,15 @@
+tasks:
+  build:
+    description: Run build
+    cmds:
+      - cd greeter && apex build
+
+  debug:
+    description: Run build
+    cmds:
+      - cd greeter && apex debug
+
+  test:
+    description: Run tests
+    cmds:
+      - cram tests/wasm-service.t

@@ -1,0 +1,21 @@
+namespace "streamer.v1"
+
+alias UUID = string
+
+interface Streamer @service @uses([Source, Sink]) {
+  process() @POST @path("/process")
+}
+
+interface Source @provider {
+  read(): stream Customer
+}
+
+interface Sink @provider {
+  write(out: stream Customer)
+}
+
+type Customer @entity(table: "customer") {
+  id: UUID @column("id") @key
+  firstName: string @column("first_name")
+  lastName: string  @column("last_name")
+}

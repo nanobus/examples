@@ -65,7 +65,7 @@ interfaces:
             handler: 'urlshortener.v1.Repository::loadById'
             input: |-
               {
-                "id": pipe.id,
+               "id": pipe.id
               }
           returns: target
         - name: Redirect
@@ -83,8 +83,7 @@ providers:
           uses: '@postgres/load'
           with:
             resource: db
-            namespace: urlshortener.v1
-            type: URL
+            entity: 'urlshortener.v1::URL'
             key: $.id
           retry: database
           circuitBreaker: database
@@ -94,8 +93,7 @@ providers:
           uses: '@postgres/find_one'
           with:
             resource: db
-            namespace: urlshortener.v1
-            type: URL
+            entity: 'urlshortener.v1::URL'
             where:
               - query: url = ?
                 value: $.url

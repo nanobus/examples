@@ -1,0 +1,10 @@
+resources:
+  db:
+    uses: postgres
+    with:
+      url: ${env:STREAMER_DB}
+  blob:
+    uses: nanobus.resource.fsblob/v1
+    with:
+      dir: blobs
+      create: true

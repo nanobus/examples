@@ -1,5 +1,6 @@
 
 pub(crate) mod test {
+    pub(crate) use super::*;
     pub(crate) mod op;
     pub(crate) mod reverse;
 }
@@ -23,6 +24,20 @@ extern "C" fn __wasmrs_init(
     wasmrs_guest::init(guest_buffer_size, host_buffer_size, max_host_frame_len);
 }
 
+fn deserialize_helper<T: serde::de::DeserializeOwned + 'static>(
+    i: Mono<ParsedPayload, PayloadError>,
+) -> Mono<T, PayloadError> {
+    Mono::from_future(async move {
+        match i.await {
+            Ok(bytes) => match deserialize(&bytes.data) {
+                Ok(v) => Ok(v),
+                Err(e) => Err(PayloadError::application_error(e.to_string())),
+            },
+            Err(e) => Err(PayloadError::application_error(e.to_string())),
+        }
+    })
+}
+
 pub(crate) struct TestComponent();
 
 impl TestComponent {
@@ -33,8 +48,7 @@ impl TestComponent {
         let task = TestComponent::op(input)
             .map(|result| {
                 let output = result?;
-                Ok(serialize(&output)
-                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+                Ok(serialize(&output).map(|bytes| Payload::new_data(None, Some(bytes.into())))?)
             })
             .map(|output| tx.send(output).unwrap());
 
@@ -50,8 +64,7 @@ impl TestComponent {
         let task = TestComponent::reverse(input)
             .map(|result| {
                 let output = result?;
-                Ok(serialize(&output)
-                    .map(|bytes| Payload::new_optional(None, Some(bytes.into())))?)
+                Ok(serialize(&output).map(|bytes| Payload::new_data(None, Some(bytes.into())))?)
             })
             .map(|output| tx.send(output).unwrap());
 
@@ -92,19 +105,22 @@ impl TestService for TestComponent {
 }
 
 pub mod test_service {
-    use super::*;
+    #[allow(unused_imports)]
+    pub(crate) use super::*;
 
     pub mod op {
-        use super::*;
-        #[derive(serde::Deserialize, Debug)]
+        #[allow(unused_imports)]
+        pub(crate) use super::*;
+        #[derive(serde::Deserialize)]
         pub(crate) struct Inputs {}
 
         pub(crate) type Outputs = String;
     }
 
     pub mod reverse {
-        use super::*;
-        #[derive(serde::Deserialize, Debug)]
+        #[allow(unused_imports)]
+        pub(crate) use super::*;
+        #[derive(serde::Deserialize)]
         pub(crate) struct Inputs {
             #[serde(rename = "input")]
             pub(crate) input: String,
@@ -152,15 +168,15 @@ pub(crate) fn init_imports() {
     wasmrs_guest::add_import(
         u32::from_be_bytes(EXTERNAL_UPPERCASE_INDEX_BYTES),
         OperationType::RequestResponse,
-        "suite.external",
+        "suite.External",
         "uppercase",
     );
 }
 pub(crate) fn init_exports() {
-    wasmrs_guest::register_request_response("suite.test", "op", TestComponent::op_wrapper);
+    wasmrs_guest::register_request_response("suite.Test", "op", TestComponent::op_wrapper);
 
     wasmrs_guest::register_request_response(
-        "suite.test",
+        "suite.Test",
         "reverse",
         TestComponent::reverse_wrapper,
     );

@@ -5,7 +5,7 @@
 [nanobus]
 
 ### run:
-`just docker` (for local db and auth)
+`apex docker` (for local db and auth)
 `nanobus`
 visit: http://localhost:8080
 
@@ -21,15 +21,15 @@ To setup a local development environment
 
 | Dependency       | Check                    | Description                                                |
 |:---------------- |:------------------------ |:---------------------------------------------------------- |
-| [just]           | $ just --version         | Like Makefile [just] runs the needed commands              |
+| [apex]           | $ apex --version         | Like Makefile [apex] runs the needed commands              |
 | [nanobus]        | $ nanobus version        | [Nanobus](https://github.com/nanobus/nanobus) to run iOTAs |
 | [docker]         | $ docker version         | Build and run via Docker containers                        |
 | [docker-compose] | $ docker compose version | Docker compose nanobus & postgres                          |
 
 ## Developing the UI
 run:
-`just deps`
-`just dev`
+`apex deps`
+`apex dev`
 
 visit: http://localhost:5173
 

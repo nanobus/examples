@@ -1,49 +1,65 @@
+// deno-lint-ignore-file no-unused-vars ban-unused-ignore
+export * from "https://deno.land/x/nanobusconfig@v0.0.23/mod.ts";
 import {
   Application,
   Authorization,
+  callInterface,
+  callProvider,
+  CloudEvent,
+  Entity,
   Flow,
   Handler,
-  Iota,
-} from "https://deno.land/x/nanobusconfig@v0.0.15/mod.ts";
+  Handlers,
+  Operations,
+  Response,
+  Step,
+  toDataExpr
+} from "https://deno.land/x/nanobusconfig@v0.0.23/mod.ts";
 
-type UUID = string;
+export const types = {
+  LikeRef: "nanochat.io.like.v1::LikeRef" as Entity,
+  Likable: "nanochat.io.like.v1::Likable" as Entity,
+  Like: "nanochat.io.like.v1::Like" as Entity
+};
 
-interface LikeStoreLikeArgs {
+export type UUID = string;
+
+export interface LikeStoreLikeArgs {
   likableId: UUID;
 }
 
-interface LikeStoreUnlikeArgs {
+export interface LikeStoreUnlikeArgs {
   likableId: UUID;
 }
 
-interface LikeStoreLoadArgs {
+export interface LikeStoreLoadArgs {
   likableId: UUID;
 }
 
-interface LikeStoreDeleteArgs {
+export interface LikeStoreDeleteArgs {
   likableId: UUID;
 }
 
-interface LikeStoreGetMultipleArgs {
-  likableIds: UUID[];
+export interface LikeStoreGetMultipleArgs {
+  likableIds: Array<UUID>;
 }
 
-interface LikeStoreGetLikedByArgs {
+export interface LikeStoreGetLikedByArgs {
   likableId: UUID;
   offset: number;
   limit: number;
 }
 
-interface LikeStoreOper {
-  like?: Flow<LikeStoreLikeArgs>;
-  unlike?: Flow<LikeStoreUnlikeArgs>;
-  load?: Flow<LikeStoreLoadArgs>;
-  delete?: Flow<LikeStoreDeleteArgs>;
-  getMultiple?: Flow<LikeStoreGetMultipleArgs>;
-  getLikedBy?: Flow<LikeStoreGetLikedByArgs>;
+export interface LikeStoreOper {
+  like?: Flow<LikeStoreLikeArgs> | Step[];
+  unlike?: Flow<LikeStoreUnlikeArgs> | Step[];
+  load?: Flow<LikeStoreLoadArgs> | Step[];
+  delete?: Flow<LikeStoreDeleteArgs> | Step[];
+  getMultiple?: Flow<LikeStoreGetMultipleArgs> | Step[];
+  getLikedBy?: Flow<LikeStoreGetLikedByArgs> | Step[];
 }
 
-interface LikeStoreAuth {
+export interface LikeStoreAuth {
   like?: Authorization;
   unlike?: Authorization;
   load?: Authorization;
@@ -53,6 +69,7 @@ interface LikeStoreAuth {
 }
 
 export const LikeStore = {
+  $interface: "nanochat.io.like.v1.LikeStore",
   like: "nanochat.io.like.v1.LikeStore::like" as Handler,
   unlike: "nanochat.io.like.v1.LikeStore::unlike" as Handler,
   load: "nanochat.io.like.v1.LikeStore::load" as Handler,
@@ -61,25 +78,88 @@ export const LikeStore = {
   getLikedBy: "nanochat.io.like.v1.LikeStore::getLikedBy" as Handler,
 
   register(app: Application, iface: LikeStoreOper): void {
-    app.register(
-      LikeStore as unknown as Record<string, Handler>,
-      iface as Record<string, Flow<unknown>>,
-    );
+    app.interface(LikeStore.$interface, (iface as unknown) as Operations);
   },
 
   authorize(app: Application, auths: LikeStoreAuth): void {
-    app.authorize(
-      LikeStore as unknown as Record<string, Handler>,
-      auths as Record<string, Authorization>,
-    );
+    app.authorize(LikeStore.$interface, auths as Record<string, Authorization>);
+  }
+};
+
+export const likeStoreClient = {
+  like(likableId: UUID): Response<unknown> {
+    const dataExpr = `{
+ "likableId": ${toDataExpr(likableId)}
+}`;
+    return callInterface(LikeStore.like, dataExpr) as Response<unknown>;
   },
+
+  unlike(likableId: UUID): Response<unknown> {
+    const dataExpr = `{
+ "likableId": ${toDataExpr(likableId)}
+}`;
+    return callInterface(LikeStore.unlike, dataExpr) as Response<unknown>;
+  },
+
+  load(likableId: UUID): Response<Likable> {
+    const dataExpr = `{
+ "likableId": ${toDataExpr(likableId)}
+}`;
+    return callInterface(LikeStore.load, dataExpr) as Response<Likable>;
+  },
+
+  delete(likableId: UUID): Response<Likable> {
+    const dataExpr = `{
+ "likableId": ${toDataExpr(likableId)}
+}`;
+    return callInterface(LikeStore.delete, dataExpr) as Response<Likable>;
+  },
+
+  getMultiple(likableIds: Array<UUID>): Response<unknown> {
+    const dataExpr = `{
+ "likableIds": ${toDataExpr(likableIds)}
+}`;
+    return callInterface(LikeStore.getMultiple, dataExpr) as Response<unknown>;
+  },
+
+  getLikedBy(
+    likableId: UUID,
+    offset: number,
+    limit: number
+  ): Response<unknown> {
+    const dataExpr = `{
+ "likableId": ${toDataExpr(likableId)}
+ "offset": ${toDataExpr(offset)}
+ "limit": ${toDataExpr(limit)}
+}`;
+    return callInterface(LikeStore.getLikedBy, dataExpr) as Response<unknown>;
+  }
 };
 
-const Interfaces = {
-  LikeStore,
-};
+export interface LikeRef {
+  // The likers's user ID
+  userId: UUID;
+  // Creation timestamp (for sorting)
+  time: Date;
+}
 
-export const Like: Iota<typeof Interfaces> = {
-  $ref: "iotas/like",
-  interfaces: Interfaces,
+export interface Likable {
+  // Identifer of the likable entity.
+  id: UUID;
+  // The number of likes.
+  likes: number;
+}
+
+// Like record
+export interface Like {
+  // The tweet ID liked
+  likableId: UUID;
+  // The likers's user ID
+  userId: UUID;
+  // Creation timestamp (for sorting)
+  time: Date;
+}
+
+export const interfaces = {
+  LikeStore
 };

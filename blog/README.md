@@ -8,7 +8,6 @@ Before you begin, make sure you have the following installed:
 
 * [Apex](https://apexlang.io)
 * [NanoBus](https://github.com/nanobus)
-* [Just](https://just.systems)
 * [Docker](https://docs.docker.com/get-docker/)
 * [Postgres](https://www.postgresql.org) (optional)
 

@@ -1,0 +1,21 @@
+tasks:
+  deps:
+    description: Install dependencies
+    cmds:
+      - npm install
+
+  dev:
+    description: Run server in dev mode
+    cmds:
+      - npm run dev
+
+  build:
+    description: Build the UI assets
+    cmds:
+      - npm run build
+
+  codegen:
+    description: Build the OpenAPI client code
+    cmds:
+      - rm -Rf src/generated-sources/
+      - npx openapi-generator-cli generate -g typescript -i ../openapi.yaml -o src/generated-sources/openapi -g typescript-fetch --additional-properties=supportsES6=true,npmVersion=6.9.0,typescriptThreePlus=true
