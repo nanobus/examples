@@ -21,5 +21,5 @@ $ curl -H "Content-Type: application/json" \
 ## Run tests
 
 ```sh
-$ just test
+$ apex test
 ```

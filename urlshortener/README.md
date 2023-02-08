@@ -24,11 +24,11 @@ docker-compose -f docker-compose.all.yml up
 Build the application
 
 ```cli
-just build
+apex build
 ```
 
 Run NanoBus
 
  ```cli
-just run
+apex run
 ```

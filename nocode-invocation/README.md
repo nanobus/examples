@@ -11,5 +11,5 @@ $ echo '{"name": "World!"}' | nanobus invoke bus.yaml Greeter::sayHello
 ## Run tests
 
 ```sh
-$ just test
+$ apex test
 ```
