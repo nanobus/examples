@@ -30,5 +30,5 @@ apex build
 Run NanoBus
 
  ```cli
-apex run
+apex start
 ```
