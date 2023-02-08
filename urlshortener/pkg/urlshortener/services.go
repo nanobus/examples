@@ -22,9 +22,9 @@ type ShortenerImpl struct {
 // Ensure ShortenerImpl satifies the Shortener interface.
 var _ = (Shortener)((*ShortenerImpl)(nil))
 
-func NewShortener(repository Repository) *ShortenerImpl {
+func NewShortener(deps Dependencies) *ShortenerImpl {
 	return &ShortenerImpl{
-		repository: repository,
+		repository: deps.Repository,
 	}
 }
 

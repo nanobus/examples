@@ -18,6 +18,12 @@ type ShortenerShortenArgs struct {
 	URL string `json:"url" yaml:"url" msgpack:"url"`
 }
 
+// DefaultShortenerShortenArgs returns a `ShortenerShortenArgs` struct populated
+// with its default values.
+func DefaultShortenerShortenArgs() ShortenerShortenArgs {
+	return ShortenerShortenArgs{}
+}
+
 func (o *ShortenerShortenArgs) Decode(decoder msgpack.Reader) error {
 	numFields, err := decoder.ReadMapSize()
 	if err != nil {
@@ -58,6 +64,12 @@ func (o *ShortenerShortenArgs) Encode(encoder msgpack.Writer) error {
 
 type ShortenerLookupArgs struct {
 	ID string `json:"id" yaml:"id" msgpack:"id"`
+}
+
+// DefaultShortenerLookupArgs returns a `ShortenerLookupArgs` struct populated with
+// its default values.
+func DefaultShortenerLookupArgs() ShortenerLookupArgs {
+	return ShortenerLookupArgs{}
 }
 
 func (o *ShortenerLookupArgs) Decode(decoder msgpack.Reader) error {
@@ -102,6 +114,12 @@ type RepositoryLoadByIdArgs struct {
 	ID string `json:"id" yaml:"id" msgpack:"id"`
 }
 
+// DefaultRepositoryLoadByIdArgs returns a `RepositoryLoadByIdArgs` struct
+// populated with its default values.
+func DefaultRepositoryLoadByIdArgs() RepositoryLoadByIdArgs {
+	return RepositoryLoadByIdArgs{}
+}
+
 func (o *RepositoryLoadByIdArgs) Decode(decoder msgpack.Reader) error {
 	numFields, err := decoder.ReadMapSize()
 	if err != nil {
@@ -142,6 +160,12 @@ func (o *RepositoryLoadByIdArgs) Encode(encoder msgpack.Writer) error {
 
 type RepositoryLoadByURLArgs struct {
 	URL string `json:"url" yaml:"url" msgpack:"url"`
+}
+
+// DefaultRepositoryLoadByURLArgs returns a `RepositoryLoadByURLArgs` struct
+// populated with its default values.
+func DefaultRepositoryLoadByURLArgs() RepositoryLoadByURLArgs {
+	return RepositoryLoadByURLArgs{}
 }
 
 func (o *RepositoryLoadByURLArgs) Decode(decoder msgpack.Reader) error {
@@ -230,7 +254,7 @@ func RegisterShortener(svc Shortener) {
 
 func shortenerShortenWrapper(svc Shortener) invoke.RequestResponseHandler {
 	return func(ctx context.Context, p payload.Payload) mono.Mono[payload.Payload] {
-		var inputArgs ShortenerShortenArgs
+		inputArgs := DefaultShortenerShortenArgs()
 		if err := transform.CodecDecode(p, &inputArgs); err != nil {
 			return mono.Error[payload.Payload](err)
 		}
@@ -239,29 +263,48 @@ func shortenerShortenWrapper(svc Shortener) invoke.RequestResponseHandler {
 	}
 }
 
-var (
-	gCaller invoke.Caller
-)
-
-func Initialize(caller invoke.Caller) {
-	gCaller = caller
+type Dependencies struct {
+	Repository Repository
 }
 
-type RepositoryImpl struct {
-	opLoadByID  uint32
-	opLoadByURL uint32
-	opStoreURL  uint32
+type Client struct {
+	caller                 invoke.Caller
+	_opRepositoryLoadByID  uint32
+	_opRepositoryLoadByURL uint32
+	_opRepositoryStoreURL  uint32
 }
 
-func NewRepository() *RepositoryImpl {
-	return &RepositoryImpl{
-		opLoadByID:  invoke.ImportRequestResponse("urlshortener.v1.Repository", "loadById"),
-		opLoadByURL: invoke.ImportRequestResponse("urlshortener.v1.Repository", "loadByURL"),
-		opStoreURL:  invoke.ImportRequestResponse("urlshortener.v1.Repository", "storeURL"),
+func New(caller invoke.Caller) *Client {
+	return &Client{
+		caller:                 caller,
+		_opRepositoryLoadByID:  invoke.ImportRequestResponse("urlshortener.v1.Repository", "loadById"),
+		_opRepositoryLoadByURL: invoke.ImportRequestResponse("urlshortener.v1.Repository", "loadByURL"),
+		_opRepositoryStoreURL:  invoke.ImportRequestResponse("urlshortener.v1.Repository", "storeURL"),
+	}
+}
+func (c *Client) Dependencies() Dependencies {
+	return Dependencies{
+		Repository: c.Repository(),
 	}
 }
 
-func (r *RepositoryImpl) LoadByID(ctx context.Context, id string) mono.Mono[URL] {
+func GetDependencies(caller invoke.Caller) Dependencies {
+	c := New(caller)
+	return c.Dependencies()
+}
+
+type RepositoryClient struct {
+	c          *Client
+	instanceID uint64
+}
+
+func (c *Client) Repository() Repository {
+	return &RepositoryClient{
+		c: c,
+	}
+}
+
+func (r *RepositoryClient) LoadByID(ctx context.Context, id string) mono.Mono[URL] {
 	request := RepositoryLoadByIdArgs{
 		ID: id,
 	}
@@ -269,18 +312,18 @@ func (r *RepositoryImpl) LoadByID(ctx context.Context, id string) mono.Mono[URL]
 	if err != nil {
 		return mono.Error[URL](err)
 	}
-	var metadata [8]byte
+	var metadata [16]byte
 	stream, ok := proxy.FromContext(ctx)
-	binary.BigEndian.PutUint32(metadata[0:4], r.opLoadByID)
+	binary.BigEndian.PutUint32(metadata[0:4], r.c._opRepositoryLoadByID)
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
 	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestResponse(ctx, pl)
+	future := r.c.caller.RequestResponse(ctx, pl)
 	return mono.Map(future, transform.MsgPackDecode[URL])
 }
 
-func (r *RepositoryImpl) LoadByURL(ctx context.Context, url string) mono.Mono[URL] {
+func (r *RepositoryClient) LoadByURL(ctx context.Context, url string) mono.Mono[URL] {
 	request := RepositoryLoadByURLArgs{
 		URL: url,
 	}
@@ -288,29 +331,29 @@ func (r *RepositoryImpl) LoadByURL(ctx context.Context, url string) mono.Mono[UR
 	if err != nil {
 		return mono.Error[URL](err)
 	}
-	var metadata [8]byte
+	var metadata [16]byte
 	stream, ok := proxy.FromContext(ctx)
-	binary.BigEndian.PutUint32(metadata[0:4], r.opLoadByURL)
+	binary.BigEndian.PutUint32(metadata[0:4], r.c._opRepositoryLoadByURL)
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
 	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestResponse(ctx, pl)
+	future := r.c.caller.RequestResponse(ctx, pl)
 	return mono.Map(future, transform.MsgPackDecode[URL])
 }
 
-func (r *RepositoryImpl) StoreURL(ctx context.Context, url *URL) mono.Void {
+func (r *RepositoryClient) StoreURL(ctx context.Context, url *URL) mono.Void {
 	payloadData, err := msgpack.ToBytes(url)
 	if err != nil {
 		return mono.Error[struct{}](err)
 	}
-	var metadata [8]byte
+	var metadata [16]byte
 	stream, ok := proxy.FromContext(ctx)
-	binary.BigEndian.PutUint32(metadata[0:4], r.opStoreURL)
+	binary.BigEndian.PutUint32(metadata[0:4], r.c._opRepositoryStoreURL)
 	if ok {
 		binary.BigEndian.PutUint32(metadata[4:8], stream.StreamID())
 	}
 	pl := payload.New(payloadData, metadata[:])
-	future := gCaller.RequestResponse(ctx, pl)
+	future := r.c.caller.RequestResponse(ctx, pl)
 	return mono.Map(future, transform.Void.Decode)
 }

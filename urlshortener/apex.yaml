@@ -4,5 +4,5 @@ config:
   module: github.com/nanobus/examples/urlshortener
   package: urlshortener
 plugins:
-  - https://deno.land/x/iota_codegen@v0.0.3/tinygo/plugin.ts
+  - "file:///Users/pkedy/go/src/github.com/nanobus/iota/codegen/src/tinygo/plugin.ts"
   - https://deno.land/x/nanobusconfig@v0.0.23/plugin.ts

@@ -7,13 +7,11 @@ import (
 )
 
 func main() {
-	urlshortener.Initialize(guest.HostInvoker)
-
 	// Create providers
-	repositoryProvider := urlshortener.NewRepository()
+	deps := urlshortener.GetDependencies(guest.HostInvoker)
 
 	// Create services
-	shortenerService := urlshortener.NewShortener(repositoryProvider)
+	shortenerService := urlshortener.NewShortener(deps)
 
 	// Register services
 	urlshortener.RegisterShortener(shortenerService)
