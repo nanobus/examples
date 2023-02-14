@@ -226,3 +226,21 @@ errors:
     code: not_found
     title: Jot not found
     message: 'Jot with id {{ .messageId }} is not found'
+package:
+   registry: reg.candle.run
+   org: examples
+   add:
+     - ui/dist/
+     - resources.yaml
+     - iotas/follow/
+     - iotas/like/
+     - iotas/message/
+     - iotas/user/
+
+   #Credentials.  Add these to your environment.  replace regcandlerun with your registry host name.
+   #If you are going to use candle registry, make a free account at https://reg.candle.run
+   #you can only push to orgs that you own and already exist so feel free to make an org ("Project") for yourself.
+   #export OCI_REGISTRIES=CANDLE
+   #export CANDLE_HOSTNAME=reg.candle.run
+   #export CANDLE_USERNAME=<your registry username>
+   #export CANDLE_PASSWORD=<your registry password>
