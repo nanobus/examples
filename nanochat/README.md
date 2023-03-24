@@ -1,17 +1,31 @@
 # nanochat 
 
 ## See it in action
-### Install: 
+
+### Install:
+
 [nanobus]
 
 ### run:
-`apex docker` (for local db and auth)
-`nanobus`
-visit: http://localhost:8080
+
+For local db and auth
+
+```sh
+apex docker
+```
+
+It takes a few seconds for the OIDC provider to start and allow NanoBus to start successfully.
+
+```sh
+nanobus run --debug
+```
+
+Visit: http://localhost:8080
 
 Login:
+
 ```
-u: foo@candle.dev
+u: foo@nanochat.io
 p: bar
 ```
 
@@ -28,10 +42,13 @@ To setup a local development environment
 
 ## Developing the UI
 run:
-`apex deps`
-`apex dev`
 
-visit: http://localhost:5173
+```sh
+apex deps
+apex dev
+```
+
+Open the UI in your browser: http://localhost:5173
 
 When you are finished, make sure to run `docker compose down`.
 
@@ -39,7 +56,9 @@ When you are finished, make sure to run `docker compose down`.
 
 The full-stack docker compose:
 
-$ `docker compose --profile app up`
+```sh
+docker compose --profile app up
+```
 
 Provides all the running parts;
 
@@ -54,8 +73,8 @@ Provides all the running parts;
 [docker]: https://docs.docker.com/engine/install/
 [docker-compose]: https://docs.docker.com/compose/install/
 [go]: https://go.dev/doc/install
-[iota]: https://github.com/nanobus/iOTA
-[iotas]: https://github.com/nanobus/iOTA
+[iota]: https://github.com/nanobus/iota
+[iotas]: https://github.com/nanobus/iota
 [just]: https://github.com/casey/just#Installation
 [nanobus]: https://github.com/nanobus/nanobus#Install
 [npm]: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm

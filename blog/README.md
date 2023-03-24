@@ -24,7 +24,7 @@ The `nanobus invoke <bus file> <operation>` allows you to run nanobus actions in
 Below is us echoing in a json with the necessary parameters to make a blog post.
 
 ```sh
-$ echo '{ "userId":"myuserid", "title":"My Blog Title ", "body": "This is my blog post" }' | nanobus invoke bus.yaml blogs.v1.Blogs::postBlog
+echo '{ "userId": "myuserid", "title": "My Blog Title", "body": "This is my blog post" }' | nanobus invoke bus.yaml blogs.v1.Blogs::postBlog
 ```
 
 Here are some other method commands you can run (Pass in the id you get from the `postblog` response) -
@@ -32,7 +32,7 @@ Here are some other method commands you can run (Pass in the id you get from the
 Delete Blog Post:
 
 ```sh
-$ echo '{"id":"", "userId":"myuserid" }' | nanobus invoke bus.yaml blogs.v1.Blogs::deleteBlog
+echo '{ "id": "", "userId": "myuserid" }' | nanobus invoke bus.yaml blogs.v1.Blogs::deleteBlog
  ```
 
 > Note: `userId` has to be passed because this example does not use authentication/authorization.
@@ -40,13 +40,13 @@ $ echo '{"id":"", "userId":"myuserid" }' | nanobus invoke bus.yaml blogs.v1.Blog
 Get Single Blog Post:
 
 ```sh
-$ echo '{"id":"" }' | nanobus invoke bus.yaml blogs.v1.Blogs::getBlog
+echo '{ "id": "" }' | nanobus invoke bus.yaml blogs.v1.Blogs::getBlog
 ```
 
 Show Feed:
 
 ```sh
-$ echo '{}' | nanobus invoke bus.yaml blogs.v1.Blogs::getFeed
+echo '{}' | nanobus invoke bus.yaml blogs.v1.Blogs::getFeed
 ```
 
 ### Invoking Nanoblog as a web service
@@ -58,7 +58,7 @@ $ echo '{}' | nanobus invoke bus.yaml blogs.v1.Blogs::getFeed
 * Now you have a web service and can make rest calls. Below is an example of a curl command you can run to test out the API calls.
 
 ```sh
-$ curl -X 'POST' \
+curl -X 'POST' \
   'http://localhost:8080/v1/blogs' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
@@ -66,7 +66,7 @@ $ curl -X 'POST' \
   "body": "string",
   "title": "string",
   "userId": "string"
-}' 
+}'
 ```
 ## More info
 

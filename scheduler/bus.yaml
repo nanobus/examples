@@ -1,5 +1,6 @@
 id: hello-world
 version: 0.0.1
+
 transports:
   schedule:
     uses: nanobus.transport.time.scheduler/v1
@@ -9,6 +10,7 @@ transports:
           schedule: '*/1 * * * *' # Make sure schedules are different or they merge and only one gets run.
         - handler: 'log::helloMoon'
           schedule: '*/2 * * * *'
+
 interfaces:
   log:
     helloWorld:

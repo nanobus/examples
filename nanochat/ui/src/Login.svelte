@@ -17,7 +17,7 @@
     >
       <div class="login-prompt-wrapper">
         <div class="login-prompt--header">
-          <img src="./images/logo/candle-logo.png" width="" alt="Candle logo" />
+          <h1>NanoChat</h1>
         </div>
         <div class="login-prompt--btn mt-5">
           <a

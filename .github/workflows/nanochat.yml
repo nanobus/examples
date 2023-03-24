@@ -30,9 +30,9 @@ jobs:
           cd nanochat/ui
           npm install
           npm run build
-      - name: Package and push
-        uses: nanobus/push-action@v1
-        with:
-          path: "nanochat/bus.yaml"
-          username: ${{ secrets.CANDLE_REG_EXAMPLES_USERNAME }}
-          password: ${{ secrets.CANDLE_REG_EXAMPLES_PASSWORD }}
+      # - name: Package and push
+      #   uses: nanobus/push-action@v1
+      #   with:
+      #     path: "nanochat/bus.yaml"
+      #     username: ${{ secrets.REG_EXAMPLES_USERNAME }}
+      #     password: ${{ secrets.REG_EXAMPLES_PASSWORD }}

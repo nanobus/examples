@@ -5,7 +5,7 @@ This example shows how to turn a basic no-code interface into a functioning web 
 ## Running
 
 ```sh
-$ nanobus run
+nanobus run --debug
 ```
 
 ## Querying the service
@@ -13,7 +13,7 @@ $ nanobus run
 You can now query the web service with a tool like curl:
 
 ```sh
-$ curl -H "Content-Type: application/json" \
+curl -H "Content-Type: application/json" \
        -d '{"name":"World!"}' \
        http://localhost:8080/hello
 ```
@@ -21,5 +21,5 @@ $ curl -H "Content-Type: application/json" \
 ## Run tests
 
 ```sh
-$ apex test
+apex test
 ```
