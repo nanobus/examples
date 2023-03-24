@@ -5,7 +5,7 @@ import * from "@apexlang/openapi"
 namespace "blogs.v1"
 @info(
     title: "Simple blog app"
-    description: "Simple blog application created using NanoBus and IOtas."
+    description: "Simple blog application created using NanoBus."
     version: "1.0.0"
     termsOfService: "https://nanoblog.io/terms/"
     contact: {

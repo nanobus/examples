@@ -30,7 +30,7 @@ apex build
 ### Option 1: Run NanoBus as a server
 
  ```cli
-apex start
+nanobus run --debug
 ```
 
 Invoke via HTTP

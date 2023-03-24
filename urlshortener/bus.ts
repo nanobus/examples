@@ -22,7 +22,7 @@ const app = new Application("url-shortener", "0.0.1")
   .spec("apex.axdl")
   .main("build/urlshortener.wasm")
   .package({
-    registry: "reg.candle.run",
+    registry: "reg.mycompany.com",
     org: "examples",
     add: [
       "resources.yaml",

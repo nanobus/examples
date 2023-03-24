@@ -23,8 +23,7 @@
   </div>
   <footer>
     <p>
-      <a href="https://candle.dev/privacy.html">Privacy Policy</a>
-      - © 2022 Nanochat, Inc.
+      © 2022 Nanochat, Inc.
     </p>
   </footer>
 </body>

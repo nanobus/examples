@@ -5,7 +5,7 @@ This example shows how to use WebAssembly iotas with nanobus.
 ## Running
 
 ```sh
-nanobus run
+nanobus run --debug
 ```
 
 ## Querying the service

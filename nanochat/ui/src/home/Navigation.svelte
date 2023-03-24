@@ -42,9 +42,6 @@
 
 <main>
   <header class="flex justify-between pb-3">
-    <a href="/">
-      <img src="/images/logo/candle-short.png" alt="Candle logo" />
-    </a>
     <button id="menuBtn" class="hamburger block sm:hidden focus:outline-none pr-10" type="button" on:click={navToggle}>
       <span class="hamburger__top-bun"></span><span class="hamburger__bottom-bun"></span>
     </button>

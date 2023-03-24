@@ -64,7 +64,7 @@ services:
 
   nanobus:
     profiles: [ "app" ]
-    image: nanobus/nanobus:v0.0.16
+    image: nanobus/nanobus:v0.0.24
     depends_on:
       postgres:
         condition: service_healthy

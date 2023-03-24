@@ -1,5 +1,6 @@
 id: wasm-test
 version: 0.0.1
+
 transports:
   http:
     uses: nanobus.transport.http.server/v1
@@ -12,11 +13,14 @@ transports:
               - method: POST
                 uri: /hello
                 handler: my-module.v1.Greeter::sayHello
+
 imports:
   greeter:
     ref: ./greeter
+
 authorization:
   my-module.v1.Greeter:
     sayHello:
       unauthenticated: true
+
 interfaces:
